@@ -1,0 +1,18 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "add-repo": "cd packages && git clone $1",
+    "add-repos-from-blueprint": "node blueprint.js repos | xargs -I {} npm run add-repo {}",
+    "sync": "npm run add-repos-from-blueprint && npm install --force && npm run build && npm run open-errors",
+    "build": "lerna run build.tsc && lerna run build.resolve-paths",
+    "open-errors": "if [ -f errors.log ]; then open errors.log || xdg-open errors.log; fi"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.1.0",
+    "lerna": "^7.3.0"
+  }
+}
