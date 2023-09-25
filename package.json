@@ -5,11 +5,12 @@
     "packages/*"
   ],
   "scripts": {
-    "add-repo": "cd packages && git clone $1",
-    "add-repos-from-blueprint": "node blueprint.js repos | xargs -I {} npm run add-repo {}",
-    "sync": "npm run add-repos-from-blueprint && npm install --force && npm run build && npm run open-errors",
-    "build": "lerna run build.tsc && lerna run build.resolve-paths",
-    "open-errors": "if [ -f errors.log ]; then open errors.log || xdg-open errors.log; fi"
+    "add-repos-from-blueprint": "./support/sync-repos-with-blueprint.sh",
+    "add-repo": "./support/add-repo.sh",
+    "sync": "npm run add-repos-from-blueprint && npm install --force && npm run build",
+    "build": "lerna run build && lerna run build.resolve-paths",
+    "clean": "lerna clean",
+    "reset": "find ./packages -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} +"
   },
   "devDependencies": {
     "js-yaml": "^4.1.0",

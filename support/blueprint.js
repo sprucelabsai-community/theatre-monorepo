@@ -8,7 +8,7 @@ if (!section) {
     process.exit(1);
 }
 
-const file = fs.readFileSync('./blueprint.yml', 'utf8');
+const file = fs.readFileSync('../blueprint.yml', 'utf8');
 const data = yaml.load(file);
 
 if (data[section]) {
