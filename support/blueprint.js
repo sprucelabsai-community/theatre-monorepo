@@ -10,7 +10,9 @@ if (!blueprintPath) {
     process.exit(1);
 }
 
-const file = fs.readFileSync(path.join(process.cwd(), '..', blueprintPath), 'utf8');
+const resolvedPath = blueprintPath[0] === '/' ? blueprintPath : path.join(process.cwd(), '..', blueprintPath);
+
+const file = fs.readFileSync(resolvedPath, 'utf8');
 const data = yaml.load(file);
 
 if (data[section]) {

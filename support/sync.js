@@ -8,8 +8,7 @@ if (!blueprintPath) {
 }
 
 try {
-    const command = `yarn add-repos-from-blueprint ${blueprintPath} && yarn --force && yarn build`;
-    console.log(command)
+    const command = `yarn add-skills-from-blueprint ${blueprintPath} && yarn --force && yarn build`;
     execSync(command, { stdio: 'inherit' });
 } catch (error) {
     console.error('Error running sync', error);

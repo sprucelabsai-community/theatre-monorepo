@@ -17,8 +17,8 @@ PIDS=()
 
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
-    # Run add-repo.sh in the background
-    ./add-repo.sh $REPO &
+    # Run add-skill.sh in the background
+    ./add-skill.sh $REPO &
     # Store the PID of the background process
     PIDS+=($!)
 done
@@ -28,7 +28,7 @@ for PID in "${PIDS[@]}"; do
     wait $PID
     STATUS=$?
 
-    # Check exit status from add-repo.sh
+    # Check exit status from add-skill.sh
     # Only fail script if the exit code is 1, indicating an unexpected error
     if [ $STATUS -eq 1 ]; then
         echo "Error processing a repo with PID $PID."
