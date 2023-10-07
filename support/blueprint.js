@@ -1,14 +1,16 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
+const path = require('path')
 
-const section = process.argv[2];
+const blueprintPath = process.argv[2];
+const section = process.argv[3];
 
-if (!section) {
+if (!blueprintPath) {
     console.error("No section provided. Usage: node blueprint.js <section-name>");
     process.exit(1);
 }
 
-const file = fs.readFileSync('../blueprint.yml', 'utf8');
+const file = fs.readFileSync(path.join(process.cwd(), '..', blueprintPath), 'utf8');
 const data = yaml.load(file);
 
 if (data[section]) {
