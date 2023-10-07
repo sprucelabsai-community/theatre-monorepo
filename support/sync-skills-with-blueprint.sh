@@ -10,7 +10,10 @@ fi
 cd $(dirname $0)
 
 # Fetch repos from blueprint.js
-REPOS=$(node blueprint.js $1 repos)
+REPOS=$(node blueprint.js $1 skills)
+
+echo "Repos to process:"
+echo $REPOS
 
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
