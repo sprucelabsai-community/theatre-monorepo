@@ -12,6 +12,8 @@ if (!blueprintPath) {
 
 const resolvedPath = blueprintPath[0] === '/' ? blueprintPath : path.join(process.cwd(), '..', blueprintPath);
 
+console.log('Using blueprint file: ' + resolvedPath)
+
 const file = fs.readFileSync(resolvedPath, 'utf8');
 const data = yaml.load(file);
 
