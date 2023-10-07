@@ -18,10 +18,13 @@ echo $REPOS
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
 
+# Change to the packages directory
+cd ../packages
+
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
     # Run add-skill.sh in the background
-    ./add-skill.sh $REPO &
+    ./add-skill.sh $REPO
     # Store the PID of the background process
     PIDS+=($!)
 done

@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Change to the packages directory
-cd ../packages
-
 # Extract repo name from the URL
 REPO_NAME=$(basename $1 .git)
+
+echo "Cloning skill $REPO_NAME..."
 
 # Clone the repo if it doesn't exist
 if [ ! -d "$REPO_NAME" ]; then
@@ -26,5 +25,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo ".git directory in $REPO_NAME deleted successfully."
 exit 0
