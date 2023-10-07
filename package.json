@@ -7,7 +7,7 @@
   "scripts": {
     "add-repos-from-blueprint": "./support/sync-repos-with-blueprint.sh",
     "add-repo": "./support/add-repo.sh",
-    "sync": "node ./support/sync.js",
+    "sync": "yarn && node ./support/sync.js",
     "build": "lerna run build",
     "clean": "lerna clean",
     "reset": "find ./packages -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} +"
