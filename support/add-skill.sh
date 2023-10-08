@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Change to the packages directory
+cd ../packages
+
 # Extract repo name from the URL
 REPO_NAME=$(basename $1 .git)
 
