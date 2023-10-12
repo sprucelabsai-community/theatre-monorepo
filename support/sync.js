@@ -9,7 +9,7 @@ if (!blueprintPath) {
 
 try {
     const command = `yarn add-skills-from-blueprint ${blueprintPath} && yarn --force && yarn build.skills`;
-    execSync(command, { stdio: 'inherit' });
+    execSync(command, { stdio: 'inherit', cwd: process.cwd() });
 } catch (error) {
     console.error('Error running sync', error);
 }
