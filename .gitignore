@@ -2,3 +2,4 @@ node_modules/
 .DS_Store
 blueprint.yml
 yarn-error.log
+yarn.lock

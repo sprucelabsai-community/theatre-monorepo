@@ -15,7 +15,7 @@
     "clean": "rm -rf node_modules/ package-lock.json yarn.lock",
     "rebuild": "yarn reset && yarn sync",
     "reset": "yarn clean && yarn delete.skills",
-    "update": "git pull && yarn && ./support/update.sh"
+    "update": "./support/update.sh"
   },
   "devDependencies": {
     "js-yaml": "^4.1.0",

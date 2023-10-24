@@ -39,5 +39,5 @@ for PID in "${PIDS[@]}"; do
     fi
 done
 
-echo "All repos processed."
+echo "Sync complete..."
 exit 0
