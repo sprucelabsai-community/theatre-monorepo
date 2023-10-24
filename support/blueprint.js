@@ -14,11 +14,13 @@ const resolvedPath = blueprintPath[0] === '/' ? blueprintPath : path.join(proces
 const file = fs.readFileSync(resolvedPath, 'utf8');
 const data = yaml.load(file);
 
-if (data[section]) {
+if (Array.isArray(data[section])) {
     data[section].forEach(item => {
         console.log(item);
     });
+} else if (typeof data[section] === 'object') {
+    console.log(JSON.stringify(data[section]));
 } else {
-    console.error(`Section "${section}" not found in blueprint.yml`);
+    console.error(`Section "${section}" not found or not iterable in blueprint.yml`);
     process.exit(1);
 }

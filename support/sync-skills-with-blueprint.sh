@@ -12,8 +12,9 @@ cd $(dirname $0)
 # Fetch repos from blueprint.js
 REPOS=$(node blueprint.js $1 skills)
 
-echo "Repos to process:"
-echo $REPOS
+clear
+
+echo "Pulling skills..."
 
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
@@ -21,7 +22,7 @@ PIDS=()
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
     # Run add-skill.sh in the background
-    ./add-skill.sh $REPO &
+    ./add-skill.sh $REPO $1 &
     # Store the PID of the background process
     PIDS+=($!)
 done
