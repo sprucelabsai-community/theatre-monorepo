@@ -21,11 +21,4 @@ else
     echo "Repo $REPO_NAME already exists."
 fi
 
-# Delete the .git directory
-rm -rf "$REPO_NAME/.git"
-if [ $? -ne 0 ]; then
-    echo "Error deleting .git directory in $REPO_NAME."
-    exit 1
-fi
-
 exit 0

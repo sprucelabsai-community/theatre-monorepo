@@ -21,7 +21,7 @@ PIDS=()
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
     # Run add-skill.sh in the background
-    ../support/add-skill.sh $REPO &
+    ./add-skill.sh $REPO &
     # Store the PID of the background process
     PIDS+=($!)
 done
