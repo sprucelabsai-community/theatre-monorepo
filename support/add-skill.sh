@@ -53,7 +53,13 @@ values=("$SKILL_NAMESPACE")
 for i in "${!keys[@]}"; do
     key="${keys[$i]}"
     value="${values[$i]}"
-    sed -i '' "s/{{${key}}}/${value}/g" .env
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS requires an empty string after -i
+        sed -i '' "s/{{${key}}}/${value}/g" .env
+    else
+        # Linux and other UNIX-like systems do not require the empty string
+        sed -i "s/{{${key}}}/${value}/g" .env
+    fi
 done
 
 exit 0
