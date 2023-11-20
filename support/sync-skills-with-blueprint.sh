@@ -2,12 +2,31 @@
 
 # Alert if path is missing
 if [ -z "$1" ]; then
-    echo "Missing path to blueprint.yml. Try 'yarn sync ./path/to/blueprint.yml'"
+    echo "ERROR: Missing path to blueprint.yml. Try 'yarn sync ./path/to/blueprint.yml'"
+    exit 1
+fi
+
+BLUEPRINT_FILE=$(dirname $1)/blueprint.yml
+if [ ! -f "$BLUEPRINT_FILE" ]; then
+    echo "ERROR: blueprint.yml file not found at $BLUEPRINT_FILE"
     exit 1
 fi
 
 # Navigate to the correct directory
 cd $(dirname $0)
+
+ADMIN_SECTION=$(node blueprint.js $1 admin)
+
+echo $ADMIN_SECTION
+
+# Check if admin section contains phone number
+if [[ $ADMIN_SECTION != *phone* ]]; then
+    echo "ERROR: The admin number is missing in your blueprint.yml. Add it as follows:"
+    echo ""
+    echo "admin:"
+    echo "  - phone: \"1234567890\""
+    exit 1
+fi
 
 # Fetch repos from blueprint.js
 REPOS=$(node blueprint.js $1 skills)
