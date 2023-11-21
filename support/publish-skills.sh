@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo -e "Publishing skills...\n"
 
 cd packages
