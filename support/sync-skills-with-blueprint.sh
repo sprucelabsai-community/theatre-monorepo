@@ -36,9 +36,6 @@ echo "Pulling skills..."
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
 
-eval $(ssh-agent -s)
-ssh-add /root/.ssh/id_rsa
-
 # Export the SSH agent's environment variables
 export SSH_AUTH_SOCK
 export SSH_AGENT_PID
