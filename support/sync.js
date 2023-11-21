@@ -11,7 +11,7 @@ if (!blueprintPath) {
 try {
     const fullPath = path.resolve(process.cwd(), blueprintPath);
     const command = `yarn add-skills-from-blueprint ${fullPath} && yarn --force && yarn build`;
-    execSync(command, { stdio: 'inherit', cwd: process.cwd() });
+    execSync('./test-clone.sh', { stdio: 'inherit', cwd: process.cwd() });
 } catch (error) {
     console.error('Error running sync', error);
 }
