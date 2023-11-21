@@ -1,8 +1,5 @@
 #!/bin/bash
 
-git clone git@github.com:sprucelabsai/spruce-mercury-api.git
-exit 0
-
 # Alert if path is missing
 if [ -z "$1" ]; then
     echo "ERROR: Missing path to blueprint.yml. Try 'yarn sync ./path/to/blueprint.yml'"
@@ -39,17 +36,10 @@ echo "Pulling skills..."
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
 
-cd ../packages
-
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
     # Run add-skill.sh in the background
-    REPO_NAME=$(basename $REPO .git)
-
-    echo "\"$REPO_NAME\""
-
-    git clone $REPO
-    exit 1
+    git clone git@github.com:sprucelabsai/spruce-mercury-api.git
     # ./add-skill.sh $REPO $1
     # Store the PID of the background process
     PIDS+=($!)
