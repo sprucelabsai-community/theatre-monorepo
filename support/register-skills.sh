@@ -7,14 +7,7 @@ for dir in *-skill; do
         cd "$dir"
 
         # Extract NAMESPACE from directory name
-        IFS='-' read -ra ADDR <<<"$dir"
-        if [ ${#ADDR[@]} -gt 1 ]; then
-            NAMESPACE=${ADDR[1]}
-        else
-            echo "Invalid directory format for $dir" >&2
-            cd ..
-            continue
-        fi
+        NAMESPACE=$(jq -r '.skill.namespace' ./package.json)
 
         # Check if .env file exists
         if [ -f .env ]; then
