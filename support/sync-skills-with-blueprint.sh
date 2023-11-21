@@ -41,9 +41,9 @@ cd ../packages
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
     # Run add-skill.sh in the background
-    # REPO_NAME=$(basename $REPO .git)
+    REPO_NAME=$(basename $REPO .git)
 
-    echo "\"$REPO\""
+    echo "\"$REPO_NAME\""
     exit 1
 
     git clone $REPO
