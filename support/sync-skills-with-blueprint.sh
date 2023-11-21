@@ -36,7 +36,7 @@ echo "Pulling skills..."
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
 
-cd packages
+cd ../packages
 
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
@@ -48,8 +48,6 @@ for REPO in $REPOS; do
     # Store the PID of the background process
     PIDS+=($!)
 done
-
-cd ..
 
 # Wait for all background processes to finish
 for PID in "${PIDS[@]}"; do
