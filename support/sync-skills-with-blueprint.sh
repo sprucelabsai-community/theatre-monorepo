@@ -36,10 +36,6 @@ echo "Pulling skills..."
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
 
-# Export the SSH agent's environment variables
-export SSH_AUTH_SOCK
-export SSH_AGENT_PID
-
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
     # Run add-skill.sh in the background
