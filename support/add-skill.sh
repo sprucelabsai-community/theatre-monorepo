@@ -1,5 +1,4 @@
 #!/bin/bash
-eval $(ssh-agent -s) && ssh-add
 
 # Pull env
 ENV=$(node ./blueprint.js $2 env)
