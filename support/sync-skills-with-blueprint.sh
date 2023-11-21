@@ -38,12 +38,13 @@ PIDS=()
 
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
+
+    CLEAN_REPO="${REPO%\"}"
+    CLEAN_REPO="${CLEAN_REPO#\"}"
+
     # Run add-skill.sh in the background
+    ./add-skill.sh $CLEAN_REPO $1 &
 
-    echo "git clone $REPO"
-    git clone $REPO
-
-    # ./add-skill.sh $REPO $1
     # Store the PID of the background process
     PIDS+=($!)
 done
