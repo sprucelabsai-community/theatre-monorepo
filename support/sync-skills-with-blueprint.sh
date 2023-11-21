@@ -36,15 +36,20 @@ echo "Pulling skills..."
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
 
+cd packages
+
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
     # Run add-skill.sh in the background
     # REPO_NAME=$(basename $REPO .git)
+
     git clone $REPO
     # ./add-skill.sh $REPO $1
     # Store the PID of the background process
     PIDS+=($!)
 done
+
+cd ..
 
 # Wait for all background processes to finish
 for PID in "${PIDS[@]}"; do
