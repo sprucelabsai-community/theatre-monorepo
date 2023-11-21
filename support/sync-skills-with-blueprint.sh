@@ -44,9 +44,9 @@ for REPO in $REPOS; do
     REPO_NAME=$(basename $REPO .git)
 
     echo "\"$REPO_NAME\""
-    exit 1
 
     git clone $REPO
+    exit 1
     # ./add-skill.sh $REPO $1
     # Store the PID of the background process
     PIDS+=($!)
