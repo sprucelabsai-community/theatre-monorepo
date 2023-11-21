@@ -1,9 +1,5 @@
 #!/bin/bash
 
-eval $(ssh-agent -s)
-ssh-add /root/.ssh/id_rsa
-exec "$@"
-
 # Alert if path is missing
 if [ -z "$1" ]; then
     echo "ERROR: Missing path to blueprint.yml. Try 'yarn sync ./path/to/blueprint.yml'"
