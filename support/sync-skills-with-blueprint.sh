@@ -41,6 +41,7 @@ for REPO in $REPOS; do
     # Run add-skill.sh in the background
 
     echo "git clone $REPO"
+    git clone $REPO
 
     # ./add-skill.sh $REPO $1
     # Store the PID of the background process
