@@ -1,0 +1,11 @@
+{
+  "skipped": [
+    "skill"
+  ],
+  "installed": [
+    "node",
+    "schema",
+    "permission",
+    "event"
+  ]
+}
