@@ -16,7 +16,7 @@ const data = yaml.load(file);
 
 if (Array.isArray(data[section])) {
     data[section].forEach(item => {
-        console.log(item);
+        console.log(JSON.stringify(item));
     });
 } else if (typeof data[section] === 'object') {
     console.log(JSON.stringify(data[section]));

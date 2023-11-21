@@ -17,8 +17,6 @@ cd $(dirname $0)
 
 ADMIN_SECTION=$(node blueprint.js $1 admin)
 
-echo $ADMIN_SECTION
-
 # Check if admin section contains phone number
 if [[ $ADMIN_SECTION != *phone* ]]; then
     echo "ERROR: The admin number is missing in your blueprint.yml. Add it as follows:"

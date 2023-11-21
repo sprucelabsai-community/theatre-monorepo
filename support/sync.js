@@ -1,4 +1,5 @@
 const { execSync } = require('child_process');
+const path = require('path');
 
 const blueprintPath = process.argv[2]
 
@@ -8,7 +9,8 @@ if (!blueprintPath) {
 }
 
 try {
-    const command = `yarn add-skills-from-blueprint ${blueprintPath} && yarn --force && yarn build`;
+    const fullPath = path.resolve(process.cwd(), blueprintPath);
+    const command = `yarn add-skills-from-blueprint ${fullPath} && yarn --force && yarn build`;
     execSync(command, { stdio: 'inherit', cwd: process.cwd() });
 } catch (error) {
     console.error('Error running sync', error);
