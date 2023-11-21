@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo -e "Checking skills for registration...\n"
 
 cd packages
