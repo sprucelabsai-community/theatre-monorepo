@@ -8,10 +8,16 @@ if (!blueprintPath) {
     process.exit(1);
 }
 
+const env = {
+    ...process.env,
+    SSH_AUTH_SOCK: process.env.SSH_AUTH_SOCK,
+    SSH_AGENT_PID: process.env.SSH_AGENT_PID
+};
+
 try {
     const fullPath = path.resolve(process.cwd(), blueprintPath);
     const command = `yarn add-skills-from-blueprint ${fullPath} && yarn --force && yarn build`;
-    execSync(command, { stdio: 'inherit', cwd: process.cwd(), 'env': process.env });
+    execSync(command, { stdio: 'inherit', cwd: process.cwd(), env: env });
 } catch (error) {
     console.error('Error running sync', error);
 }
