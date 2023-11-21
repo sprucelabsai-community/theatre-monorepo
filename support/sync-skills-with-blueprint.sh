@@ -1,4 +1,7 @@
 #!/bin/bash
+
+cd packages
+
 git clone -v git@github.com:sprucelabsai/spruce-mercury-api.git
 
 # #!/bin/bash
