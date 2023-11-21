@@ -1,65 +1,68 @@
 #!/bin/bash
+git clone -v git@github.com:sprucelabsai/spruce-mercury-api.git
 
-# Alert if path is missing
-if [ -z "$1" ]; then
-    echo "ERROR: Missing path to blueprint.yml. Try 'yarn sync ./path/to/blueprint.yml'"
-    exit 1
-fi
+# #!/bin/bash
 
-BLUEPRINT_FILE=$(dirname $1)/blueprint.yml
-if [ ! -f "$BLUEPRINT_FILE" ]; then
-    echo "ERROR: blueprint.yml file not found at $BLUEPRINT_FILE"
-    exit 1
-fi
+# # Alert if path is missing
+# if [ -z "$1" ]; then
+#     echo "ERROR: Missing path to blueprint.yml. Try 'yarn sync ./path/to/blueprint.yml'"
+#     exit 1
+# fi
 
-# Navigate to the correct directory
-cd $(dirname $0)
+# BLUEPRINT_FILE=$(dirname $1)/blueprint.yml
+# if [ ! -f "$BLUEPRINT_FILE" ]; then
+#     echo "ERROR: blueprint.yml file not found at $BLUEPRINT_FILE"
+#     exit 1
+# fi
 
-ADMIN_SECTION=$(node blueprint.js $1 admin)
+# # Navigate to the correct directory
+# cd $(dirname $0)
 
-# Check if admin section contains phone number
-if [[ $ADMIN_SECTION != *phone* ]]; then
-    echo "ERROR: The admin number is missing in your blueprint.yml. Add it as follows:"
-    echo ""
-    echo "admin:"
-    echo "  - phone: \"1234567890\""
-    exit 1
-fi
+# ADMIN_SECTION=$(node blueprint.js $1 admin)
 
-# Fetch repos from blueprint.js
-REPOS=$(node blueprint.js $1 skills)
+# # Check if admin section contains phone number
+# if [[ $ADMIN_SECTION != *phone* ]]; then
+#     echo "ERROR: The admin number is missing in your blueprint.yml. Add it as follows:"
+#     echo ""
+#     echo "admin:"
+#     echo "  - phone: \"1234567890\""
+#     exit 1
+# fi
 
-clear
+# # Fetch repos from blueprint.js
+# REPOS=$(node blueprint.js $1 skills)
 
-echo "Pulling skills..."
+# clear
 
-# Declare an empty array to collect PIDs of background processes
-PIDS=()
+# echo "Pulling skills..."
 
-# Export the SSH agent's environment variables
-export SSH_AUTH_SOCK
-export SSH_AGENT_PID
+# # Declare an empty array to collect PIDs of background processes
+# PIDS=()
 
-# Loop over each repo and attempt to add in the background
-for REPO in $REPOS; do
-    # Run add-skill.sh in the background
-    ./add-skill.sh $REPO $1 &
-    # Store the PID of the background process
-    PIDS+=($!)
-done
+# # Export the SSH agent's environment variables
+# export SSH_AUTH_SOCK
+# export SSH_AGENT_PID
 
-# Wait for all background processes to finish
-for PID in "${PIDS[@]}"; do
-    wait $PID
-    STATUS=$?
+# # Loop over each repo and attempt to add in the background
+# for REPO in $REPOS; do
+#     # Run add-skill.sh in the background
+#     ./add-skill.sh $REPO $1 &
+#     # Store the PID of the background process
+#     PIDS+=($!)
+# done
 
-    # Check exit status from add-skill.sh
-    # Only fail script if the exit code is 1, indicating an unexpected error
-    if [ $STATUS -eq 1 ]; then
-        echo "Error processing a repo with PID $PID."
-        exit 1
-    fi
-done
+# # Wait for all background processes to finish
+# for PID in "${PIDS[@]}"; do
+#     wait $PID
+#     STATUS=$?
 
-echo "Sync complete..."
-exit 0
+#     # Check exit status from add-skill.sh
+#     # Only fail script if the exit code is 1, indicating an unexpected error
+#     if [ $STATUS -eq 1 ]; then
+#         echo "Error processing a repo with PID $PID."
+#         exit 1
+#     fi
+# done
+
+# echo "Sync complete..."
+# exit 0
