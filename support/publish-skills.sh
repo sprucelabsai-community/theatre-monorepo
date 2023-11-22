@@ -11,9 +11,11 @@ for dir in *-skill; do
         cd "$dir"
         namespace=$(grep '"namespace"' package.json | awk -F: '{print $2}' | tr -d '," ')
         if [[ " ${namespaces[*]} " == *"$namespace"* ]]; then
-            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: true}})" >/dev/null
+            echo "Publishing "$namespace" and setting canBeInstalled to true"
+            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: true}})" >/dev/null &
         else
-            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: false}})" >/dev/null
+            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: false}})" >/dev/null &
+            echo "Publishing "$namespace" and setting canBeInstalled to false"
         fi
         cd ..
     fi

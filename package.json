@@ -16,6 +16,7 @@
     "publish.skills": "./support/publish-skills.sh",
     "register.skills": "./support/register-skills.sh",
     "boot.mercury": "lerna run boot --scope=spruce-mercury-api",
+    "boot.skills": "./support/boot-skills.sh",
     "rebuild": "yarn reset && yarn sync",
     "reset": "yarn clean && yarn delete.skills",
     "sync": "yarn && node ./support/sync.js",

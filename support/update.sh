@@ -15,5 +15,3 @@ cd ..
 
 yarn
 yarn build.skills
-
-wait
