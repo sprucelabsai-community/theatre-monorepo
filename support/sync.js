@@ -10,7 +10,7 @@ if (!blueprintPath) {
 
 try {
     const fullPath = path.resolve(process.cwd(), blueprintPath);
-    const command = `yarn add-skills-from-blueprint ${fullPath} && yarn --force && yarn build`;
+    const command = `npm run add-skills-from-blueprint ${fullPath} && npm install --force && npm run build`;
     execSync(command, { stdio: 'inherit', cwd: process.cwd() });
 } catch (error) {
     console.error('Error running sync', error);

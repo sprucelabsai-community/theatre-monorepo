@@ -13,5 +13,5 @@ done
 
 cd ..
 
-yarn
-yarn build.skills
+npm install --force
+npm run build

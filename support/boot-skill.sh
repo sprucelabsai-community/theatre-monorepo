@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 while true; do
     yarn boot
-    sleep 5
+    sleep 10
 done
