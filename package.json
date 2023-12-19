@@ -18,7 +18,7 @@
     "register.skills": "./support/register-skills.sh",
     "rebuild": "npm run reset && npm run sync",
     "reset": "npm run clean && npm run delete.skills",
-    "sync": "npm install && node ./support/sync.js && yarn",
+    "sync": "npm install && node ./support/sync.js",
     "update": "./support/update.sh"
   },
   "devDependencies": {
