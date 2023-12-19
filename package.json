@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "theatre",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -17,11 +17,11 @@
     "register.skills": "./support/register-skills.sh",
     "rebuild": "npm run reset && npm run sync",
     "reset": "npm run clean && npm run delete.skills",
-    "sync": "npm install && node ./support/sync.js",
+    "sync": "npm install && node ./support/sync.js && yarn",
     "update": "./support/update.sh"
   },
   "devDependencies": {
     "js-yaml": "^4.1.0",
-    "lerna": "^7.3.0"
+    "lerna": "^8.0.1"
   }
 }
