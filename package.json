@@ -11,6 +11,7 @@
     "build": "lerna run build.dev",
     "clean": "rm -rf node_modules/ package-lock.json npm install.lock",
     "login": "./support/login.sh",
+    "boot.mercury": "lerna run boot --scope=spruce-mercury-api",
     "clean.skills": "lerna clean",
     "delete.skills": "find ./packages -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} +",
     "publish.skills": "./support/publish-skills.sh",
