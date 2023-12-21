@@ -4,7 +4,8 @@ echo -e "Publishing skills...\n"
 
 cd packages
 
-namespaces=("appointments" "developer" "esm" "feedback" "forms" "groups" "invite" "lbb" "profile" "reminders" "shifts" "skills" "theme" "waivers")
+# namespaces of skills that cannot be installed
+namespaces=("feed" "files" "images" "organization" "locations" "heartwood" "people" "roles" "skills" "permissions")
 
 for dir in *-skill; do
     if [[ -d $dir ]]; then
