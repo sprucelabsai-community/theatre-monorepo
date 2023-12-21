@@ -5,6 +5,8 @@ echo "Updating isPublished and canBeInstalled for skills"
 # array of lowercase skill namespaces that are private
 namespaces=("feed" "files" "images" "locations" "organization" "people" "roles" "skills" "theatre")
 
+cd packages
+
 # loop through all directories in the current directory that end in -skill
 for dir in *-skill; do
     if [[ -d $dir ]]; then
