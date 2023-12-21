@@ -38,7 +38,17 @@ SKILL_NAMESPACE=$(jq -r '.skill.namespace' ./package.json)
 
 # Loop to set the environment variables
 for key in $(jq -r 'keys[]' <<<"$ENV"); do
-    if [[ "$key" == "universal" || "$key" == "$SKILL_NAMESPACE" ]]; then
+    if [[ "$key" == "universal" ]]; then
+        len=$(jq -r ".$key | length" <<<"$ENV")
+        for i in $(seq 0 $(($len - 1))); do
+            pair=$(jq -r ".$key[$i] | to_entries[0] | \"\(.key)=\\\"\(.value)\\\"\"" <<<"$ENV")
+            echo "$pair" >>.env
+        done
+    fi
+done
+
+for key in $(jq -r 'keys[]' <<<"$ENV"); do
+    if [[ "$key" == "$SKILL_NAMESPACE" ]]; then
         len=$(jq -r ".$key | length" <<<"$ENV")
         for i in $(seq 0 $(($len - 1))); do
             pair=$(jq -r ".$key[$i] | to_entries[0] | \"\(.key)=\\\"\(.value)\\\"\"" <<<"$ENV")
