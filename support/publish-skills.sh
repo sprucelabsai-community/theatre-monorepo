@@ -1,22 +1,26 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-echo -e "Publishing skills...\n"
+echo "Updating isPublished and canBeInstalled for skills"
 
-cd packages
+# array of lowercase skill namespaces that are private
+namespaces=("feed" "files" "images" "locations" "organization" "people" "roles" "skills" "theatre")
 
-namespaces=("appointments" "developer" "esm" "feedback" "forms" "groups" "invite" "lbb" "profile" "reminders" "shifts" "skills" "theme" "waivers")
-
+# loop through all directories in the current directory that end in -skill
 for dir in *-skill; do
     if [[ -d $dir ]]; then
+        # change into the directory
         cd "$dir"
+        # get the namespace from package.json
         namespace=$(grep '"namespace"' package.json | awk -F: '{print $2}' | tr -d '," ')
+        # check if namespace is in the namespaces array
         if [[ " ${namespaces[*]} " == *"$namespace"* ]]; then
-            echo "Publishing "$namespace" and setting canBeInstalled to true"
-            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: true}})" >/dev/null &
+            # set isPublished and canBeInstalled to false
+            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: false}})"
         else
-            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: false}})" >/dev/null &
-            echo "Publishing "$namespace" and setting canBeInstalled to false"
+            # set isPublished and canBeInstalled to true
+            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: true}})"
         fi
+        # change back to the parent directory
         cd ..
     fi
 done
