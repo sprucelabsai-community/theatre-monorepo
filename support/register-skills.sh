@@ -13,12 +13,14 @@ for dir in *-skill; do
 
         # Check if .env file exists
         if [ -f .env ]; then
+            spruce set.remote --remote=local
+
             # Check if SKILL_ID is defined in .env file
             if ! grep -q "^SKILL_ID=" .env; then
-                spruce set.remote --remote=local
                 spruce register --nameReadable="$NAMESPACE" --nameKebab="$NAMESPACE"
             else
-                echo "$NAMESPACE is already registered."
+                echo "$NAMESPACE is already registered, logging in..."
+                spruce login.skill --skillSlug="$NAMESPACE"
             fi
         else
             echo "$NAMESPACE is missing a .env file!" >&2

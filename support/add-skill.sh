@@ -52,6 +52,13 @@ for key in $(jq -r 'keys[]' <<<"$ENV"); do
         len=$(jq -r ".$key | length" <<<"$ENV")
         for i in $(seq 0 $(($len - 1))); do
             pair=$(jq -r ".$key[$i] | to_entries[0] | \"\(.key)=\\\"\(.value)\\\"\"" <<<"$ENV")
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                # macOS requires an empty string after -i
+                sed -i '' "/^$(echo $pair | cut -d= -f1)/d" .env
+            else
+                # Linux and other UNIX-like systems do not require the empty string
+                sed -i "/^$(echo $pair | cut -d= -f1)/d" .env
+            fi
             echo "$pair" >>.env
         done
     fi
