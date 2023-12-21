@@ -16,6 +16,7 @@
     "delete.skills": "find ./packages -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} +",
     "publish.skills": "./support/publish-skills.sh",
     "register.skills": "./support/register-skills.sh",
+    "login.skills": "./support/login-skills.sh",
     "rebuild": "npm run reset && npm run sync",
     "reset": "npm run clean && npm run delete.skills",
     "sync": "npm install && node ./support/sync.js",
