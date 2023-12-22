@@ -12,7 +12,7 @@
     "clean": "rm -rf node_modules/ package-lock.json npm install.lock",
     "login": "./support/login.sh",
     "boot.mercury": "lerna run boot --scope=spruce-mercury-api",
-    "build.heartwood": "cd packages/spruce-heartwood-skill && yarn build.cdn",
+    "build.heartwood": "cd packages/spruce-heartwood-skill && yarn rebuild && yarn build.cdn",
     "clean.skills": "lerna clean",
     "serve.heartwood": "./support/serve-heartwood.sh",
     "delete.skills": "find ./packages -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} +",
