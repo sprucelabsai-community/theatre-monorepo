@@ -20,7 +20,7 @@
     "publish.skills": "./support/publish-skills.sh",
     "register.skills": "./support/register-skills.sh",
     "login.skills": "./support/login-skills.sh",
-    "rebuild": "npm run reset && npm run sync",
+    "rebuild": "lerna run clean.build && lerna run build.dev && yarn",
     "reset": "npm run clean && npm run delete.skills",
     "sync": "rm package-lock.json || npm install && node ./support/sync.js",
     "update": "./support/update.sh"
