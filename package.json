@@ -7,6 +7,7 @@
   "scripts": {
     "add-skills-from-blueprint": "./support/sync-skills-with-blueprint.sh",
     "boot": "./support/boot.sh",
+    "boot.serve": "./support/boot.sh && yarn serve.heartwood",
     "shutdown": "./support/shutdown.sh",
     "build": "lerna run build.dev",
     "clean": "rm -rf node_modules/ package-lock.json npm install.lock",
