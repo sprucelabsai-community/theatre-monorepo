@@ -7,6 +7,7 @@
   "scripts": {
     "add-skills-from-blueprint": "./support/sync-skills-with-blueprint.sh",
     "reboot": "yarn shutdown && yarn boot",
+    "reboot.skill": "./support/reboot-skill.sh",
     "boot": "./support/boot.sh",
     "boot.serve": "./support/boot.sh && yarn serve.heartwood",
     "boot.skill": "./support/boot-skill.sh",
@@ -26,7 +27,8 @@
     "rebuild": "lerna run clean.build && lerna run build.dev && yarn",
     "reset": "npm run clean && npm run delete.skills",
     "sync": "rm package-lock.json || npm install && node ./support/sync.js",
-    "update": "./support/update.sh"
+    "update": "./support/update.sh",
+    "update.skill": "./support/update-skill.sh"
   },
   "devDependencies": {
     "js-yaml": "^4.1.0",
