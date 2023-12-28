@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "add-skills-from-blueprint": "./support/sync-skills-with-blueprint.sh",
+    "reboot": "yarn shutdown && yarn boot",
     "boot": "./support/boot.sh",
     "boot.serve": "./support/boot.sh && yarn serve.heartwood",
     "boot.skill": "./support/boot-skill.sh",
