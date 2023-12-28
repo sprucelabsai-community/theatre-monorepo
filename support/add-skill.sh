@@ -27,7 +27,7 @@ fi
 # Change to the repo directory
 cd $REPO_NAME
 
-# Delete .env if exists
+# Skip if .env if exists
 if [ -f .env ]; then
     exit 0
 fi
