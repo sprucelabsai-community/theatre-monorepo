@@ -1,27 +1,41 @@
 #!/usr/bin/env bash
 
-screen_name="skills"
-
-# Quit any existing screens with the same name
-screen -S "${screen_name}" -X quit
-
-# Create a new screen session and run the skills
-screen -d -m -S "${screen_name}" bash
-
-packages_dir="$(pwd)/packages"
 boot_command="$(pwd)/support/boot-skill.sh"
 
-echo "Booting Mercury..."
-screen -S "${screen_name}" -p 0 -X screen -t "mercury" bash -c "cd ${packages_dir}/spruce-mercury-api && ${boot_command}; bash"
+# Function to boot a skill
+boot_skill() {
+    local namespace=$1
+    local vendor=${2:-spruce} # Default vendor to "spruce"
 
+    echo "Booting ${vendor}-${namespace}..."
+    bash "$boot_command" "$namespace" "$vendor"
+}
+
+# Boot skills
+# Example: boot_skill "heartwood" (defaults vendor to "spruce")
+# For a non-default vendor: boot_skill "namespace" "vendor"
+
+# Boot Mercury API
+boot_skill "mercury"
+
+# Wait for 5 seconds
 sleep 5
 
-echo "Booting skills..."
+# Boot Heartwood Skill
+boot_skill "heartwood"
 
-cd packages
+# Wait for 5 seconds
+sleep 5
 
-for skill_dir in *-skill; do
-    skill_name="$(echo ${skill_dir} | cut -d '-' -f 2)"
-    echo "Booting ${skill_name}"
-    screen -S "${screen_name}" -p 0 -X screen -t "${skill_name}" bash -c "cd ${packages_dir}/${skill_dir} && ${boot_command}; bash"
+# Boot remaining skills
+echo "Booting remaining skills..."
+for skill_dir in $(pwd)/packages/*-skill; do
+    # Extract vendor and namespace from directory name
+    skill_name=$(basename "$skill_dir" -skill)
+    vendor=$(echo "$skill_name" | cut -d '-' -f 1)
+    namespace=$(echo "$skill_name" | cut -d '-' -f 2)
+
+    if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" ]]; then
+        boot_skill "$namespace" "$vendor"
+    fi
 done

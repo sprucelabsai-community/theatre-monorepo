@@ -11,7 +11,6 @@ REPO_NAME=$(basename $1 .git)
 
 # Clone the repo if it doesn't exist
 if [ ! -d "$REPO_NAME" ]; then
-    echo "Cloning skill $REPO_NAME"
 
     git clone $1
 
