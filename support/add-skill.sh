@@ -29,7 +29,7 @@ cd $REPO_NAME
 
 # Delete .env if exists
 if [ -f .env ]; then
-    rm .env
+    exit 0
 fi
 
 ## drop in ENV logic here
