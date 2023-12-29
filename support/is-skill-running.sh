@@ -23,7 +23,7 @@ pid_file_api="${processes_dir}/${vendor}-${namespace}-api"
 
 # Check if the PID file exists for either -skill or -api
 if [ -f "$pid_file_skill" ] || [ -f "$pid_file_api" ]; then
-    echo "YES"
+    echo "SKILL_RUNNING"
 else
-    echo "NO"
+    echo "SKILL_NOT_RUNNING"
 fi

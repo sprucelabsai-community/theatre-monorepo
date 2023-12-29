@@ -18,7 +18,14 @@ fi
 
 # Construct PID file path
 processes_dir="$(pwd)/.processes"
-pid_file="${processes_dir}/${vendor}-${namespace}"
+
+# Append '-api' if namespace is 'mercury', otherwise '-skill'
+if [ "$namespace" = "mercury" ]; then
+    suffix="-api"
+else
+    suffix="-skill"
+fi
+pid_file="${processes_dir}/${vendor}-${namespace}${suffix}.pid"
 
 # Check if the PID file exists and kill the process
 if [ -f "$pid_file" ]; then
@@ -26,19 +33,21 @@ if [ -f "$pid_file" ]; then
 
     # Check if the PID is a running process
     if ps -p $pid >/dev/null 2>&1; then
-        echo "Shutting down ${vendor}-${namespace}"
+        echo "Shutting down ${vendor}-${namespace}${suffix}"
         kill $pid
 
         # Optional: Check if the process was killed successfully
         if ! ps -p $pid >/dev/null 2>&1; then
-            echo "${vendor}-${namespace} shutdown."
+            echo "${vendor}-${namespace}${suffix} shutdown."
         else
-            echo "Failed to stop ${vendor}-${namespace} ($pid)."
+            echo "Failed to stop ${vendor}-${namespace}${suffix} ($pid)."
         fi
     else
-        echo "${vendor}-${namespace} was not running... skipping"
+        echo "${vendor}-${namespace}${suffix} was not running... skipping"
     fi
 
     # Delete the PID file
     rm "$pid_file"
+else
+    echo "${vendor}-${namespace}${suffix}.pid was not found... skipping"
 fi
