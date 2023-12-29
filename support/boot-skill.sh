@@ -6,23 +6,40 @@ namespace=$1
 vendor=${2:-spruce} # Default vendor to "spruce"
 packages_dir="$(pwd)/packages"
 processes_dir="$(pwd)/.processes"
-forever_script="$(pwd)/support/boot-skill-forever.sh"
 
 # Ensure .processes directory exists
 mkdir -p "$processes_dir"
 
 # Determine skill directory
-# If the namespace is 'mercury', treat it as an API
+suffix="-skill"
 if [ "$namespace" == "mercury" ]; then
-    skill_dir="${packages_dir}/${vendor}-${namespace}-api"
-    file_name="${vendor}-${namespace}-api" # For PID and log file naming
-else
-    skill_dir="${packages_dir}/${vendor}-${namespace}-skill"
-    file_name="${vendor}-${namespace}-skill"
+    suffix="-api"
 fi
 
-# Call boot-skill-forever.sh and redirect output to a log file
-bash "$forever_script" "$skill_dir" >"${processes_dir}/${file_name}.log" 2>&1 &
+skill_dir="${packages_dir}/${vendor}-${namespace}${suffix}"
+app_name="${vendor}-${namespace}${suffix}"
+config_file="${processes_dir}/${app_name}.json"
 
-# Write the PID to a file with .pid extension
-echo $! >"${processes_dir}/${file_name}.pid"
+# Find the path to yarn
+yarn_path=$(which yarn)
+
+# Check if yarn was found
+if [ -z "$yarn_path" ]; then
+    echo "Error: yarn not found"
+    exit 1
+fi
+
+# Construct the JSON configuration
+json_config="{
+    \"name\": \"$app_name\",
+    \"script\": \"$yarn_path\",
+    \"args\": \"boot\",
+    \"cwd\": \"$skill_dir\",
+    \"interpreter\": \"bash\"
+}"
+
+# Write the JSON configuration to the file
+echo "$json_config" >"$config_file"
+
+# Start or Restart the application with PM2 using the JSON configuration file
+pm2 startOrRestart "$config_file"

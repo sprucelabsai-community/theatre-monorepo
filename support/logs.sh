@@ -5,8 +5,8 @@ vendor="spruce"
 
 # Check for at least one argument
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <namespace> [vendor]"
-    echo "Example: $0 heartwood"
+    echo "Usage: yarn logs <namespace> [vendor]"
+    echo "Example: yarn logs heartwood"
     exit 1
 fi
 
@@ -16,7 +16,7 @@ if [ $# -ge 2 ]; then
     vendor="$2"
 fi
 
-# Construct the PM2 application name
+# Construct the application name
 # Append '-api' if namespace is 'mercury', otherwise '-skill'
 if [ "$namespace" = "mercury" ]; then
     app_name="${vendor}-${namespace}-api"
@@ -24,5 +24,6 @@ else
     app_name="${vendor}-${namespace}-skill"
 fi
 
-# Stop the PM2 process
-pm2 stop "$app_name" && echo "Successfully stopped ${app_name}" || echo "Failed to stop ${app_name}, it might not be running"
+# Show logs for the specified application
+echo "Showing logs for ${app_name}..."
+pm2 logs "$app_name"

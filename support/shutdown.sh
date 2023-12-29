@@ -1,34 +1,20 @@
 #!/bin/bash
 
-processes_dir="$(pwd)/.processes"
+# Get PM2 list in JSON format
+pm2_json=$(pm2 jlist)
 
-# Ensure the .processes directory exists
-if [ ! -d "$processes_dir" ]; then
-    echo "Platform not running..."
-    exit 1
-fi
-
-# Loop through all files in the .processes directory
-for pid_file in "$processes_dir"/*.pid; do
-    # Check if the file exists
-    if [ ! -f "$pid_file" ]; then
-        # No PID files found
-        echo "No running skills found."
-        exit 0
+# Loop through each application
+echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
+    # Skip empty lines
+    if [ -z "$app_name" ]; then
+        continue
     fi
 
-    # Extract vendor and namespace from the filename
-    filename=$(basename "$pid_file")
-
-    # Split the filename into an array and pick the first two elements
-    IFS='-' read -ra ADDR <<<"$filename"
+    # Assume app_name is formatted as 'vendor-namespace-suffix'
+    IFS='-' read -ra ADDR <<<"$app_name"
     vendor="${ADDR[0]}"
     namespace="${ADDR[1]}"
 
-    # Remove the .pid extension from namespace
-    namespace="${namespace%.*}"
-
-    # Call shutdown-skill.sh with vendor and namespace
     ./support/shutdown-skill.sh "$namespace" "$vendor"
 done
 
