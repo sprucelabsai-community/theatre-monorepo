@@ -28,7 +28,7 @@
     "sync": "rm package-lock.json || npm install && node ./support/sync.js",
     "update": "./support/update.sh",
     "update.skill": "./support/update-skill.sh",
-    "list.running": "pm2 list"
+    "list.running": "pm2 save && pm2 list"
   },
   "workspaces": [
     "packages/*"
