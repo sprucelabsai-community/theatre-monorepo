@@ -2,6 +2,22 @@
 
 echo -e "Checking skills for registration...\n"
 
+shouldForceRegister=false # Default value for the flag
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+    --shouldForceRegister)
+        shouldForceRegister=true
+        shift
+        ;;
+    *)
+        shift
+        ;;
+    esac
+done
+
 cd packages
 
 for dir in *-skill; do
@@ -16,7 +32,7 @@ for dir in *-skill; do
             spruce set.remote --remote=local
 
             # Check if SKILL_ID is defined in .env file
-            if ! grep -q "^SKILL_ID=" .env; then
+            if ! grep -q "^SKILL_ID=" .env || [ "$shouldForceRegister" = "true" ]; then
                 spruce register --nameReadable="$NAMESPACE" --nameKebab="$NAMESPACE"
             else
                 echo "$NAMESPACE is already registered, logging in..."
