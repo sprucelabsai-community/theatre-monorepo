@@ -27,4 +27,5 @@ cd packages/$skill_dir_name
 
 git checkout .
 git pull
+yarn
 yarn build.dev
