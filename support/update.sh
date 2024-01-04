@@ -16,3 +16,4 @@ cd ..
 
 yarn
 yarn build
+yarn build.heartwood
