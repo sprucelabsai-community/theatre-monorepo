@@ -15,4 +15,4 @@ done
 cd ..
 
 yarn
-yarn build.dev
+yarn build

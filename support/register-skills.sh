@@ -8,7 +8,7 @@ shouldForceRegister=false # Default value for the flag
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
-    --shouldForceRegister)
+    --shouldForceRegister=true)
         shouldForceRegister=true
         shift
         ;;
