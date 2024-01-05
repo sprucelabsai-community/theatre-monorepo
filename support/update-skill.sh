@@ -27,5 +27,7 @@ cd packages/$skill_dir_name
 
 git checkout .
 git pull
+rm yarn.lock
+rm package-lock.json
 yarn
 yarn build.dev
