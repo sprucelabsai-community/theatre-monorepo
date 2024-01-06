@@ -25,7 +25,7 @@
     "serve.heartwood": "./support/serve-heartwood.sh",
     "shutdown": "./support/shutdown.sh",
     "shutdown.skill": "./support/shutdown-skill.sh",
-    "sync": "rm package-lock.json || npm install && node ./support/sync.js",
+    "sync": "rm package-lock.json || npm install --force && node ./support/sync.js",
     "update": "./support/update.sh",
     "update.skill": "./support/update-skill.sh",
     "list.running": "pm2 save && pm2 list"
