@@ -4,7 +4,7 @@
   "scripts": {
     "add-skills-from-blueprint": "./support/sync-skills-with-blueprint.sh",
     "boot": "./support/boot.sh",
-    "boot.mercury": "lerna run boot --scope=spruce-mercury-api",
+    "boot.mercury": "./support/boot-skill.sh mercury",
     "boot.serve": "./support/boot.sh && yarn serve.heartwood",
     "boot.skill": "./support/boot-skill.sh",
     "build": "lerna run build.dev",
