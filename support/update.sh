@@ -15,7 +15,7 @@ done
 cd ..
 
 # remove if exists
-rm -rf node_modules/npm/lib/utils/explain-dep.js
+rm -rf node_modules/npm
 yarn
 rm yarn.lock
 rm package-lock.json
