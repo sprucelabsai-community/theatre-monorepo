@@ -19,9 +19,9 @@ cd ..
 
 # remove if exists
 rm -rf node_modules/npm
-yarn
 rm yarn.lock
 rm package-lock.json
+yarn
 
 yarn build
 yarn build.heartwood
