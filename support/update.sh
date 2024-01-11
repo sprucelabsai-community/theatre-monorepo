@@ -12,6 +12,9 @@ for dir in */; do
     ) &
 done
 
+#wait for all to finish
+wait
+
 cd ..
 
 # remove if exists
