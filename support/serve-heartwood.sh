@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd ..
-
 # Set DIR to the current working directory
 DIR="$(pwd)"
 
