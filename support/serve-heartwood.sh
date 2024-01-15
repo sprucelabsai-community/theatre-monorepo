@@ -1,7 +1,18 @@
 #!/bin/bash
 
+# Set DIR to the current working directory
+DIR="$(pwd)"
+
 # Define the path to the heartwood-skill directory
 heartwood_skill_dir="packages/spruce-heartwood-skill"
+
+# Define the directory to serve
+SERVE_DIR="$heartwood_skill_dir/dist"
+
+# Create a Caddyfile
+echo ":8080
+root * $SERVE_DIR
+file_server" >Caddyfile
 
 # Check if the heartwood-skill directory exists
 if [ ! -d "$heartwood_skill_dir" ]; then
@@ -18,6 +29,8 @@ if [ ! -d "dist" ]; then
     yarn run build.heartwood
 fi
 
-# Change to the dist directory and start the server
-cd dist
-python3 -m http.server 8080 --bind 0.0.0.0 &
+# Change back to the root directory
+cd $DIR
+
+# Run Caddy
+caddy run
