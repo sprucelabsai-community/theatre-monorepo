@@ -4,7 +4,7 @@
 DIR="$(pwd)"
 
 # Define the path to the heartwood-skill directory
-heartwood_skill_dir="packages/spruce-heartwood-skill"
+heartwood_skill_dir="$DIR/theatre-monorepo/packages/spruce-heartwood-skill"
 
 # Define the directory to serve
 SERVE_DIR="$heartwood_skill_dir/dist"
