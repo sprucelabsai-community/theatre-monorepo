@@ -12,7 +12,14 @@ if [ "$entered_pin" == "$PIN" ]; then
     echo "PIN verified."
 
     # as for the location of dump file
-    read -p "Enter the location of dump file: " dump_file
+    read -p "Enter the location of dump file (empty to skip): " dump_file
+
+    # check if entered anything for dump_file
+    if [ -z "$dump_file" ]; then
+        echo "Clearing core database..."
+        mongosh --quiet --eval 'db.getMongo().getDBNames().forEach(function(i){try { console.log("Dropping",i);db.getSiblingDB(i).dropDatabase() } catch {}})'
+        exit 0
+    fi
 
     if [ -f "$dump_file" ]; then
         echo "Dump file found. Dropping and restoring databases..."
