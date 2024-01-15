@@ -6,7 +6,7 @@ cd ..
 DIR="$(pwd)"
 
 # Define the path to the heartwood-skill directory
-heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill/dist"
+heartwood_skill_dir="$DIR/theatre-monorepo/packages/spruce-heartwood-skill/dist"
 
 # Check if the heartwood-skill directory exists
 if [ ! -d "$heartwood_skill_dir" ]; then
