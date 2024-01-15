@@ -8,7 +8,7 @@ heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill"
 
 # Create a Caddyfile
 echo "http://0.0.0.0:8080
-root * $SERVE_DIR
+root * $heartwood_skill_dir
 file_server" >Caddyfile
 
 # Check if the heartwood-skill directory exists
