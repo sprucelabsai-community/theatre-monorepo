@@ -21,7 +21,7 @@ if [ "$entered_pin" == "$PIN" ]; then
         exit 0
     fi
 
-    if [ -f "$dump_file" ]; then
+    if [ -d "$dump_file" ]; then
         echo "Dump file found. Dropping and restoring databases..."
         mongosh --quiet --eval 'db.getMongo().getDBNames().forEach(function(i){try { console.log("Dropping",i);db.getSiblingDB(i).dropDatabase() } catch {}})'
         mongorestore -$dump_file
