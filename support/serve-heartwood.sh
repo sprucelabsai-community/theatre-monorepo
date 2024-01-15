@@ -21,4 +21,4 @@ root * $heartwood_skill_dir
 file_server" >Caddyfile
 
 # Run Caddy
-caddy run
+caddy run &
