@@ -5,22 +5,19 @@ dump_file=""
 
 # Function to show usage
 usage() {
-    echo "Usage: $0 [--dumpDir <path_to_dump_directory>]"
+    echo "Usage: $0 --dumpDir=/path/to/dump"
     exit 1
 }
 
 # Parse command-line arguments
-while getopts ":d:" opt; do
-    case $opt in
-    d)
-        dump_file=$OPTARG
+for arg in "$@"; do
+    case $arg in
+    --dumpDir=*)
+        dump_file="${arg#*=}"
+        shift # Remove argument from processing
         ;;
-    \?)
-        echo "Invalid option: -$OPTARG" >&2
-        usage
-        ;;
-    :)
-        echo "Option -$OPTARG requires an argument." >&2
+    *)
+        # Unknown option
         usage
         ;;
     esac
