@@ -10,7 +10,7 @@ heartwood_skill_dir="packages/spruce-heartwood-skill"
 SERVE_DIR="$heartwood_skill_dir/dist"
 
 # Create a Caddyfile
-echo "0.0.0.0:8080
+echo "http://0.0.0.0:8080
 root * $SERVE_DIR
 file_server" >Caddyfile
 
