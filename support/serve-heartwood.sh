@@ -14,10 +14,11 @@ if [ ! -d "$heartwood_skill_dir" ]; then
     exit 1
 fi
 
-# Run Caddy
-caddy run
-
 # Create a Caddyfile
-echo "http://0.0.0.0:8080
+echo ":8080
+bind 0.0.0.0
 root * $heartwood_skill_dir
 file_server" >Caddyfile
+
+# Run Caddy
+caddy run
