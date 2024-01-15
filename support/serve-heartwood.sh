@@ -33,4 +33,4 @@ fi
 cd $DIR
 
 # Run Caddy
-caddy run
+caddy run &
