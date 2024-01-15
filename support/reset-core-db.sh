@@ -9,8 +9,19 @@ read -p "Enter the PIN: " entered_pin
 
 # Compare the entered PIN with the generated PIN
 if [ "$entered_pin" == "$PIN" ]; then
-    echo "PIN verified. Dropping databases..."
-    mongosh --quiet --eval 'db.getMongo().getDBNames().forEach(function(i){try { console.log("Dropping",i);db.getSiblingDB(i).dropDatabase() } catch {}})'
+    echo "PIN verified."
+
+    # as for the location of dump file
+    read -p "Enter the location of dump file: " dump_file
+
+    if [ -f "$dump_file" ]; then
+        echo "Dump file found. Dropping and restoring databases..."
+        mongosh --quiet --eval 'db.getMongo().getDBNames().forEach(function(i){try { console.log("Dropping",i);db.getSiblingDB(i).dropDatabase() } catch {}})'
+        mongorestore -$dump_file
+    else
+        echo "Dump file not found. Aborting operation."
+    fi
+
 else
     echo "Incorrect PIN. Aborting operation."
 fi
