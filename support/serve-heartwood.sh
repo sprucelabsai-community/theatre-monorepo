@@ -1,15 +1,12 @@
 #!/bin/bash
 
+cd ..
+
 # Set DIR to the current working directory
 DIR="$(pwd)"
 
 # Define the path to the heartwood-skill directory
 heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill/dist"
-
-# Create a Caddyfile
-echo "http://0.0.0.0:8080
-root * $heartwood_skill_dir
-file_server" >Caddyfile
 
 # Check if the heartwood-skill directory exists
 if [ ! -d "$heartwood_skill_dir" ]; then
@@ -19,3 +16,8 @@ fi
 
 # Run Caddy
 caddy run
+
+# Create a Caddyfile
+echo "http://0.0.0.0:8080
+root * $heartwood_skill_dir
+file_server" >Caddyfile
