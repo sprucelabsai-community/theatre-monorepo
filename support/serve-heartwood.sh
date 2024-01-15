@@ -17,17 +17,5 @@ if [ ! -d "$heartwood_skill_dir" ]; then
     exit 1
 fi
 
-# Change to the heartwood-skill directory
-cd "$heartwood_skill_dir"
-
-# Check if the dist directory exists
-if [ ! -d "dist" ]; then
-    echo "The 'dist' directory does not exist. Running 'yarn run build.heartwood'"
-    yarn run build.heartwood
-fi
-
-# Change back to the root directory
-cd $DIR
-
 # Run Caddy
 caddy start
