@@ -18,4 +18,4 @@ if [ ! -d "$heartwood_skill_dir" ]; then
 fi
 
 # Run Caddy
-caddy start
+caddy run
