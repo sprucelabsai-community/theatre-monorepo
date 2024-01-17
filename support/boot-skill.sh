@@ -29,13 +29,16 @@ if [ -z "$yarn_path" ]; then
     exit 1
 fi
 
+max_restarts=0
+
 # Construct the JSON configuration
 json_config="{
     \"name\": \"$app_name\",
     \"script\": \"$yarn_path\",
     \"args\": \"boot\",
     \"cwd\": \"$skill_dir\",
-    \"interpreter\": \"bash\"
+    \"interpreter\": \"bash\",
+    \"max_restarts\": $max_restarts
 }"
 
 # Write the JSON configuration to the file
