@@ -8,7 +8,7 @@ heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill/dist"
 
 # Check if the heartwood-skill directory exists
 if [ ! -d "$heartwood_skill_dir" ]; then
-    echo "Error: The $heartwood_skill_dir directory does not exist. You need to run 'npm run sync [pathToBlueprint.yml]'"
+    echo "Error: The $heartwood_skill_dir directory does not exist. You may need to run 'yarn build.heartwood'."
     exit 1
 fi
 
