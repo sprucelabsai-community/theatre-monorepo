@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Parse the --envStrategy argument
+ENV_STRATEGY=""
+for arg in "$@"; do
+    case $arg in
+    --envStrategy=*)
+        ENV_STRATEGY="${arg#*=}"
+        shift # Remove argument from processing
+        ;;
+    esac
+done
+
 # Pull env
 ENV=$(node ./blueprint.js $2 env)
 
@@ -29,7 +40,19 @@ cd $REPO_NAME
 
 # Skip if .env if exists
 if [ -f .env ]; then
-    exit 0
+    case $ENV_STRATEGY in
+    skip)
+        echo "Skipping due to 'skip' strategy."
+        exit 0
+        ;;
+    replace)
+        echo "Deleting .env due to 'replace' strategy."
+        rm .env
+        ;;
+    *)
+        # Other strategies can be handled here in the future
+        ;;
+    esac
 fi
 
 ## drop in ENV logic here
