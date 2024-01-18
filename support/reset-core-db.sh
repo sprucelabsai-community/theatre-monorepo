@@ -36,7 +36,13 @@ if [ "$entered_pin" == "$PIN" ]; then
 
     # Ask for the location of dump file if not provided as an argument
     if [ -z "$dump_file" ]; then
-        read -p "Enter the location of dump file (empty to skip): " dump_file
+        read -p "Enter the location of dump you want to restore from (empty to skip): " dump_file
+    fi
+
+    # if the dump_file is provided, but no dir exists, throw an error
+    if [ -n "$dump_file" ] && [ ! -d "$dump_file" ]; then
+        echo "Dump file not founda at $dump_file. Aborting operation."
+        exit 1
     fi
 
     # Clear the core database
@@ -44,14 +50,25 @@ if [ "$entered_pin" == "$PIN" ]; then
     mongosh --quiet --eval 'db.getMongo().getDBNames().forEach(function(i){try { console.log("Dropping",i);db.getSiblingDB(i).dropDatabase() } catch {}})'
 
     # Restore from dump if the dump_file is provided and valid
-    if [ -n "$dump_file" ] && [ -d "$dump_file" ]; then
-        echo "Dump file found. Restoring databases..."
+    if [ -n "$dump_file" ]; then
+        echo "Dump file found. Restoring databases now..."
         mongorestore --dir "$dump_file"
-    elif [ -n "$dump_file" ]; then
-        echo "Dump file not found. Skipping restore."
+        echo "Restore complete!"
     else
-        echo "No dump file provided. Restore skipped."
+        echo "Database cleared!"
     fi
+
+    echo "Next steps:"
+    echo "1. Shutdown the platform: yarn shutdown"
+    echo "2. Start mercury: yarn boot.mercury"
+    echo "3. Login: yarn login blueprint.yml"
+    if [ -n "$dump_file" ]; then
+        echo "4. Register skills: yarn register"
+    else
+        echo "4. Register skills: yarn register -shouldForceRegister=true"
+    fi
+    echo "5. Reboot the platform: yarn reboot"
+
 else
     echo "Incorrect PIN. Aborting operation."
 fi

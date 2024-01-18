@@ -1,12 +1,36 @@
 #!/usr/bin/env bash
 
-# Define the dump directory
+# Function to display usage message
+usage() {
+    echo "Usage: $0 --dumpPath PATH"
+    exit 1
+}
+
+# Define the dump directory name
 DUMP_DIR="core_db_dump"
 
-# Create the backup directory if it doesn't exist
-mkdir -p "$DUMP_DIR"
+# Parse arguments
+while getopts ":p:" opt; do
+    case $opt in
+    p)
+        DUMP_PATH="$OPTARG"
+        ;;
+    \?)
+        echo "Invalid option -$OPTARG" >&2
+        usage
+        ;;
+    esac
+done
+
+# Check if dump path was provided
+if [ -z "$DUMP_PATH" ]; then
+    usage
+fi
+
+# Create the backup directory in the specified path
+mkdir -p "$DUMP_PATH/$DUMP_DIR"
 
 # Dump all databases
-mongodump --out "$DUMP_DIR"
+mongodump --out "$DUMP_PATH/$DUMP_DIR"
 
-echo "Backup completed. All databases have been dumped to '$DUMP_DIR'"
+echo "Backup completed. All databases have been dumped to '$DUMP_PATH/$DUMP_DIR'"
