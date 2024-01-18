@@ -8,7 +8,7 @@ usage() {
 }
 
 # Define the dump directory name
-DUMP_DIR="core_db_dump"
+DUMP_DIR="core-db-dump"
 
 # Initialize DUMP_PATH as empty
 DUMP_PATH=""
