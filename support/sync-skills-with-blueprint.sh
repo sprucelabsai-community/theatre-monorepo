@@ -36,14 +36,18 @@ echo "Pulling skills..."
 # Declare an empty array to collect PIDs of background processes
 PIDS=()
 
+# Capture additional arguments passed to this script
+# We skip the first argument since it's the path to the blueprint.yml
+ADDITIONAL_ARGS="${@:2}"
+
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
 
     CLEAN_REPO="${REPO%\"}"
     CLEAN_REPO="${CLEAN_REPO#\"}"
 
-    # Run add-skill.sh in the background
-    ./add-skill.sh $CLEAN_REPO $1 &
+    # Run add-skill.sh in the background with additional arguments
+    ./add-skill.sh $CLEAN_REPO $1 $ADDITIONAL_ARGS &
 
     # Store the PID of the background process
     PIDS+=($!)

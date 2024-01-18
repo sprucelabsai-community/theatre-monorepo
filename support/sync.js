@@ -1,7 +1,7 @@
 const { execSync } = require('child_process');
 const path = require('path');
 
-const blueprintPath = process.argv[2]
+const blueprintPath = process.argv[2];
 
 if (!blueprintPath) {
     console.error("No blueprint path provided. Usage: yarn sync <blueprint-path>");
@@ -10,7 +10,9 @@ if (!blueprintPath) {
 
 try {
     const fullPath = path.resolve(process.cwd(), blueprintPath);
-    const command = `yarn add-skills-from-blueprint ${fullPath} && yarn && (yarn run build || true) && yarn build.heartwood`;
+    // Construct command with all arguments
+    const args = process.argv.slice(2).join(' '); // Join all arguments starting from index 2
+    const command = `yarn sync-skills-from-blueprint ${args} && yarn && (yarn run build || true) && yarn build.heartwood`;
     execSync(command, { stdio: 'inherit', cwd: process.cwd() });
 } catch (error) {
     console.error('Error running sync', error);

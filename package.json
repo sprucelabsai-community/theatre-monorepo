@@ -2,7 +2,7 @@
   "name": "theatre",
   "private": true,
   "scripts": {
-    "add-skills-from-blueprint": "./support/sync-skills-with-blueprint.sh",
+    "sync-skills-from-blueprint": "./support/sync-skills-with-blueprint.sh",
     "boot": "./support/boot.sh",
     "boot.mercury": "./support/boot-skill.sh mercury",
     "boot.serve": "./support/boot.sh && yarn serve.heartwood",
