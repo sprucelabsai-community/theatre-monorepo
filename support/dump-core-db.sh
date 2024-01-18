@@ -3,7 +3,7 @@
 # Function to display usage message
 usage() {
     echo "Error! No --dumpPath argument provided."
-    echo "Usage: $0 --dumpPath PATH"
+    echo "Usage: $0 --dumpPath=PATH"
     exit 1
 }
 
@@ -14,12 +14,16 @@ DUMP_DIR="core_db_dump"
 DUMP_PATH=""
 
 # Parse arguments
-for arg in "$@"; do
-    case $arg in
+while [[ $# -gt 0 ]]; do
+    case $1 in
     --dumpPath)
-        DUMP_PATH="${2}"
+        DUMP_PATH="$2"
         shift # Remove --dumpPath
         shift # Remove the value of --dumpPath
+        ;;
+    --dumpPath=*)
+        DUMP_PATH="${1#*=}"
+        shift # Remove --dumpPath=VALUE
         ;;
     *)
         # Handle unknown options
