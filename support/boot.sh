@@ -11,21 +11,21 @@ boot_skill() {
     bash "$boot_command" "$namespace" "$vendor"
 }
 
-# Boot skills
-# Example: boot_skill "heartwood" (defaults vendor to "spruce")
-# For a non-default vendor: boot_skill "namespace" "vendor"
+# Boot Mercury API if mercury exists
+if [[ -d $(pwd)/packages/spruce-mercury-api ]]; then
+    boot_skill "mercury"
+    sleep 5
+else
+    echo "Mercury API not found. Skipping..."
+fi
 
-# Boot Mercury API
-boot_skill "mercury"
-
-# Wait for 5 seconds
-sleep 5
-
-# Boot Heartwood Skill
-boot_skill "heartwood"
-
-# Wait for 5 seconds
-sleep 5
+# Boot Heartwood Skill if it exists
+if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
+    boot_skill "heartwood"
+    sleep 5
+else
+    echo "Heartwood Skill not found. Skipping..."
+fi
 
 # Boot remaining skills
 echo "Booting remaining skills..."

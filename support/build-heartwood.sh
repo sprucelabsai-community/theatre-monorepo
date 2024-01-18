@@ -1,5 +1,12 @@
 #!/bin/bash
 
+heartwood_dir="packages/spruce-heartwood-skill"
+
+if [ ! -d "$heartwood_dir" ]; then
+    echo "Skipping building Heartwood."
+    exit 0
+fi
+
 cd packages/spruce-heartwood-skill
 yarn build.cdn
 
