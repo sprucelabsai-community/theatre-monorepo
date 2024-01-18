@@ -21,7 +21,7 @@
     "reboot.skill": "./support/reboot-skill.sh",
     "rebuild": "lerna run clean.build && lerna run build.dev && yarn",
     "register.skills": "./support/register-skills.sh",
-    "reset": "npm run clean && npm run delete.skills",
+    "reset": "yarn clean && yarn delete.skills",
     "serve.heartwood": "./support/serve-heartwood.sh",
     "shutdown": "./support/shutdown.sh",
     "shutdown.skill": "./support/shutdown-skill.sh",
