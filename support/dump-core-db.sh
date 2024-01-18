@@ -3,21 +3,26 @@
 # Function to display usage message
 usage() {
     echo "Error! No --dumpPath argument provided."
-    echo "Usage: yarn dump.core.database --dumpPath PATH"
+    echo "Usage: $0 --dumpPath PATH"
     exit 1
 }
 
 # Define the dump directory name
 DUMP_DIR="core_db_dump"
 
+# Initialize DUMP_PATH as empty
+DUMP_PATH=""
+
 # Parse arguments
-while getopts ":p:" opt; do
-    case $opt in
-    p)
-        DUMP_PATH="$OPTARG"
+for arg in "$@"; do
+    case $arg in
+    --dumpPath)
+        DUMP_PATH="${2}"
+        shift # Remove --dumpPath
+        shift # Remove the value of --dumpPath
         ;;
-    \?)
-        echo "Invalid option -$OPTARG" >&2
+    *)
+        # Handle unknown options
         usage
         ;;
     esac
