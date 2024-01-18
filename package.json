@@ -27,7 +27,7 @@
     "shutdown.skill": "./support/shutdown-skill.sh",
     "reset.core.database": "./support/reset-core-db.sh",
     "dump.core.database": "./support/dump-core-db.sh",
-    "sync": "rm package-lock.json || npm install --force && node ./support/sync.js",
+    "sync": "rm package-lock.json || node ./support/sync.js",
     "update": "./support/update.sh",
     "update.skill": "./support/update-skill.sh",
     "upgrade": "./support/upgrade.sh",

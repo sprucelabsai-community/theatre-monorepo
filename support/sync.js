@@ -12,7 +12,7 @@ try {
     const fullPath = path.resolve(process.cwd(), blueprintPath);
     // Construct command with all arguments
     const args = process.argv.slice(2).join(' '); // Join all arguments starting from index 2
-    const command = `yarn sync-skills-from-blueprint ${args} && yarn && (yarn run build || true) && yarn build.heartwood`;
+    const command = `yarn && yarn sync-skills-from-blueprint ${args} && yarn && (yarn run build || true) && yarn build.heartwood`;
     execSync(command, { stdio: 'inherit', cwd: process.cwd() });
 } catch (error) {
     console.error('Error running sync', error);
