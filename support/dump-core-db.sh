@@ -3,7 +3,7 @@
 # Function to display usage message
 usage() {
     echo "Error! No --dumpPath argument provided."
-    echo "Usage: $0 --dumpPath PATH"
+    echo "Usage: yarn dump.core.database --dumpPath PATH"
     exit 1
 }
 

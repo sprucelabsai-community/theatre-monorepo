@@ -5,7 +5,7 @@ dump_file=""
 
 # Function to show usage
 usage() {
-    echo "Usage: $0 --dumpDir=/path/to/dump"
+    echo "Usage: yarn reset.core.database --dumpDir=/path/to/dump"
     exit 1
 }
 
