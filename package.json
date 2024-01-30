@@ -19,7 +19,7 @@
     "publish.skills": "./support/publish-skills.sh",
     "reboot": "yarn shutdown && yarn boot",
     "reboot.skill": "./support/reboot-skill.sh",
-    "rebuild": "yarn clean && lerna run clean.build && lerna run build.dev && yarn",
+    "rebuild": "yarn clean && yarn && lerna run clean.build && lerna run build.dev",
     "register.skills": "./support/register-skills.sh",
     "reset": "yarn clean && yarn delete.skills",
     "serve.heartwood": "./support/serve-heartwood.sh",

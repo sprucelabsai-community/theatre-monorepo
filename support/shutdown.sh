@@ -1,7 +1,28 @@
 #!/bin/bash
 
-# Get PM2 list in JSON format
-pm2_json=$(pm2 jlist)
+# Function to get PM2 list in JSON format
+get_pm2_json() {
+    pm2_json=$(pm2 jlist 2>&1) # Capture stderr as well
+    echo "$pm2_json"
+}
+
+# Try to get PM2 list
+pm2_json=$(get_pm2_json)
+
+# Check if pm2 jlist was successful
+if ! echo "$pm2_json" | jq empty; then
+    echo "pm2 jlist failed, attempting to update PM2 and retry."
+
+    # Update PM2 and retry
+    pm2 update
+    pm2_json=$(get_pm2_json)
+
+    # Check again if pm2 jlist was successful
+    if ! echo "$pm2_json" | jq empty; then
+        echo "pm2 jlist failed again after update. Exiting script."
+        exit 1
+    fi
+fi
 
 # Loop through each application
 echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
