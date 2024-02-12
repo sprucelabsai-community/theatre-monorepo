@@ -27,4 +27,3 @@ yarn build
 yarn build.heartwood
 rm yarn.lock
 rm package-lock.json
-yarn
