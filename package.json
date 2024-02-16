@@ -31,7 +31,8 @@
     "update": "./support/update.sh",
     "update.skill": "./support/update-skill.sh",
     "upgrade": "./support/upgrade.sh",
-    "list.running": "pm2 save && pm2 list"
+    "list.running": "pm2 save && pm2 list",
+    "monitor": "pm2 monit"
   },
   "workspaces": [
     "packages/*"
