@@ -2,18 +2,32 @@
 
 # Default vendor
 vendor="spruce"
+# Default number of lines
+lines=15  # Default value, change if you want a different default
 
 # Check for at least one argument
 if [ $# -lt 1 ]; then
-    echo "Usage: yarn logs <namespace> [vendor]"
-    echo "Example: yarn logs heartwood"
+    echo "Usage: yarn logs <namespace> [vendor] [--lines=<number>]"
+    echo "Example: yarn logs heartwood spruce --lines=100"
     exit 1
 fi
 
-# Assign arguments
-namespace="$1"
-if [ $# -ge 2 ]; then
-    vendor="$2"
+# Parse arguments
+namespace=""
+for arg in "$@"; do
+    if [[ "$arg" == --lines=* ]]; then
+        lines="${arg#*=}"
+    elif [ -z "$namespace" ]; then
+        namespace="$arg"
+    else
+        vendor="$arg"
+    fi
+done
+
+# Validate namespace
+if [ -z "$namespace" ]; then
+    echo "Error: Namespace not specified."
+    exit 1
 fi
 
 # Construct the application name
@@ -25,5 +39,5 @@ else
 fi
 
 # Show logs for the specified application
-echo "Showing logs for ${app_name}..."
-pm2 logs "$app_name"
+echo "Showing last $lines lines of logs for ${app_name}..."
+pm2 logs "$app_name" --lines "$lines"
