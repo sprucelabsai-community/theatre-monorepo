@@ -21,7 +21,7 @@ app_name="${vendor}-${namespace}${suffix}"
 config_file="${processes_dir}/${app_name}.json"
 
 # Find the path to yarn
-yarn_path=$(which yarn)
+yarn_path="yarn"
 
 # Check if yarn was found
 if [ -z "$yarn_path" ]; then
