@@ -53,3 +53,6 @@ if $SHOULD_INCLUDE_CONFIG; then
         echo "Config has been imported to $BASE_DIR"
     fi
 fi
+
+# This has to get reinstalled after the theatre is imported
+npm install pm2
