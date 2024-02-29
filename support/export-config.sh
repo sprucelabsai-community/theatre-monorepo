@@ -48,7 +48,7 @@ else
 fi
 
 # Zip the config files including the (potentially merged) blueprint.yml and specific .env files
-zip -r "${ZIP_DIR}/config.zip" "$TEMP_BLUEPRINT" $(find packages -maxdepth 2 -type f -name "*.env") -x "*.DS_Store"
+zip -qr "${ZIP_DIR}/config.zip" "$TEMP_BLUEPRINT" $(find packages -maxdepth 2 -type f -name "*.env") -x "*.DS_Store"
 
 # Clean up: Remove temporary merged blueprint.yml if it was created
 if [ -n "$UNIT_CONFIG_PATH" ]; then

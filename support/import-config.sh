@@ -22,6 +22,6 @@ BASE_DIR="."
 EXTRACT_DIR="${BASE_DIR}"
 
 # Extract the config contents
-unzip -o "$ZIP_FILE" -d "${EXTRACT_DIR}"
+unzip -qo "$ZIP_FILE" -d "${EXTRACT_DIR}"
 
 echo "Config files have been extracted to ${EXTRACT_DIR}"

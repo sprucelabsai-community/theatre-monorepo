@@ -38,7 +38,7 @@ BASE_DIR="."
 
 # Extract the theatre contents
 echo "Importing new theatre files..."
-unzip -o "$THEATRE_ZIP" -d "$BASE_DIR"
+unzip -qo "$THEATRE_ZIP" -d "$BASE_DIR"
 echo "Theatre has been imported to $BASE_DIR"
 
 # Check and handle config zip if specified
@@ -49,7 +49,7 @@ if $SHOULD_INCLUDE_CONFIG; then
     else
         # Extract the config contents
         echo "Importing new config files..."
-        unzip -o "$CONFIG_ZIP" -d "$BASE_DIR"
+        unzip -qo "$CONFIG_ZIP" -d "$BASE_DIR"
         echo "Config has been imported to $BASE_DIR"
     fi
 fi
