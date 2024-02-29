@@ -30,6 +30,7 @@ if [ -z "$yarn_path" ]; then
 fi
 
 max_restarts=0
+restart_delay=5000 # Set the delay between restarts in milliseconds
 
 # Construct the JSON configuration
 json_config="{
@@ -38,7 +39,8 @@ json_config="{
     \"args\": \"boot\",
     \"cwd\": \"$skill_dir\",
     \"interpreter\": \"bash\",
-    \"max_restarts\": $max_restarts
+    \"max_restarts\": $max_restarts,
+    \"restart_delay\": $restart_delay
 }"
 
 # Write the JSON configuration to the file
