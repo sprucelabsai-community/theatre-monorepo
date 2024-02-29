@@ -54,8 +54,9 @@ if $SHOULD_INCLUDE_CONFIG; then
     fi
 fi
 
+source ~/.zshrc
+
 # This has to get reinstalled after the theatre is imported
-sleep 2
 npm uninstall pm2
-sleep 2
+
 npm install pm2
