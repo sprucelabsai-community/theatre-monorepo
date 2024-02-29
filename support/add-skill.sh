@@ -30,6 +30,4 @@ REPO_PATH=$(pwd)
 
 cd ../../support
 
-echo "./sync-config.sh $REPO_PATH $ADDITIONAL_ARGS"
-
 ./sync-config.sh $REPO_PATH $ADDITIONAL_ARGS
