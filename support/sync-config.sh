@@ -1,15 +1,14 @@
-# Parse the --envStrategy argument
+# Parse the --configStrategy argument
 ENV_STRATEGY=""
 for arg in "$@"; do
     case $arg in
-    --envStrategy=*)
+    --configStrategy=*)
         ENV_STRATEGY="${arg#*=}"
-        shift # Remove argument from processing
         ;;
     esac
 done
 
-ENV_PATH=$1
+REPO_PATH=$1
 
 # Pull env
 ENV=$(node blueprint.js $2 env)
@@ -32,7 +31,9 @@ if [ -f .env ]; then
 fi
 
 ## drop in ENV logic here
-SKILL_NAMESPACE=$(jq -r '.skill.namespace' $ENV_PATH/package.json)
+SKILL_NAMESPACE=$(jq -r '.skill.namespace' $REPO_PATH/package.json)
+
+cd $REPO_PATH
 
 # Loop to set the environment variables
 for key in $(jq -r 'keys[]' <<<"$ENV"); do

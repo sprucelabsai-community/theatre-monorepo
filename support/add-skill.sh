@@ -3,6 +3,8 @@
 # Change to the packages directory
 cd ../packages
 
+ADDITIONAL_ARGS="${@:2}"
+
 # Extract repo name from the URL
 REPO_NAME=$(basename $1 .git)
 
@@ -28,6 +30,6 @@ REPO_PATH=$(pwd)
 
 cd ../../support
 
-./sync-config.sh $REPO_PATH $2
+echo "./sync-config.sh $REPO_PATH $ADDITIONAL_ARGS"
 
-exit 0
+./sync-config.sh $REPO_PATH $ADDITIONAL_ARGS
