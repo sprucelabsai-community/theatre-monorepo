@@ -55,7 +55,7 @@ if $SHOULD_INCLUDE_CONFIG; then
 fi
 
 # This has to get reinstalled after the theatre is imported
-
+sleep 2
 npm uninstall pm2
-
+sleep 2
 npm install pm2
