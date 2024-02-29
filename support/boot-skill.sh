@@ -6,9 +6,11 @@ namespace=$1
 vendor=${2:-spruce} # Default vendor to "spruce"
 packages_dir="$(pwd)/packages"
 processes_dir="$(pwd)/.processes"
+logs_dir="${processes_dir}/logs"
 
 # Ensure .processes directory exists
 mkdir -p "$processes_dir"
+mkdir -p "$logs_dir"
 
 # Determine skill directory
 suffix="-skill"
@@ -34,13 +36,15 @@ restart_delay=5000 # Set the delay between restarts in milliseconds
 
 # Construct the JSON configuration
 json_config="{
-    \"name\": \"$app_name\",
+     \"name\": \"$app_name\",
     \"script\": \"$yarn_path\",
     \"args\": \"boot\",
     \"cwd\": \"$skill_dir\",
     \"interpreter\": \"bash\",
     \"max_restarts\": $max_restarts,
-    \"restart_delay\": $restart_delay
+    \"restart_delay\": $restart_delay,
+    \"out_file\": \"${logs_dir}/${app_name}-out.log\",
+    \"error_file\": \"${logs_dir}/${app_name}-error.log\"
 }"
 
 # Write the JSON configuration to the file
