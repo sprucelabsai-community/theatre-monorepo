@@ -30,4 +30,4 @@ REPO_PATH=$(pwd)
 
 cd ../../support
 
-./sync-config.sh $REPO_PATH $ADDITIONAL_ARGS
+./propagate-blueprint.sh $REPO_PATH $ADDITIONAL_ARGS

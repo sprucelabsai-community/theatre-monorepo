@@ -11,24 +11,22 @@ done
 REPO_PATH=$1
 
 # Pull env
-ENV=$(node blueprint.js $2 env)
+ENV=$(node support/blueprint.js $2 env)
 
 # Skip if .env if exists
-if [ -f .env ]; then
-    case $ENV_STRATEGY in
+case $ENV_STRATEGY in
     skip)
         echo "Skipping due to 'skip' strategy."
         exit 0
         ;;
     replace)
         echo "Deleting .env due to 'replace' strategy."
-        rm .env
+        rm $REPO_PATH/.env
         ;;
     *)
         # Other strategies can be handled here in the future
         ;;
-    esac
-fi
+esac
 
 ## drop in ENV logic here
 SKILL_NAMESPACE=$(jq -r '.skill.namespace' $REPO_PATH/package.json)

@@ -15,12 +15,8 @@ while [[ $# -gt 0 ]]; do
             DO_BACKUP=true
             shift # Consume the flag
             ;;
-        --unit-number)
-            # Check if the next argument exists and is not another flag
-            if [[ -n "$2" && "${2:0:1}" != "-" ]]; then
-                UNIT_NUMBER="-$2"
-                shift # Move to the next argument
-            fi
+        --unit-number=*)
+            UNIT_NUMBER="-${1#*=}" # Extract the number after the equal sign
             shift # Consume the flag and its argument
             ;;
         *)

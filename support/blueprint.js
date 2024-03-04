@@ -10,7 +10,8 @@ if (!blueprintPath) {
     process.exit(1);
 }
 
-const resolvedPath = blueprintPath[0] === '/' ? blueprintPath : path.join(process.cwd(), '..', blueprintPath);
+// Assuming the script is always run from the theatre-monorepo directory:
+const resolvedPath = blueprintPath[0] === '/' ? blueprintPath : path.join(__dirname, '..', blueprintPath);
 const file = fs.readFileSync(resolvedPath, 'utf8');
 const data = yaml.load(file);
 

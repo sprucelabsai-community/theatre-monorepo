@@ -8,10 +8,12 @@ if [ -z "$BLUEPRINT" ]; then
     exit 1
 fi
 
+echo $BLUEPRINT
+
 # loop through every dir inside of packages
-# and run ./sync-config.sh {dir} {blueprint}
-for dir in ../packages/*; do
+# and run ./propagate-blueprint.sh {dir} {blueprint}
+for dir in packages/*; do
     if [ -d "$dir" ]; then
-        ./sync-config.sh $dir $BLUEPRINT
+        ./support/propagate-blueprint.sh "$dir" "$BLUEPRINT" "--configStrategy=replace"
     fi
 done
