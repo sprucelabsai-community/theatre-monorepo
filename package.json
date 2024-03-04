@@ -15,7 +15,7 @@
     "delete.skills": "find ./packages -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +",
     "export.config": "./support/export-config.sh",
     "export.theatre": "./support/export-theatre.sh",
-    "import.config": "./support/import-config.sh",
+    "import.blueprint": "./support/import-blueprint.sh",
     "import.theatre": "./support/import-theatre.sh",
     "login": "./support/login.sh",
     "logs": "./support/logs.sh",
