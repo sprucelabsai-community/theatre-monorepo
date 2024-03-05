@@ -6,6 +6,7 @@ cd packages || exit 1
 
 for dir in */; do
     (
+        echo "Updating $dir"
         cd "$dir" || continue
         git checkout .
         git pull
