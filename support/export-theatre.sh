@@ -40,7 +40,7 @@ fi
 cd "${BASE_DIR}"
 
 # Zip the theatre contents, ensuring to exclude specified files and directories
-zip -qr "${ZIP_DIR}/theatre.zip" . -x "packages/*/.env" -x "*.DS_Store" -x "snapshots/*" -x "support/*" -x "src/*" -x "*.log" -x "blueprint.yml" 
+zip -qr "${ZIP_DIR}/theatre.zip" . -x "packages/*/.env" -x "*.DS_Store" -x "snapshots/*" -x "*.log" -x "blueprint.yml" 
 
 # Confirm completion of the operation
 echo "Theatre files have been zipped into ${ZIP_DIR}/theatre.zip"
