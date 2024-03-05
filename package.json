@@ -32,6 +32,7 @@
     "reset.core.database": "./support/reset-core-db.sh",
     "dump.core.database": "./support/dump-core-db.sh",
     "sync": "rm package-lock.json || node ./support/sync.js",
+    "test": "lerna run test",
     "update": "./support/update.sh",
     "update.skill": "./support/update-skill.sh",
     "upgrade": "./support/upgrade.sh",
