@@ -30,9 +30,9 @@ if $INCLUDE_CONFIG; then
     echo "Including configuration export..."
     cd "${BASE_DIR}"
     if $DO_BACKUP; then
-        yarn export.config --backup
+        yarn export.blueprint --backup
     else
-        yarn export.config
+        yarn export.blueprint
     fi
 fi
 
