@@ -4,11 +4,16 @@
 BASE_DIR="."
 INCLUDE_CONFIG=false
 DO_BACKUP=false
+RELEASE=false
 
 # Parse command line arguments
 for arg in "$@"; do
     if [[ "$arg" == "--shouldIncludeConfig" ]]; then
         INCLUDE_CONFIG=true
+    fi
+    if [[ "$arg" == "--release" ]]; then
+        RELEASE=true
+        RELEASE_DATE=$(date +%Y-%m-%d)
     elif [[ "$arg" == "--backup" ]]; then
         DO_BACKUP=true
     fi
@@ -18,6 +23,8 @@ done
 TIMESTAMP=$(date +%Y%m%d%H%M)
 if $DO_BACKUP; then
     ZIP_DIR="${BASE_DIR}/snapshots/${TIMESTAMP}_backup"
+elif $RELEASE; then
+    ZIP_DIR="${BASE_DIR}/snapshots/release-${RELEASE_DATE}"
 else
     ZIP_DIR="${BASE_DIR}/snapshots/${TIMESTAMP}"
 fi
