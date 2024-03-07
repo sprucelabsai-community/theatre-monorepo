@@ -11,15 +11,7 @@ cd packages
 
 for skill_dir in *-skill; do
     (
-
-        echo "Updating $skill_dir..."
-
-        # Update to the latest code from the default branch
-        ../support/checkout-default-skill.sh "$skill_dir"
-        default_branch=$(git ls-remote --symref origin HEAD | grep 'ref:' | sed 's/.*refs\/heads\/\(.*\)\tHEAD/\1/')
-
         cd "$skill_dir"
-
         # Check if the branch already exists
         if git show-ref --verify --quiet "refs/heads/$branch_name"; then
             # Branch exists, so check it out and reset it to the latest code from the default branch
@@ -38,4 +30,4 @@ done
 # Wait for all background processes to finish
 wait
 
-echo "All skills have been updated and branched as $branch_name with the latest code from the default branch."
+echo "All skills have been pushed to $branch_name."
