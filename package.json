@@ -24,6 +24,7 @@
     "logs": "./support/logs.sh",
     "monitor": "pm2 monit",
     "publish.skills": "./support/publish-skills.sh",
+    "push.latest.to": "./support/push-latest-to.sh",
     "reboot.skill": "./support/reboot-skill.sh",
     "reboot": "yarn shutdown && yarn boot",
     "rebuild": "yarn clean && yarn && lerna run clean.build && lerna run build.dev",
