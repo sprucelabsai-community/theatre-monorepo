@@ -28,6 +28,6 @@ cd $REPO_NAME
 
 REPO_PATH=$(pwd)
 
-cd ../../support
+cd ../../
 
-./propagate-blueprint.sh $REPO_PATH $ADDITIONAL_ARGS
+./support/propagate-blueprint.sh $REPO_PATH $ADDITIONAL_ARGS
