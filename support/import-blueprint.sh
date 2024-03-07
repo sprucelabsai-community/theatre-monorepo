@@ -1,12 +1,9 @@
 
 #!/bin/bash
 
-# Default values for options
-shouldInferUnitCode=true
-
 # Usage message
 usage() {
-    echo "Usage: $0 path/to/blueprint [--shouldInferUnitCode=[true|false]] [PARAMETER=value]..."
+    echo "Usage: $0 path/to/blueprint[PARAMETER=value]..."
 }
 
 # Parse positional arguments
@@ -21,9 +18,6 @@ fi
 # Parse options and parameters
 while [ $# -gt 0 ]; do
     case "$1" in
-        --shouldInferUnitCode=*)
-            shouldInferUnitCode="${1#*=}"
-            ;;
         *=*)
             # Assuming arguments are in the form PARAMETER=value
             key="${1%%=*}"
@@ -42,15 +36,9 @@ while [ $# -gt 0 ]; do
 done
 
 echo "Processing blueprint: $BLUEPRINT"
-echo "Should infer unit code: $shouldInferUnitCode"
 
 # Convert BLUEPRINT to blueprint.yml in the base directory
 cp "$BLUEPRINT" blueprint.yml
-
-# Get the unit code from the hostname (default behavior)
-if $shouldInferUnitCode 
-  export UNIT_CODE="LUM-$(hostname | sed -e 's/mini-//' -e 's/\.lan$//')"
-fi
 
 # Replace parameters in the blueprint.yml
 while read -r line; do
