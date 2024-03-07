@@ -49,7 +49,7 @@ cp "$BLUEPRINT" blueprint.yml
 
 # Get the unit code from the hostname (default behavior)
 if $shouldInferUnitCode 
- export UNIT_CODE=$(hostname | sed -e 's/mini-//' -e 's/\.lan$//')
+  export UNIT_CODE="LUM-$(hostname | sed -e 's/mini-//' -e 's/\.lan$//')"
 fi
 
 # Replace parameters in the blueprint.yml
