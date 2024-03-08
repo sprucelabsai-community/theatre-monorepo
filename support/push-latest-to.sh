@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <branch_name>"
     exit 1
@@ -18,16 +16,10 @@ for skill_dir in *-skill; do
 
         # Update to the latest code from the default branch
         ../support/checkout-default-skill.sh "$skill_dir"
-        default_branch=$(git ls-remote --symref origin HEAD | grep 'ref:' | sed 's/.*refs\/heads\/\(.*\)\tHEAD/\1/')
 
         cd "$skill_dir"
 
-        # Stash any local changes including untracked files
-        git stash push --include-untracked
-
-        git checkout $default_branch
-
-        git pull
+        default_branch=$(git ls-remote --symref origin HEAD | grep 'ref:' | sed 's/.*refs\/heads\/\(.*\)\tHEAD/\1/')
 
         # Check if the branch already exists
         if git show-ref --verify --quiet "refs/heads/$branch_name"; then
@@ -41,7 +33,7 @@ for skill_dir in *-skill; do
 
         # Push the branch to the remote repository, with force to overwrite any existing content
         git push -u origin "$branch_name" --force
-    )
+    ) &
 done
 
 # Wait for all background processes to finish
