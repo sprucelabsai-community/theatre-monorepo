@@ -5,6 +5,8 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
+yarn upgrade
+
 branch_name="$1"
 
 cd packages
