@@ -33,6 +33,8 @@ for skill_dir in *-skill; do
 
         # Push the branch to the remote repository, with force to overwrite any existing content
         git push -u origin "$branch_name" --force
+
+        git checkout $default_branch
     ) &
 done
 
