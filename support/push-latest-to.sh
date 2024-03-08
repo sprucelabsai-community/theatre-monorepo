@@ -5,6 +5,7 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
+yarn install
 yarn upgrade
 
 branch_name="$1"
