@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Check if the correct number of arguments has been provided
 if [ "$#" -ne 1 ]; then
