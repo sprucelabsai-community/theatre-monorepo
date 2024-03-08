@@ -2,7 +2,7 @@
 
 echo "Upgrading skills..."
 
-cd $HOME/theatre-monorepo/packages
+cd ./packages
 
 for dir in *-skill; do
     if [[ -d $dir ]]; then

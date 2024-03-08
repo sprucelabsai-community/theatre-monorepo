@@ -15,7 +15,7 @@ for skill_dir in *-skill; do
         echo "Updating $skill_dir..."
 
         # Update to the latest code from the default branch
-        $HOME/theatre-monorepo/support/checkout-default-skill.sh "$skill_dir"
+        ../support/checkout-default-skill.sh "$skill_dir"
 
         cd "$skill_dir"
 
