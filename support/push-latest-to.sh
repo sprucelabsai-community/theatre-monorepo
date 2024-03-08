@@ -20,6 +20,9 @@ for skill_dir in *-skill; do
 
         cd "$skill_dir"
 
+        # Stash any local changes including untracked files
+        git stash push --include-untracked
+
         # Check if the branch already exists
         if git show-ref --verify --quiet "refs/heads/$branch_name"; then
             # Branch exists, so check it out and reset it to the latest code from the default branch
