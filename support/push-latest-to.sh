@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <branch_name>"
     exit 1
@@ -39,7 +41,7 @@ for skill_dir in *-skill; do
 
         # Push the branch to the remote repository, with force to overwrite any existing content
         git push -u origin "$branch_name" --force
-    ) &
+    )
 done
 
 # Wait for all background processes to finish
