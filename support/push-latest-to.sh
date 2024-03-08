@@ -23,6 +23,8 @@ for skill_dir in *-skill; do
         # Stash any local changes including untracked files
         git stash push --include-untracked
 
+        git checkout $default_branch
+
         git pull
 
         # Check if the branch already exists
