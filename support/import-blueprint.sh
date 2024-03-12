@@ -41,11 +41,13 @@ echo "Processing blueprint: $BLUEPRINT"
 cp "$BLUEPRINT" blueprint.yml
 
 # Replace parameters in the blueprint.yml
-while read -r line; do
+while IFS= read -r line; do
     if [[ "$line" =~ \$([a-zA-Z_][a-zA-Z_0-9]*) ]]; then  # Match $ followed by variable name
         param="${BASH_REMATCH[1]}"
-        if [[ -v "$param" ]]; then  # Check if the variable is set
-            sed -i "s|\$$param|${!param}|g" blueprint.yml  # Replace $PARAM with its value
+        # Check if the variable is set using an older method
+        if [ ! -z "${!param}" ]; then  # Check if variable is set
+            # Use sed suitable for macOS. Notice the '' after -i, which is required for macOS
+            sed -i '' "s|\$$param|${!param}|g" blueprint.yml  
         fi
     fi
 done < blueprint.yml

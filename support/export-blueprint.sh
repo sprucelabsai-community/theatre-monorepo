@@ -49,7 +49,6 @@ mkdir -p "${SNAPSHOT_DIR}"
 # Navigate to the base directory
 cd "${BASE_DIR}"
 
-
 # Prepare the blueprint.yml: Merge with unit-specific config if provided and write to the output directory
 if [ -n "$UNIT_CONFIG_PATH" ]; then
     # Merge and store in the output directory
