@@ -42,10 +42,10 @@ cp "$BLUEPRINT" blueprint.yml
 
 # Replace parameters in the blueprint.yml
 while read -r line; do
-    if [[ "$line" =~ \{\{(.+)\}\} ]]; then
+    if [[ "$line" =~ \$([a-zA-Z_][a-zA-Z_0-9]*) ]]; then  # Match $ followed by variable name
         param="${BASH_REMATCH[1]}"
-        if [[ -v "$param" ]]; then
-            sed -i "s|\{\{$param\}\}|${!param}|g" blueprint.yml
+        if [[ -v "$param" ]]; then  # Check if the variable is set
+            sed -i "s|\$$param|${!param}|g" blueprint.yml  # Replace $PARAM with its value
         fi
     fi
 done < blueprint.yml
