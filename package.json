@@ -24,6 +24,7 @@
     "login": "./support/login.sh",
     "logs": "./support/logs.sh",
     "monitor": "pm2 monit",
+    "commit.skills": "./support/commit-skills.sh",
     "pull.latest.from": "./support/pull-latest-from.sh",
     "publish.skills": "./support/publish-skills.sh",
     "push.latest.to": "./support/push-latest-to.sh",
