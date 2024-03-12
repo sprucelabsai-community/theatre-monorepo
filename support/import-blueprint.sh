@@ -53,7 +53,7 @@ while IFS= read -r line; do
 done < blueprint.yml
 
 # Check for uncaught parameters in blueprint.yml and list them
-uncaught_params=$(grep -o '{{[^}]*}}' blueprint.yml | sort | uniq)
+uncaught_params=$(grep -o '\$[a-zA-Z_][a-zA-Z_0-9]*' blueprint.yml | sort | uniq)
 if [ -n "$uncaught_params" ]; then
     echo "Error: Missing dynamic parameters detected in blueprint.yml."
     echo "These parameters can be passed via command line e.g. "
