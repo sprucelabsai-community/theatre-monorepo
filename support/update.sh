@@ -22,7 +22,7 @@ for dir in */; do
             echo "Failed to pull latest for $dir"
             exit 1
         fi
-    )
+    ) &
 done
 
 #wait for all to finish
