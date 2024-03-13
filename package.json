@@ -41,6 +41,7 @@
     "sync-skills-from-blueprint": "./support/sync-skills-with-blueprint.sh",
     "sync": "rm package-lock.json || node ./support/sync.js",
     "test": "lerna run test",
+    "repair": "lerna repair",
     "update.skill": "./support/update-skill.sh",
     "update": "./support/update.sh",
     "upgrade.skill": "./support/upgrade-skill.sh",
