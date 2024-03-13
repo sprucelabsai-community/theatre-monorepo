@@ -1,30 +1,56 @@
 #!/bin/bash
 
+set -e
+
 git pull
 
-cd packages || exit 1
+cd packages || {
+    echo "Failed to change directory to 'packages'"
+    exit 1
+}
 
 for dir in */; do
+    echo "Pulling latest to $dir"
+
     (
-        echo "Updating $dir"
-        cd "$dir" || continue
+        cd "$dir" || {
+            echo "Failed to change directory to '$dir'"
+            exit 1
+        }
         git checkout .
-        git pull
+        if ! git pull; then
+            echo "Failed to pull latest for $dir"
+            exit 1
+        fi
     ) &
 done
 
 #wait for all to finish
 wait
 
+echo "Done pulling latest..."
+
 cd ..
 
+echo "Starting to update dependencies..."
+
 # remove if exists
-rm -rf node_modules/npm
-rm yarn.lock
-rm package-lock.json
+rm -rf node_modules/npm >/dev/null 2>&1
+
+echo "Removing yarn lock..."
+
+rm -f yarn.lock >/dev/null 2>&1
+
+echo "Removing npm lock..."
+
+rm -f package-lock.json >/dev/null 2>&1
+
+echo "Installing dependencies..."
+
 yarn
 
 yarn build
 yarn build.heartwood
-rm yarn.lock
-rm package-lock.json
+
+rm -f yarn.lock >/dev/null 2>&1
+rm -f package-lock.json >/dev/null 2>&1
