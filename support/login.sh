@@ -23,8 +23,7 @@ fi
 cd ..
 
 #set remote if no HOST exists in env
-ENV_EXISTS=$(grep -q "^HOST=" .env)
-if [ -z "$ENV_EXISTS" ]; then
+if ! grep -q "^HOST=" .env; then
     spruce set.remote local
 fi
 
