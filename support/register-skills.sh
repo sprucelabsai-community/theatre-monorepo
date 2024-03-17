@@ -29,7 +29,11 @@ for dir in *-skill; do
 
         # Check if .env file exists
         if [ -f .env ]; then
-            spruce set.remote --remote=local
+
+            # Set remote if no HOST exists in env
+            if ! grep -q "^HOST=" .env; then
+                spruce set.remote --remote=local
+            fi
 
             # Check if SKILL_ID is defined in .env file
             if ! grep -q "^SKILL_ID=" .env || [ "$shouldForceRegister" = "true" ]; then
