@@ -21,6 +21,8 @@ for skill_dir in *-skill; do
         # Change to the directory of the skill
         cd "$skill_dir"
 
+        git checkout .
+
         # Fetch all branches from the origin
         git fetch origin
 

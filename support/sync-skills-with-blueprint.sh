@@ -43,6 +43,8 @@ ADDITIONAL_ARGS="${@:2}"
 # Loop over each repo and attempt to add in the background
 for REPO in $REPOS; do
 
+    echo "Processing $REPO..."
+
     CLEAN_REPO="${REPO%\"}"
     CLEAN_REPO="${CLEAN_REPO#\"}"
 

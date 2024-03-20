@@ -1,14 +1,13 @@
-
 #!/bin/bash
 
 # Usage message
 usage() {
-    echo "Usage: $0 path/to/blueprint[PARAMETER=value]..."
+    echo "Usage: $0 path/to/blueprint [PARAMETER=value]..."
 }
 
 # Parse positional arguments
 BLUEPRINT=$1
-shift  # Remove the first argument, leaving only options and parameters
+shift # Remove the first argument, leaving only options and parameters
 
 if [ -z "$BLUEPRINT" ]; then
     usage
@@ -18,19 +17,22 @@ fi
 # Parse options and parameters
 while [ $# -gt 0 ]; do
     case "$1" in
-        *=*)
-            # Assuming arguments are in the form PARAMETER=value
-            key="${1%%=*}"
-            value="${1#*=}"
-            # Export parameter for later use in sed command
-            export "$key"="$value"
-            ;;
-        *)
-            # Unknown option
-            echo "Unknown option: $1"
-            usage
-            exit 1
-            ;;
+    *=*)
+        # Assuming arguments are in the form PARAMETER=value
+        key="${1%%=*}"
+        value="${1#*=}"
+
+        echo "Importing variable: $key as $value"
+
+        # Export parameter for later use in sed command
+        export "$key"="$value"
+        ;;
+    *)
+        # Unknown option
+        echo "Unknown option: $1"
+        usage
+        exit 1
+        ;;
     esac
     shift
 done
@@ -42,15 +44,15 @@ cp "$BLUEPRINT" blueprint.yml
 
 # Replace parameters in the blueprint.yml
 while IFS= read -r line; do
-    if [[ "$line" =~ \$([a-zA-Z_][a-zA-Z_0-9]*) ]]; then  # Match $ followed by variable name
+    if [[ "$line" =~ \$([a-zA-Z_][a-zA-Z_0-9]*) ]]; then # Match $ followed by variable name
         param="${BASH_REMATCH[1]}"
         # Check if the variable is set using an older method
-        if [ ! -z "${!param}" ]; then  # Check if variable is set
+        if [ ! -z "${!param}" ]; then # Check if variable is set
             # Use sed suitable for macOS. Notice the '' after -i, which is required for macOS
-            sed -i '' "s|\$$param|${!param}|g" blueprint.yml  
+            sed -i '' "s|\$$param|${!param}|g" blueprint.yml
         fi
     fi
-done < blueprint.yml
+done <blueprint.yml
 
 # Check for uncaught parameters in blueprint.yml and list them
 uncaught_params=$(grep -o '\$[a-zA-Z_][a-zA-Z_0-9]*' blueprint.yml | sort | uniq)

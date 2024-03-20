@@ -22,7 +22,10 @@ fi
 
 cd ..
 
-spruce set.remote local
+#set remote if no HOST exists in env
+if ! grep -q "^HOST=" .env; then
+    spruce set.remote local
+fi
 
 # Run your command with the extracted phone number
 spruce login --phone "$PHONE" --pin 0000
