@@ -10,7 +10,7 @@ cd packages || {
 }
 
 for dir in */; do
-    echo "Pulling latest to $dir"
+    echo "Pulling latest from $dir"
 
     (
         cd "$dir" || {
