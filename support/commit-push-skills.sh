@@ -10,15 +10,17 @@ commit_message="$1"
 
 cd packages
 
-for skill_dir in *-skill; do
-    echo "Committing changes for $skill_dir..."
+# Commit and push changes for each skill + spruce-mercury-api
+for skill_dir in *-skill *-api; do
+    (
+        echo "Committing changes for $skill_dir..."
 
-    cd "$skill_dir"
+        cd "$skill_dir"
 
-    git add .
-    git commit -m "$commit_message"
-    git pull
-    git push
+        git add .
+        git commit -m "$commit_message"
+        git pull
+        git push
 
-    cd ..
+    ) &
 done
