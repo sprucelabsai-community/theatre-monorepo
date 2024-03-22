@@ -9,7 +9,7 @@ branch_name="$1"
 
 cd packages
 
-for skill_dir in *-skill; do
+for skill_dir in *-skill *-api; do
     (
         cd "$skill_dir"
         # Check if the branch already exists

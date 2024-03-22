@@ -9,9 +9,9 @@ branch_name="$1"
 
 cd packages
 
-for skill_dir in *-skill; do
+for skill_dir in *-skill *-api; do
     (
-        echo "Checkout out $skill_dir..."
+        echo "Checking out $skill_dir..."
 
         cd "$skill_dir"
 

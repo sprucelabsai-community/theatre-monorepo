@@ -2,7 +2,7 @@
 
 cd packages
 
-for skill_dir in *-skill; do
+for skill_dir in *-skill *-api; do
     ../support/checkout-default-skill.sh "$skill_dir" &
 done
 

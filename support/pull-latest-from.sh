@@ -13,7 +13,7 @@ branch_name="$1"
 cd packages
 
 # Iterate over all directories that match the pattern *-skill
-for skill_dir in *-skill; do
+for skill_dir in *-skill *-api; do
     (
         # Notify the user that the specific directory is being updated
         echo "Pulling latest for $skill_dir..."
