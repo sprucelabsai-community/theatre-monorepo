@@ -54,10 +54,6 @@ if $SHOULD_INCLUDE_CONFIG; then
     fi
 fi
 
-zsh -c "source ~/.zshrc; env > /tmp/zshenv"
-source /tmp/zshenv
-
-# This has to get reinstalled after the theatre is imported
-npm uninstall pm2
-
-npm install pm2
+cd node_modules/.bin
+rm pm2
+ln -s ../pm2/bin/pm2 pm2
