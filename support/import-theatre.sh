@@ -58,6 +58,6 @@ zsh -c "source ~/.zshrc; env > /tmp/zshenv"
 source /tmp/zshenv
 
 # This has to get reinstalled after the theatre is imported
-npm uninstall pm2
+# npm uninstall pm2
 
-npm install pm2
+# npm install pm2
