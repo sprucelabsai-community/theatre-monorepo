@@ -12,7 +12,7 @@ echo "Checking $skill_dir..."
 # Navigate to the skill directory
 cd "$skill_dir" || exit
 
-git checkout src/.spruce/setting.json
+git checkout .
 
 # Use git ls-remote to get the default branch name
 default_branch=$(git ls-remote --symref origin HEAD | grep 'ref:' | sed 's/.*refs\/heads\/\(.*\)\tHEAD/\1/')
