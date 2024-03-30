@@ -36,6 +36,7 @@
     "reset.core.database": "./support/reset-core-db.sh",
     "reset": "yarn clean && yarn delete.skills",
     "serve.heartwood": "./support/serve-heartwood.sh",
+    "stop.serving.heartwood": "./support/stop-serving-heartwood.sh",
     "shutdown.skill": "./support/shutdown-skill.sh",
     "shutdown": "./support/shutdown.sh",
     "sync-skills-from-blueprint": "./support/sync-skills-with-blueprint.sh",
