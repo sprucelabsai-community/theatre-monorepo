@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.7.0"
+echo "Version: 0.8.0"
 echo "Hey there! 👋"
 echo "Sprucebot here! 🌲🤖"
 echo "By the time I'm done, I'll have done the following:"
@@ -202,6 +202,19 @@ fi
 if ! pgrep -x "mongod" >/dev/null; then
     echo "Starting MongoDB..."
     brew services start mongodb-community
+fi
+
+# install caddy if not installed
+if ! [ -x "$(command -v caddy)" ]; then
+    echo -n "Would you like to install Caddy (to serve the front end)? (y/n): "
+    read -r response
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Installing Caddy..."
+        brew install caddy
+    else
+        echo "Please install Caddy manually from https://caddyserver.com/docs/install."
+    fi
 fi
 
 # ask if the person already has a blueprint.yml by supplying a path or empty if nothing
