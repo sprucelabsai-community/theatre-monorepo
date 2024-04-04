@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.8.2"
+echo "Version: 0.9.0"
 sleep 1
 echo "Hey there! 👋"
 sleep 1
@@ -225,6 +225,19 @@ if ! [ -x "$(command -v caddy)" ]; then
         brew install caddy
     else
         echo "Please install Caddy manually from https://caddyserver.com/docs/install."
+    fi
+fi
+
+# install jq if it's not installed
+if ! [ -x "$(command -v jq)" ]; then
+    echo -n "Would you like to install jq (to parse JSON)? (y/n): "
+    read -r response
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Installing jq..."
+        brew install jq
+    else
+        echo "Please install jq manually from https://stedolan.github.io/jq/download/."
     fi
 fi
 
