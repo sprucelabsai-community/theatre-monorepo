@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.6.0"
+echo "Version: 0.7.0"
 echo "Hey there! 👋"
 echo "Sprucebot here! 🌲🤖"
 echo "By the time I'm done, I'll have done the following:"
@@ -193,10 +193,15 @@ if ! [ -x "$(command -v mongod)" ]; then
         echo "Installing MongoDB..."
         brew tap mongodb/brew
         brew install mongodb-community
-        brew services start mongodb/brew/mongodb-community
     else
         echo "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
     fi
+fi
+
+# start mongo if not running
+if ! pgrep -x "mongod" >/dev/null; then
+    echo "Starting MongoDB..."
+    brew services start mongodb-community
 fi
 
 # ask if the person already has a blueprint.yml by supplying a path or empty if nothing
