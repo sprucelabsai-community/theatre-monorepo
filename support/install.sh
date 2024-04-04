@@ -20,6 +20,9 @@ echo "
 /_/   /_/\__,_/\__/_/  \____/_/  /_/ /_/ /_/ 
                                                                          
 "
+
+echo "Version: 0.0.1"
+
 # Global configuration
 min_node_version="20.0.0"
 should_install_node=false
@@ -187,8 +190,9 @@ else
 
     # clone theatre mono repo at
     git clone git@github.com:sprucelabsai-community/theatre-monorepo.git
-    cd theatre-monorepo
+    cp $blueprint_path theatre-monorepo/blueprint.yml
+    mv theatre-monorepo spruce-theatre
+    cd spruce-theatre
     yarn
-    cp $blueprint_path blueprint.yml
     yarn sync blueprint.yml
 fi
