@@ -21,7 +21,17 @@ echo "
                                                                          
 "
 
-echo "Version: 0.5.0"
+echo "Version: 0.6.0"
+echo "Hey there! 👋"
+echo "Sprucebot here! 🌲🤖"
+echo "By the time I'm done, I'll have done the following:"
+echo "1. Installed Brew, Node.js, Yarn and Mongo (or skipped any already installed)."
+echo "2. Installed the Spruce CLI."
+echo "3. Setup your computer for development."
+echo "4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
+echo "4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
+echo "Let's get started! 🚀"
+echo "PS: Make sure you are in a directory where you want to install the Sprucebot Development Theatre."
 echo -n "Press enter when ready: "
 read -r response
 # wait for return
