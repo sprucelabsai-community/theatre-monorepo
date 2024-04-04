@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.1.0"
+echo "Version: 0.2.0"
 echo -n "Press enter when ready: "
 read -r response
 # wait for return
@@ -213,4 +213,12 @@ else
     cd spruce-theatre
     yarn
     yarn sync blueprint.yml
+    yarn boot.mercury
+    yarn register.skills
+    yarn boot.serve
+
+    echo "You're all set up! 🚀"
+    echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
+    echo "When you're ready to build your first skill, run ""mkdir [skill-name] && spruce onboard)"""
+    echo "Go team! 🌲🤖"
 fi
