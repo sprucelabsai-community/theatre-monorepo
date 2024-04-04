@@ -178,6 +178,13 @@ if [ -z "$blueprint_path" ]; then
     echo "Coming soon..."
     exit 1
 else
+
+    # throw if bad path
+    if [ ! -f "$blueprint_path" ]; then
+        echo "Invalid path to blueprint.yml. You can try this whole thing again."
+        exit 1
+    fi
+
     # clone theatre mono repo at
     git clone git@github.com:sprucelabsai-community/theatre-monorepo.git
     cd theatre-monorepo
