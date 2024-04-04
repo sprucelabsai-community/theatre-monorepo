@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.4.0"
+echo "Version: 0.5.0"
 echo -n "Press enter when ready: "
 read -r response
 # wait for return
@@ -214,7 +214,7 @@ else
     yarn
     yarn sync blueprint.yml
     yarn boot.mercury
-    yarn login blueprint.yml
+    yarn run login blueprint.yml
     yarn register.skills
     yarn boot.serve
 
