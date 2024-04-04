@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.8.1"
+echo "Version: 0.8.2"
 sleep 1
 echo "Hey there! 👋"
 sleep 1
@@ -255,6 +255,7 @@ else
     yarn boot.mercury
     yarn run login blueprint.yml
     yarn register.skills
+    yarn login.skills
     yarn boot.serve
 
     echo "You're all set up! 🚀"
