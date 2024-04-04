@@ -33,16 +33,16 @@ function get_profile() {
     fi
 }
 
-# Function to check if Node.js is installed
+# Function to check if Node is installed
 is_node_installed() {
     if command -v node >/dev/null 2>&1; then
-        return 0 # Node.js is installed
+        return 0 # Node is installed
     else
-        return 1 # Node.js is not installed
+        return 1 # Node is not installed
     fi
 }
 
-# Function to get the installed Node.js version
+# Function to get the installed Node version
 get_installed_node_version() {
     if is_node_installed; then
         local version=$(node --version | cut -d 'v' -f 2)
@@ -52,38 +52,38 @@ get_installed_node_version() {
     fi
 }
 
-# Function to check if the installed Node.js version is outdated
+# Function to check if the installed Node version is outdated
 is_node_outdated() {
     if is_node_installed; then
         local installed_version=$(get_installed_node_version)
         if [[ "$(printf '%s\n' "$min_node_version" "$installed_version" | sort -V | head -n1)" == "$min_node_version" ]]; then
-            return 1 # Node.js is not outdated
+            return 1 # Node is not outdated
         else
-            return 0 # Node.js is outdated
+            return 0 # Node is outdated
         fi
     else
-        return 0 # Node.js is not installed, consider it outdated
+        return 0 # Node is not installed, consider it outdated
     fi
 }
 
-echo "Checking for Node.js..."
+echo "Checking for Node..."
 
 if is_node_installed; then
-    echo "Node.js is installed..."
+    echo "Node is installed..."
     if is_node_outdated; then
-        echo "Node.js is outdated..."
+        echo "Node is outdated..."
         should_install_node=true
     else
-        echo "Node.js is up to date..."
+        echo "Node is up to date..."
     fi
 else
-    echo "Node.js is not installed..."
+    echo "Node is not installed..."
     should_install_node=true
 fi
 
-# Check if Node.js is installed, if not, install it
+# Check if Node is installed, if not, install it
 if [ "$should_install_node" = true ]; then
-    echo "Installing Node.js via Homebrew..."
+    echo "Installing Node via Homebrew..."
 
     # Check if Homebrew is installed
     if ! [ -x "$(command -v brew)" ]; then
@@ -107,7 +107,7 @@ You OK if I install it now? (y/n): "
 
             source $(get_profile)
         else
-            echo "Please install Node.js manually from https://nodejs.org/en/download/."
+            echo "Please install Node manually from https://nodejs.org/en/download/."
             exit 1
         fi
     fi
@@ -139,17 +139,49 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
     # check for vscode
     if ! [ -x "$(command -v code)" ]; then
-        echo "Visual Studio Code is not installed..."
-        echo -n "Would you like to install Visual Studio Code? (y/n): "
-        read -r response
+        echo "Visual Studio Code CLI tools is not installed..."
+        echo "Checking for Visual Studio Code..."
 
-        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-            echo "Installing Visual Studio Code..."
-            brew install --cask visual-studio-code
+        # Check if Visual Studio Code is installed in /Applications/Visual\ Studio\ Code.app
+        if [ -d "/Applications/Visual Studio Code.app" ]; then
+            echo "Visual Studio Code is installed..."
+            echo "Adding Visual Studio Code CLI to PATH..."
 
+            # Add Visual Studio Code CLI to PATH
+            echo 'export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' >>$(get_profile)
+
+            source $(get_profile)
         else
-            echo "Please install Visual Studio Code manually from https://code.visualstudio.com/."
+
+            echo -n "Would you like to install Visual Studio Code? (y/n): "
+            read -r response
+
+            if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+                echo "Installing Visual Studio Code..."
+                brew install --cask visual-studio-code
+            else
+                echo "Please install Visual Studio Code manually from https://code.visualstudio.com/."
+            fi
+
         fi
     fi
 
+fi
+
+# ask if the person already has a blueprint.yml by supplying a path or empty if nothing
+echo -n "Path to blueprinty.yml. Leave empty if you don't have one or have no idea what I'm talking about: "
+read -r blueprint_path
+
+if [ -z "$blueprint_path" ]; then
+    echo "No blueprint.yml provided..."
+    echo "Setting you up with a Sprucebot Development Theatre..."
+    echo "Coming soon..."
+    exit 1
+else
+    # clone theatre mono repo at
+    git clone git@github.com:sprucelabsai-community/theatre-monorepo.git
+    cd theatre-monorepo
+    yarn
+    cp $blueprint_path blueprint.yml
+    yarn sync blueprint.yml
 fi
