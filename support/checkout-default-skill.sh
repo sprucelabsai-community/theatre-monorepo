@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <skill_directory>"
+# pull out optional --hard flag to clobber local changes
+if [ "$1" == "--hard" ]; then
+    hard=true
+    shift
+fi
+
+# usage
+if [ -z "$1" ]; then
+    echo "Usage: $0 [--hard] <skill_dir>"
     exit 1
 fi
 
@@ -11,6 +18,11 @@ echo "Checking $skill_dir..."
 
 # Navigate to the skill directory
 cd "$skill_dir" || exit
+
+# if hard, clobber all local changes
+if [ "$hard" == "true" ]; then
+    git reset --hard
+fi
 
 # Use git ls-remote to get the default branch name
 default_branch=$(git ls-remote --symref origin HEAD | grep 'ref:' | sed 's/.*refs\/heads\/\(.*\)\tHEAD/\1/')
