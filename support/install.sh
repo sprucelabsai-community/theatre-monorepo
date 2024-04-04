@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.2.0"
+echo "Version: 0.3.0"
 echo -n "Press enter when ready: "
 read -r response
 # wait for return
