@@ -21,7 +21,10 @@ echo "
                                                                          
 "
 
-echo "Version: 0.0.1"
+echo "Version: 0.1.0"
+echo -n "Press enter when ready: "
+read -r response
+# wait for return
 
 # Global configuration
 min_node_version="20.0.0"
@@ -171,6 +174,21 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
 fi
 
+# install mongodb if not installed
+if ! [ -x "$(command -v mongod)" ]; then
+    echo -n "Would you like to install MongoDB? (y/n): "
+    read -r response
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Installing MongoDB..."
+        brew tap mongodb/brew
+        brew install mongodb-community
+        brew services start mongodb/brew/mongodb-community
+    else
+        echo "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
+    fi
+fi
+
 # ask if the person already has a blueprint.yml by supplying a path or empty if nothing
 echo -n "Path to blueprinty.yml. Leave empty if you don't have one or have no idea what I'm talking about: "
 read -r blueprint_path
@@ -182,7 +200,7 @@ if [ -z "$blueprint_path" ]; then
     exit 1
 else
 
-    # throw if bad path
+    # throw if bad path if file does not exist
     if [ ! -f "$blueprint_path" ]; then
         echo "Invalid path to blueprint.yml. You can try this whole thing again."
         exit 1
