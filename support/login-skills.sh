@@ -11,7 +11,11 @@ for dir in *-skill; do
         # Extract NAMESPACE from directory name
         NAMESPACE=$(jq -r '.skill.namespace' ./package.json)
 
-        spruce set.remote --remote=local
+        #set remote if no HOST exists in env
+        if ! grep -q "^HOST=" .env; then
+            spruce set.remote --remote=local
+        fi
+
         spruce login.skill --skillSlug="$NAMESPACE"
 
         cd ..

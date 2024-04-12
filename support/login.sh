@@ -22,7 +22,7 @@ fi
 
 cd ..
 
-#set remote if no HOST exists in env
+#set remote if no HOST exists in env on theatre
 if ! grep -q "^HOST=" .env; then
     spruce set.remote local
 fi
