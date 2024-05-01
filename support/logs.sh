@@ -3,7 +3,7 @@
 # Default vendor
 vendor="spruce"
 # Default number of lines
-lines=15  # Default value, change if you want a different default
+lines=15 # Default value, change if you want a different default
 
 # Check for at least one argument
 if [ $# -lt 1 ]; then
@@ -40,4 +40,4 @@ fi
 
 # Show logs for the specified application
 echo "Showing last $lines lines of logs for ${app_name}..."
-pm2 logs "$app_name" --lines "$lines"
+./support/pm2.sh logs "$app_name" --lines "$lines"

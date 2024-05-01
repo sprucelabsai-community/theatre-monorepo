@@ -2,7 +2,7 @@
 
 # Function to get PM2 list in JSON format
 get_pm2_json() {
-    pm2_json=$(pm2 jlist 2>&1) # Capture stderr as well
+    pm2_json=$(./support/pm2.sh jlist 2>&1) # Capture stderr as well
     echo "$pm2_json"
 }
 
@@ -14,7 +14,7 @@ if ! echo "$pm2_json" | jq empty; then
     echo "pm2 jlist failed, attempting to update PM2 and retry."
 
     # Update PM2 and retry
-    pm2 update
+    ./support/pm2.sh update
     pm2_json=$(get_pm2_json)
 
     # Check again if pm2 jlist was successful

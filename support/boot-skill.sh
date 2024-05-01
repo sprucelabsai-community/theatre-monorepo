@@ -51,5 +51,5 @@ json_config="{
 echo "$json_config" >"$config_file"
 
 # Start or Restart the application with PM2 using the JSON configuration file
-pm2 startOrRestart "$config_file"
-pm2 save
+./support/pm2.sh startOrRestart "$config_file"
+./support/pm2.sh save
