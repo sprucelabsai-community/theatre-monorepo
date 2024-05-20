@@ -14,7 +14,11 @@ fi
 namespace="$1"
 if [ $# -ge 2 ]; then
     vendor="$2"
+else
+    # Use resolve-vendor script to determine the vendor
+    vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
+
 
 # Construct the PM2 application name
 # Append '-api' if namespace is 'mercury', otherwise '-skill'

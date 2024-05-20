@@ -14,7 +14,11 @@ fi
 namespace="$1"
 if [ $# -ge 2 ]; then
     vendor="$2"
+else
+    # Use resolve-vendor script to determine the vendor
+    vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
+
 
 # Set directory name based on namespace
 if [ "$namespace" == "mercury" ]; then
