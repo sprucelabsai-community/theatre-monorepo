@@ -12,6 +12,8 @@ if [ ! -f "$BLUEPRINT_FILE" ]; then
   exit 1
 fi
 
+PM2_SKILLS=$(./support/pm2.sh list | grep -- '-skill' | awk '{print $4}')
+
 # Navigate to the correct directory
 cd $(dirname $0)
 
@@ -29,8 +31,6 @@ fi
 # Fetch repos from blueprint.js
 REPOS=$(node blueprint.js $1 skills)
 
-clear
-
 echo "Pulling skills..."
 
 # Declare an empty array to collect PIDs of background processes
@@ -40,7 +40,6 @@ PIDS=()
 # We skip the first argument since it's the path to the blueprint.yml
 ADDITIONAL_ARGS="${@:2}"
 
-PM2_SKILLS=$(./support/pm2.sh list | grep -- '-skill' | awk '{print $4}')
 # Prompt the user for each skill to remove
 for SKILL in $PM2_SKILLS; do
   echo $SKILL
