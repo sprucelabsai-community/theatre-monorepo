@@ -18,7 +18,7 @@ hero() {
     local length=${#text}
     local padding=$((length + 6))
 
-    echo "${random_color}$(printf '=%.0s' $(seq 1 $padding))${NC}"
-    echo "${random_color}|  $text  |${NC}"
-    echo "${random_color}$(printf '=%.0s' $(seq 1 $padding))${NC}"
+    printf "${random_color}$(printf '=%.0s' $(seq 1 $padding))${NC}\n"
+    printf "${random_color}|  %s  |${NC}\n" "$text"
+    printf "${random_color}$(printf '=%.0s' $(seq 1 $padding))${NC}\n"
 }
