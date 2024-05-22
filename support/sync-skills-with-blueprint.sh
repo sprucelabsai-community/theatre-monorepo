@@ -12,7 +12,20 @@ if [ ! -f "$BLUEPRINT_FILE" ]; then
   exit 1
 fi
 
-PM2_SKILLS=$(./support/pm2.sh list | grep -- '-skill' | awk '{print $4}')
+PACKAGES_DIR=$(dirname $1)/packages
+if [ ! -d "$PACKAGES_DIR" ]; then
+  echo "ERROR: packages directory not found at $PACKAGES_DIR"
+  exit 1
+fi
+
+INSTALLED_SKILLS=$(ls -d $PACKAGES_DIR/*/ 2>/dev/null | xargs -n1 basename)
+
+if [ -z "$INSTALLED_SKILLS" ]; then
+  echo "No installed skills found."
+else
+  echo "Installed skills:"
+  echo $INSTALLED_SKILLS
+fi
 
 # Navigate to the correct directory
 cd $(dirname $0)
@@ -41,7 +54,7 @@ PIDS=()
 ADDITIONAL_ARGS="${@:2}"
 
 # Prompt the user for each skill to remove
-for SKILL in $PM2_SKILLS; do
+for SKILL in $INSTALLED_SKILLS; do
   echo $SKILL
   SKILL_FOUND=false
   for REPO in $REPOS; do

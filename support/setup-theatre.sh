@@ -51,6 +51,12 @@ hero "Building skills..."
 
 yarn build
 
+hero "Booting Mercury..."
+
+yarn boot mercury
+
+sleep 3
+
 hero "Logging in using cli..."
 
 ./support/login.sh $blueprint

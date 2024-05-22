@@ -5,6 +5,12 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
+# if $0 == 'mercury' the vendor is 'spruce'
+if [ "$1" == "mercury" ]; then
+    echo "spruce"
+    exit 0
+fi
+
 namespace=$1
 matches=()
 

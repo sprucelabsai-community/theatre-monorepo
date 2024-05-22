@@ -19,7 +19,6 @@ else
     vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
 
-
 # Set directory name based on namespace
 if [ "$namespace" == "mercury" ]; then
     skill_dir_name="${vendor}-${namespace}-api"
@@ -27,5 +26,5 @@ else
     skill_dir_name="${vendor}-${namespace}-skill"
 fi
 
-yarn shutdown.skill "$namespace" "$vendor"
-yarn boot.skill "$namespace" "$vendor"
+yarn shutdown "$namespace" "$vendor"
+yarn boot "$namespace" "$vendor"

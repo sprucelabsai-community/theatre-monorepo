@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# if any arguments are passed, call shutdown-skill.sh and pass everything through
+if [ "$#" -gt 0 ]; then
+    ./support/shutdown-skill.sh "$@"
+    exit 0
+fi
+
 # Function to get PM2 list in JSON format
 get_pm2_json() {
     pm2_json=$(./support/pm2.sh jlist 2>&1) # Capture stderr as well
@@ -8,7 +14,7 @@ get_pm2_json() {
 
 # Try to get PM2 list
 pm2_json=$(get_pm2_json)
-
+#
 # Check if pm2 jlist was successful
 if ! echo "$pm2_json" | jq empty; then
     echo "pm2 jlist failed, attempting to update PM2 and retry."
@@ -36,7 +42,13 @@ echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
     vendor="${ADDR[0]}"
     namespace="${ADDR[1]}"
 
+    if [ "$namespace" == "mercury" ]; then
+        vendor="spruce"
+    fi
+
     ./support/shutdown-skill.sh "$namespace" "$vendor"
 done
+
+yarn stop.serving.heartwood
 
 echo "Shutdown complete."

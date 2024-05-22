@@ -2,6 +2,12 @@
 
 boot_command="$(pwd)/support/boot-skill.sh"
 
+# if there are arguments, call boot-skill.sh and pass everything through
+if [ "$#" -gt 0 ]; then
+    bash "$boot_command" "$@"
+    exit 0
+fi
+
 # Function to boot a skill
 boot_skill() {
     local namespace=$1
