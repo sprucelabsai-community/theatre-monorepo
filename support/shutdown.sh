@@ -6,6 +6,8 @@ if [ "$#" -gt 0 ]; then
     exit 0
 fi
 
+source ./support/hero.sh
+
 # Function to get PM2 list in JSON format
 get_pm2_json() {
     pm2_json=$(./support/pm2.sh jlist 2>&1) # Capture stderr as well
@@ -46,9 +48,13 @@ echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
         vendor="spruce"
     fi
 
-    ./support/shutdown-skill.sh "$namespace" "$vendor"
+    ./support/shutdown-skill.sh "$namespace" "$vendor" >/dev/null &
 done
 
 yarn stop.serving.heartwood
 
-echo "Shutdown complete."
+wait
+
+clear
+
+hero "All skills shutdown and Heartwood is no longer serving."

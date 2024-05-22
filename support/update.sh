@@ -2,6 +2,12 @@
 
 set -e
 
+# if any arguments are passed, we'll use update-skill.sh
+if [ $# -ge 1 ]; then
+    ./support/update-skill.sh "$@"
+    exit 0
+fi
+
 git pull
 
 cd packages || {
