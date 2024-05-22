@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./support/hero.sh
+
 # Default vendor
 vendor="spruce"
 
@@ -19,7 +21,6 @@ else
     vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
 
-
 # Set directory name based on namespace
 if [ "$namespace" == "mercury" ]; then
     skill_dir_name="${vendor}-${namespace}-api"
@@ -35,3 +36,7 @@ rm yarn.lock
 rm package-lock.json
 yarn
 yarn build.dev
+
+clear
+
+hero "$namespace has been updated"
