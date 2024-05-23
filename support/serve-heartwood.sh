@@ -10,7 +10,7 @@ heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill/dist"
 
 # Check if the heartwood-skill directory exists
 if [ ! -d "$heartwood_skill_dir" ]; then
-    echo "Error: The $heartwood_skill_dir directory does not exist. You may need to run 'yarn build.heartwood'."
+    echo "Error: The $heartwood_skill_dir directory does not exist. You may need to run 'yarn bundle.heartwood'."
     exit 1
 fi
 

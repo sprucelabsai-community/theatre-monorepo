@@ -56,7 +56,6 @@ echo "Installing dependencies..."
 yarn
 
 yarn build
-yarn build.heartwood
 
 rm -f yarn.lock >/dev/null 2>&1
 rm -f package-lock.json >/dev/null 2>&1
