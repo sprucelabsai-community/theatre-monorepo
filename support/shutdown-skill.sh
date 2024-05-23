@@ -3,6 +3,8 @@
 # Default vendor
 vendor="spruce"
 
+source ./support/hero.sh
+
 # Check for at least one argument
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <namespace> [vendor]"
@@ -14,6 +16,9 @@ fi
 namespace="$1"
 if [ $# -ge 2 ]; then
     vendor="$2"
+else
+    # Use resolve-vendor script to determine the vendor
+    vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
 
 # Construct the PM2 application name
@@ -26,3 +31,7 @@ fi
 
 # Stop the PM2 process
 ./support/pm2.sh stop "$app_name" && echo "Successfully stopped ${app_name}" || echo "Failed to stop ${app_name}, it might not be running"
+
+clear
+
+hero "Shutdown of ${namespace} complete."

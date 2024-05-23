@@ -2,6 +2,12 @@
 
 boot_command="$(pwd)/support/boot-skill.sh"
 
+# if there are arguments, call boot-skill.sh and pass everything through
+if [ "$#" -gt 0 ]; then
+    bash "$boot_command" "$@"
+    exit 0
+fi
+
 # Function to boot a skill
 boot_skill() {
     local namespace=$1
@@ -36,6 +42,14 @@ for skill_dir in $(pwd)/packages/*-skill; do
     namespace=$(echo "$skill_name" | cut -d '-' -f 2)
 
     if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" ]]; then
-        boot_skill "$namespace" "$vendor"
+        boot_skill "$namespace" "$vendor" >/dev/null &
     fi
 done
+
+echo "Waiting for boot to complete..."
+
+wait
+
+clear
+
+yarn list.running

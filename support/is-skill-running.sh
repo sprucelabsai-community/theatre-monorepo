@@ -14,7 +14,11 @@ fi
 namespace="$1"
 if [ $# -ge 2 ]; then
     vendor="$2"
+else
+    # Use resolve-vendor script to determine the vendor
+    vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
+
 
 # Construct PID file paths for both -skill and -api
 processes_dir="$(pwd)/.processes"

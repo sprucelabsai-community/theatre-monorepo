@@ -1,11 +1,41 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <branch_name>"
-    exit 1
-fi
+source ./support/hero.sh
 
-branch_name="$1"
+# Initialize variables
+branch_name=""
+hard=false
+should_update_dependencies=true
+
+# Function to display usage details
+show_help() {
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  --branchName=<branch>         Specify the branch name to checkout."
+    echo "  --hard                        Clobber all local changes."
+    echo "  --shouldUpdateDependencies=   Specify whether to run 'yarn' after checking out. Default is true."
+    echo "  --help                        Show this help message."
+}
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+    --branchName=*) branch_name="${1#*=}" ;;
+    --hard) hard=true ;;
+    --shouldUpdateDependencies=false) should_update_dependencies=false ;;
+    --help)
+        show_help
+        exit 0
+        ;;
+    *)
+        echo "Unknown parameter passed: $1"
+        show_help
+        exit 1
+        ;;
+    esac
+    shift
+done
 
 cd packages
 
@@ -13,18 +43,36 @@ for skill_dir in *-skill *-api; do
     (
         echo "Checking out $skill_dir..."
 
-        cd "$skill_dir"
-
-        git checkout "$branch_name"
-        git pull origin "$branch_name"
+        # Call the checkout-skill.sh script with the appropriate arguments
+        if [ "$hard" == "true" ]; then
+            if [ -n "$branch_name" ]; then
+                ./../support/checkout-skill.sh --hard "$skill_dir" --branchName="$branch_name"
+            else
+                ./../support/checkout-skill.sh --hard "$skill_dir"
+            fi
+        else
+            if [ -n "$branch_name" ]; then
+                ./../support/checkout-skill.sh "$skill_dir" --branchName="$branch_name"
+            else
+                ./../support/checkout-skill.sh "$skill_dir"
+            fi
+        fi
     ) &
 done
 
 # Wait for all background processes to finish
 wait
 
-echo "All skills have been checked out to $branch_name."
-
 cd ..
 
-yarn
+if [ "$should_update_dependencies" == "true" ]; then
+    yarn
+fi
+
+clear
+
+if [ -n "$branch_name" ]; then
+    hero "All skills have been checked out from $branch_name."
+else
+    hero "All skills have been checked out from their default branch."
+fi

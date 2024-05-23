@@ -6,6 +6,8 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
+source support/hero.sh
+
 # Store the branch name provided by the user
 branch_name="$1"
 
@@ -44,5 +46,7 @@ done
 # Wait for all background processes to finish
 wait
 
+clear
+
 # Notify the user that all skills have been updated
-echo "All skills have been pulled from the branch $branch_name."
+hero "All skills have been pulled from the branch $branch_name."

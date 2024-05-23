@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./support/hero.sh
+
 # Default vendor
 vendor="spruce"
 
@@ -14,6 +16,9 @@ fi
 namespace="$1"
 if [ $# -ge 2 ]; then
     vendor="$2"
+else
+    # Use resolve-vendor script to determine the vendor
+    vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
 
 # Set directory name based on namespace
@@ -31,3 +36,7 @@ rm yarn.lock
 rm package-lock.json
 yarn
 yarn build.dev
+
+clear
+
+hero "$namespace has been updated"

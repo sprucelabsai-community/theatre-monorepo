@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Default vendor
-vendor="spruce"
 # Default number of lines
 lines=15 # Default value, change if you want a different default
 
@@ -28,6 +26,11 @@ done
 if [ -z "$namespace" ]; then
     echo "Error: Namespace not specified."
     exit 1
+fi
+
+# If vendor is not provided, use the resolve-vendor.sh script to determine the vendor
+if [ -z "$vendor" ]; then
+    vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
 
 # Construct the application name

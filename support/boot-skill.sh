@@ -8,6 +8,15 @@ packages_dir="$(pwd)/packages"
 processes_dir="$(pwd)/.processes"
 logs_dir="${processes_dir}/logs"
 
+
+if [ $# -ge 2 ]; then
+    vendor="$2"
+else
+    # Use resolve-vendor script to determine the vendor
+    vendor=$(./support/resolve-vendor.sh "$namespace")
+fi
+
+
 # Ensure .processes directory exists
 mkdir -p "$processes_dir"
 mkdir -p "$logs_dir"

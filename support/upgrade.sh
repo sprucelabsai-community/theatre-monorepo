@@ -2,6 +2,12 @@
 
 echo "Upgrading skills..."
 
+# if any arguments are passed, we'll use upgrade-skill.sh
+if [ $# -ge 1 ]; then
+    ./support/upgrade-skill.sh "$@"
+    exit 0
+fi
+
 cd ./packages
 
 for dir in *-skill; do
