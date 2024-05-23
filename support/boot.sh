@@ -50,6 +50,4 @@ echo "Waiting for boot to complete..."
 
 wait
 
-clear
-
 yarn list.running

@@ -69,8 +69,6 @@ if [ "$should_update_dependencies" == "true" ]; then
     yarn
 fi
 
-clear
-
 if [ -n "$branch_name" ]; then
     hero "All skills have been checked out from $branch_name."
 else

@@ -55,6 +55,4 @@ yarn stop.serving.heartwood
 
 wait
 
-clear
-
 hero "All skills shutdown and Heartwood is no longer serving."

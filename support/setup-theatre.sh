@@ -58,6 +58,4 @@ yarn boot.serve >/dev/null &
 
 wait
 
-clear
-
 hero "Theatre setup complete! Visit http://localhost:8080"

@@ -8,6 +8,4 @@ rm -rf node_modules/ package-lock.json npm install.lock .processes .pm2
 
 find ./packages -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
 
-clear
-
 hero "Reset complete. You are now ready to start from scratch."

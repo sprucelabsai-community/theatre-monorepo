@@ -46,7 +46,5 @@ done
 # Wait for all background processes to finish
 wait
 
-clear
-
 # Notify the user that all skills have been updated
 hero "All skills have been pulled from the branch $branch_name."

@@ -37,6 +37,4 @@ rm package-lock.json
 yarn
 yarn build.dev
 
-clear
-
 hero "$namespace has been updated"

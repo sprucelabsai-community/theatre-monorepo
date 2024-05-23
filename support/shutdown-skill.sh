@@ -32,6 +32,4 @@ fi
 # Stop the PM2 process
 ./support/pm2.sh stop "$app_name" && echo "Successfully stopped ${app_name}" || echo "Failed to stop ${app_name}, it might not be running"
 
-clear
-
 hero "Shutdown of ${namespace} complete."

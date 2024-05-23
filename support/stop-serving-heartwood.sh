@@ -10,7 +10,6 @@ if [ -f .processes/caddy-heartwood.pid ]; then
     # Kill the specific Caddy process
     if kill -9 "$pid"; then
         rm .processes/caddy-heartwood.pid
-        clear
         hero "Heartwood is no longer serving."
     else
         echo "Error: Failed to stop Heartwood."
@@ -18,6 +17,5 @@ if [ -f .processes/caddy-heartwood.pid ]; then
 else
     echo "PID file not found. Falling back to killing all Caddy processes."
     pkill caddy
-    clear
     hero "Heartwood is no longer serving."
 fi
