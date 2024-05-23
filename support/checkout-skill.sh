@@ -4,6 +4,8 @@
 hard=false
 branch=""
 
+import ./support/hero.sh
+
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -32,9 +34,8 @@ fi
 
 # Determine the branch to use
 if [ -z "$branch" ]; then
-    # Use git ls-remote to get the default branch name
-    default_branch=$(git ls-remote --symref origin HEAD | grep 'ref:' | sed 's/.*refs\/heads\/\(.*\)\tHEAD/\1/')
-    branch=$default_branch
+    # Call the resolve-default-branch.sh script to get the default branch name
+    branch=$(./../resolve-default-branch.sh "$skill_dir")
 fi
 
 echo "Branch to use: $branch"
@@ -42,3 +43,5 @@ echo "Branch to use: $branch"
 # Checkout the specified branch and pull the latest changes
 git checkout "$branch"
 git pull
+
+hero "Checked out $skill_dir to $branch"
