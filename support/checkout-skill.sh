@@ -35,7 +35,7 @@ fi
 # Determine the branch to use
 if [ -z "$branch" ]; then
     # Call the resolve-default-branch.sh script to get the default branch name
-    branch=$(./../resolve-default-branch.sh "$skill_dir")
+    branch=$(./../../support/resolve-default-branch.sh "$skill_dir")
 fi
 
 echo "Branch to use: $branch"
