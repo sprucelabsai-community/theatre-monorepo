@@ -12,7 +12,7 @@ for skill_dir in packages/*-skill packages/*-api; do
 
         echo "Updating $skill_dir..."
 
-        branch=$(./support/resolve-default-branch.sh "$skill_dir")
+        $default_branch=$(./support/resolve-default-branch.sh "$skill_dir")
 
         cd "$skill_dir"
 
