@@ -4,7 +4,7 @@
 hard=false
 branch=""
 
-import ./support/hero.sh
+source ./support/hero.sh
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
