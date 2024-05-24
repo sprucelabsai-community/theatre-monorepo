@@ -11,7 +11,7 @@
     "clean": "lerna run clean",
     "commit.push.skills": "./support/commit-push-skills.sh",
     "dump.core.database": "./support/dump-core-db.sh",
-    "export.theatre.zip": "./support/export-theatred.sh",
+    "export.theatre.zip": "./support/export-theatre.sh",
     "fix.lint": "lerna run fix.lint",
     "import.blueprint": "./support/import-blueprint.sh",
     "import.theatre.zip": "./support/import-theatre.sh",

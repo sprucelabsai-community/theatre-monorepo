@@ -27,7 +27,7 @@ fi
 
 # Perform a backup using yarn export.theatre with the --backup and --shouldIncludeConfig flags
 echo "Performing backup..."
-yarn export.theatre --backup --shouldIncludeConfig
+yarn export.theatre.zip --backup --shouldIncludeConfig
 
 # Remove the existing 'packages' and 'node_modules' directories
 echo "Removing existing theatre and node_modules..."
