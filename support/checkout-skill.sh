@@ -24,18 +24,18 @@ fi
 
 echo "Checking $skill_dir..."
 
+# Determine the branch to use
+if [ -z "$branch" ]; then
+    # Call the resolve-default-branch.sh script to get the default branch name
+    branch=$(./support/resolve-default-branch.sh "$skill_dir")
+fi
+
 # Navigate to the skill directory
 cd "$skill_dir" || exit
 
 # If hard, clobber all local changes
 if [ "$hard" == "true" ]; then
     git reset --hard
-fi
-
-# Determine the branch to use
-if [ -z "$branch" ]; then
-    # Call the resolve-default-branch.sh script to get the default branch name
-    branch=$(./../../support/resolve-default-branch.sh "$skill_dir")
 fi
 
 echo "Branch to use: $branch"
