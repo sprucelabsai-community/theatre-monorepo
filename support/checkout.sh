@@ -45,13 +45,14 @@ for skill_dir in *-skill *-api; do
 
         # Call the checkout-skill.sh script with the appropriate arguments
         if [ "$hard" == "true" ]; then
-            if [ -n "$branch_name" ]; then
+            # if branch name and it's not equal to "default"
+            if [ -n "$branch_name" ] && [ "$branch_name" != "default" ]; then
                 ./../support/checkout-skill.sh --hard "$skill_dir" --branchName="$branch_name"
             else
                 ./../support/checkout-skill.sh --hard "$skill_dir"
             fi
         else
-            if [ -n "$branch_name" ]; then
+            if [ -n "$branch_name" ] && [ "$branch_name" != "default" ]; then
                 ./../support/checkout-skill.sh "$skill_dir" --branchName="$branch_name"
             else
                 ./../support/checkout-skill.sh "$skill_dir"
