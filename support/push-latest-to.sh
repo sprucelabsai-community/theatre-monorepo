@@ -35,6 +35,8 @@ for skill_dir in packages/*-skill packages/*-api; do
     ) &
 done
 
+echo "Waiting for all skills to be pushed..."
+
 # Wait for all background processes to finish
 wait
 
