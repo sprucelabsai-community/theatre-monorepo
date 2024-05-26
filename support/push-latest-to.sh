@@ -32,7 +32,7 @@ for skill_dir in packages/*-skill packages/*-api; do
         git push -u origin "$branch_name" --force
 
         git checkout $default_branch
-    )
+    ) &
 done
 
 # Wait for all background processes to finish
