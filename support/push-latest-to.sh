@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <branch_name>"
+    echo "Usage: yarn push.latest.to <branch_name>"
     exit 1
 fi
 
@@ -12,9 +12,11 @@ for skill_dir in packages/*-skill packages/*-api; do
 
         echo "Updating $skill_dir..."
 
-        $default_branch=$(./support/resolve-default-branch.sh "$skill_dir")
+        default_branch=$(./support/resolve-default-branch.sh "$skill_dir" 2>&1)
 
-        cd "$skill_dir"
+        echo "Default branch is $default_branch"
+
+        cd "$skill_dir" || exit 1
 
         # Check if the branch already exists
         if git show-ref --verify --quiet "refs/heads/$branch_name"; then
@@ -30,7 +32,7 @@ for skill_dir in packages/*-skill packages/*-api; do
         git push -u origin "$branch_name" --force
 
         git checkout $default_branch
-    ) &
+    )
 done
 
 # Wait for all background processes to finish

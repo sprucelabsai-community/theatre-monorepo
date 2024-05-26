@@ -9,7 +9,7 @@ fi
 skill_dir="$1"
 
 # Navigate to the skill directory
-cd "$skill_dir" || exit
+cd "$skill_dir" || exit 1
 
 # Use git ls-remote to get the default branch name
 default_branch=$(git ls-remote --symref origin HEAD | grep 'ref:' | sed 's/.*refs\/heads\/\(.*\)\tHEAD/\1/')
