@@ -12,6 +12,7 @@ cd packages
 for skill_dir in *-skill *-api; do
     (
         cd "$skill_dir"
+        git fetch origin
         # Check if the branch already exists
         if git show-ref --verify --quiet "refs/heads/$branch_name"; then
             # Branch exists, so check it out and reset it to the latest code from the default branch
