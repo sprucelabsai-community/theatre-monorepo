@@ -19,7 +19,9 @@ boot_skill() {
 
 # Boot Mercury API if mercury exists
 if [[ -d $(pwd)/packages/spruce-mercury-api ]]; then
-    boot_skill "mercury"
+    boot_skill "mercury" >/dev/null &
+    echo "Booting Mercury API..."
+    echo "Waiting 5 seconds for boot to complete..."
     sleep 5
 else
     echo "Mercury API not found. Skipping..."
@@ -27,7 +29,9 @@ fi
 
 # Boot Heartwood Skill if it exists
 if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
-    boot_skill "heartwood"
+    boot_skill "heartwood" >/dev/null &
+    echo "Booting Heartwood Skill..."
+    echo "Waiting 5 seconds for boot to complete..."
     sleep 5
 else
     echo "Heartwood Skill not found. Skipping..."

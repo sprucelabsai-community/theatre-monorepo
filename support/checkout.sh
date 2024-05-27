@@ -23,7 +23,7 @@ while [[ "$#" -gt 0 ]]; do
     case $1 in
     --branchName=*) branch_name="${1#*=}" ;;
     --hard) hard=true ;;
-    --shouldUpdateDependencies=false) should_update_dependencies=false ;;
+    --shouldUpdateDependencies=false) should_update_dependencies=fal se ;;
     --help)
         show_help
         exit 0
@@ -37,24 +37,23 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-cd packages
-
-for skill_dir in *-skill *-api; do
+for skill_dir in packages/*-skill packages/*-api; do
     (
         echo "Checking out $skill_dir..."
 
         # Call the checkout-skill.sh script with the appropriate arguments
         if [ "$hard" == "true" ]; then
-            if [ -n "$branch_name" ]; then
-                ./../support/checkout-skill.sh --hard "$skill_dir" --branchName="$branch_name"
+            # if branch name and it's not equal to "default"
+            if [ -n "$branch_name" ] && [ "$branch_name" != "default" ]; then
+                ./support/checkout-skill.sh --hard "$skill_dir" --branchName="$branch_name"
             else
-                ./../support/checkout-skill.sh --hard "$skill_dir"
+                ./support/checkout-skill.sh --hard "$skill_dir"
             fi
         else
-            if [ -n "$branch_name" ]; then
-                ./../support/checkout-skill.sh "$skill_dir" --branchName="$branch_name"
+            if [ -n "$branch_name" ] && [ "$branch_name" != "default" ]; then
+                ./support/checkout-skill.sh "$skill_dir" --branchName="$branch_name"
             else
-                ./../support/checkout-skill.sh "$skill_dir"
+                ./support/checkout-skill.sh "$skill_dir"
             fi
         fi
     ) &
@@ -62,8 +61,6 @@ done
 
 # Wait for all background processes to finish
 wait
-
-cd ..
 
 if [ "$should_update_dependencies" == "true" ]; then
     yarn

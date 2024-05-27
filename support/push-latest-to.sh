@@ -1,25 +1,23 @@
 #!/usr/bin/env bash
 
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <branch_name>"
+    echo "Usage: yarn push.latest.to <branch_name>"
     exit 1
 fi
 
 branch_name="$1"
 
-cd packages
-
-for skill_dir in *-skill *-api; do
+for skill_dir in packages/*-skill packages/*-api; do
     (
 
         echo "Updating $skill_dir..."
 
-        # Update to the latest code from the default branch
-        ../support/checkout-default-skill.sh "$skill_dir"
+        default_branch=$(./support/resolve-default-branch.sh "$skill_dir" 2>&1)
 
-        cd "$skill_dir"
+        echo "Default branch is $default_branch"
 
-        default_branch=$(git ls-remote --symref origin HEAD | grep 'ref:' | sed 's/.*refs\/heads\/\(.*\)\tHEAD/\1/')
+        cd "$skill_dir" || exit 1
+        git fetch origin
 
         # Check if the branch already exists
         if git show-ref --verify --quiet "refs/heads/$branch_name"; then
@@ -37,6 +35,8 @@ for skill_dir in *-skill *-api; do
         git checkout $default_branch
     ) &
 done
+
+echo "Waiting for all skills to be pushed..."
 
 # Wait for all background processes to finish
 wait
