@@ -17,6 +17,7 @@ for skill_dir in packages/*-skill packages/*-api; do
         echo "Default branch is $default_branch"
 
         cd "$skill_dir" || exit 1
+        git fetch origin
 
         # Check if the branch already exists
         if git show-ref --verify --quiet "refs/heads/$branch_name"; then
