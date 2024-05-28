@@ -13,7 +13,7 @@ hero() {
     local text="$1"
 
     local colors=("$RED" "$GREEN" "$YELLOW" "$BLUE" "$MAGENTA" "$CYAN")
-    local random_color=${colors[$RANDOM % ${#colors[@]}]}
+    local random_color=${colors[1]}
 
     local length=${#text}
     local padding=$((length + 6))
