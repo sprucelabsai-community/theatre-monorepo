@@ -248,6 +248,7 @@ if [ -z "$blueprint_path" ]; then
     curl -o ~/Downloads/Sprucebot+Theatre-arm64.dmg https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
 
     echo "Installing Sprucebot Development Theatre..."
+
     # Mount the DMG file
     hdiutil attach ~/Downloads/Sprucebot+Theatre-arm64.dmg -mountpoint /Volumes/Sprucebot\ Theatre
 
@@ -256,6 +257,8 @@ if [ -z "$blueprint_path" ]; then
 
     # Unmount the DMG file
     hdiutil detach /Volumes/Sprucebot\ Theatre
+
+    clear
 
     echo "Sprucebot Development Theatre installed into Applications..."
     open /Applications/Sprucebot\ Theatre.app
