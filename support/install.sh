@@ -41,8 +41,6 @@ echo "4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development 
 sleep 1
 echo "Let's get started! 🚀"
 sleep 1
-echo "PS: Make sure you are in a directory where you want to install the Sprucebot Development Theatre."
-sleep 1
 echo -n "Press enter when ready: "
 read -r response
 # wait for return
@@ -258,18 +256,18 @@ else
         exit 1
     fi
 
+    echo "Setting you up with a Sprucebot Development Theatre based on your blueprint.yml..."
+    echo "Where would you like to setup your Sprucebot Development Theatre?"
+    echo -n "Destination: "
+    read -r path
+
+    cd $path
+
     # clone theatre mono repo at
-    git clone git@github.com:sprucelabsai-community/theatre-monorepo.git
-    cp $blueprint_path theatre-monorepo/blueprint.yml
-    mv theatre-monorepo spruce-theatre
-    cd spruce-theatre
-    yarn
-    yarn sync blueprint.yml
-    yarn boot.mercury
-    yarn run login blueprint.yml
-    yarn register.skills
-    yarn login.skills
-    yarn boot.serve
+    git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
+    cp $blueprint_path ./blueprint.yml
+
+    yarn setup.threatre blueprint.yml
 
     echo "You're all set up! 🚀"
     echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
