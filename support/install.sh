@@ -245,17 +245,18 @@ read -r blueprint_path
 
 if [ -z "$blueprint_path" ]; then
     echo "Downloading Sprucebot Development Theatre..."
+
+    rm -f ~/Downloads/Sprucebot+Theatre-arm64.dmg
+
     curl -o ~/Downloads/Sprucebot+Theatre-arm64.dmg https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
 
     echo "Installing Sprucebot Development Theatre..."
 
-    # Mount the DMG file
     hdiutil attach ~/Downloads/Sprucebot+Theatre-arm64.dmg -mountpoint /Volumes/Sprucebot\ Theatre
 
-    # Copy the app to the Applications folder
+    rm -f /Applications/Sprucebot\ Theatre.app
     cp -R /Volumes/Sprucebot\ Theatre/Sprucebot\ Theatre.app /Applications
 
-    # Unmount the DMG file
     hdiutil detach /Volumes/Sprucebot\ Theatre
 
     clear
