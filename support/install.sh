@@ -245,9 +245,9 @@ read -r blueprint_path
 
 if [ -z "$blueprint_path" ]; then
     echo "Downloading Sprucebot Development Theatre..."
-    curl -o Sprucebot+Theatre-arm64.dmg https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
+    curl -o ~/Downloads/Sprucebot+Theatre-arm64.dmg https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
     echo "Installing Sprucebot Development Theatre..."
-    hdiutil attach Sprucebot+Theatre-arm64.dmg
+    hdiutil attach ~/Downloads/Sprucebot+Theatre-arm64.dmg
 
     exit 1
 else
