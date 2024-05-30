@@ -154,7 +154,7 @@ echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
 source $(get_profile)
 
 # Check if vscode is installed
-echo -n "Would you like to setup your machine for development? (y/n): "
+echo -n "Would you like to setup Visual Studio Code for coding? (y/n): "
 
 read -r response
 
@@ -248,6 +248,10 @@ if [ -z "$blueprint_path" ]; then
     curl -o ~/Downloads/Sprucebot+Theatre-arm64.dmg https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
     echo "Installing Sprucebot Development Theatre..."
     hdiutil attach ~/Downloads/Sprucebot+Theatre-arm64.dmg
+    cp -R /Volumes/Sprucebot\ Theatre/Sprucebot\ Theatre.app /Applications
+    hdiutil detach /Volumes/Sprucebot\ Theatre
+    echo "Sprucebot Development Theatre installed into Applications..."
+    open /Applications/Sprucebot\ Theatre.app
 
     exit 1
 else
