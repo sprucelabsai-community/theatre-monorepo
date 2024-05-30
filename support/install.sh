@@ -246,7 +246,12 @@ read -r blueprint_path
 if [ -z "$blueprint_path" ]; then
     echo "No blueprint.yml provided..."
     echo "Setting you up with a Sprucebot Development Theatre..."
-    echo "Coming soon..."
+    # download dmg from https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
+    echo "Downloading Sprucebot Development Theatre..."
+    curl -o Sprucebot+Theatre-arm64.dmg https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
+    echo "Installing Sprucebot Development Theatre..."
+    hdiutil attach Sprucebot+Theatre-arm64.dmg
+
     exit 1
 else
 
