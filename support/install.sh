@@ -244,9 +244,6 @@ echo -n "Path to blueprinty.yml. Leave empty if you don't have one or have no id
 read -r blueprint_path
 
 if [ -z "$blueprint_path" ]; then
-    echo "No blueprint.yml provided..."
-    echo "Setting you up with a Sprucebot Development Theatre..."
-    # download dmg from https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
     echo "Downloading Sprucebot Development Theatre..."
     curl -o Sprucebot+Theatre-arm64.dmg https://s3.amazonaws.com/developer.spruce.bot/development-theatre/Sprucebot+Theatre-arm64.dmg
     echo "Installing Sprucebot Development Theatre..."
