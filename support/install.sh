@@ -254,7 +254,7 @@ if [ -z "$blueprint_path" ]; then
 
     hdiutil attach ~/Downloads/Sprucebot+Theatre-arm64.dmg -mountpoint /Volumes/Sprucebot\ Theatre
 
-    rm -f /Applications/Sprucebot\ Theatre.app
+    rm -rf /Applications/Sprucebot\ Theatre.app
     cp -R /Volumes/Sprucebot\ Theatre/Sprucebot\ Theatre.app /Applications
 
     hdiutil detach /Volumes/Sprucebot\ Theatre
