@@ -91,6 +91,36 @@ is_node_outdated() {
     fi
 }
 
+touch $(get_profile)
+source $(get_profile)
+
+# Check if Homebrew is installed
+if ! [ -x "$(command -v brew)" ]; then
+    echo -n "Homebrew is not installed...
+You OK if I install it now? (y/n): "
+    read -r response
+
+    # Check if user wants to install Homebrew
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        echo "Homebrew installed..."
+
+        if [[ "$(uname -m)" == "arm64" ]]; then
+            echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>$(get_profile)
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        else
+            echo 'eval "$(/usr/local/bin/brew shellenv)"' >>$(get_profile)
+            eval "$(/usr/local/bin/brew shellenv)"
+        fi
+
+        source $(get_profile)
+    else
+        echo "Please install Node manually from https://nodejs.org/en/download/."
+        exit 1
+    fi
+fi
+
 echo "Checking for Node..."
 
 if is_node_installed; then
@@ -110,33 +140,6 @@ fi
 if [ "$should_install_node" = true ]; then
     echo "Installing Node via Homebrew..."
 
-    # Check if Homebrew is installed
-    if ! [ -x "$(command -v brew)" ]; then
-        echo -n "Homebrew is not installed...
-You OK if I install it now? (y/n): "
-        read -r response
-
-        # Check if user wants to install Homebrew
-        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-            echo "Installing Homebrew..."
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            echo "Homebrew installed..."
-
-            if [[ "$(uname -m)" == "arm64" ]]; then
-                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>$(get_profile)
-                eval "$(/opt/homebrew/bin/brew shellenv)"
-            else
-                echo 'eval "$(/usr/local/bin/brew shellenv)"' >>$(get_profile)
-                eval "$(/usr/local/bin/brew shellenv)"
-            fi
-
-            source $(get_profile)
-        else
-            echo "Please install Node manually from https://nodejs.org/en/download/."
-            exit 1
-        fi
-    fi
-
     brew install node
 
     source $(get_profile)
@@ -151,6 +154,7 @@ yarn global add @sprucelabs/spruce-cli
 # add spruce to PATH from ~/.yarn/bin
 echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
 
+# Source the profile file to apply changes immediately
 source $(get_profile)
 
 # Check if vscode is installed
@@ -159,9 +163,6 @@ echo -n "Would you like to setup Visual Studio Code for coding? (y/n): "
 read -r response
 
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    echo "Setting up your machine for development..."
-    echo "Checking for Visual Studio Code..."
-
     # check for vscode
     if ! [ -x "$(command -v code)" ]; then
         echo "Visual Studio Code CLI tools is not installed..."
@@ -175,6 +176,7 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
             # Add Visual Studio Code CLI to PATH
             echo 'export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' >>$(get_profile)
 
+            # Source the profile file to apply changes immediately
             source $(get_profile)
         else
 
