@@ -116,7 +116,7 @@ You OK if I install it now? (y/n): "
 
         source $(get_profile)
     else
-        echo "Please install Node manually from https://nodejs.org/en/download/."
+        echo "Please install Homebrew manually from https://brew.sh/."
         exit 1
     fi
 fi
@@ -277,6 +277,7 @@ else
 
     echo "Setting you up with a Sprucebot Development Theatre based on your blueprint.yml..."
     echo "Where would you like to setup your Sprucebot Development Theatre?"
+
     echo -n "Destination: "
     read -r path
 
