@@ -7,5 +7,4 @@ package-lock.json
 .processes
 **/Caddyfile
 snapshots/
-.env
 .pm2
