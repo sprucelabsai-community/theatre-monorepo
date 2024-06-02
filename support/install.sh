@@ -136,13 +136,23 @@ else
     should_install_node=true
 fi
 
-# Check if Node is installed, if not, install it
+# Check if Node is installed, if not, ask to install it
 if [ "$should_install_node" = true ]; then
-    echo "Installing Node via Homebrew..."
 
-    brew install node
+    echo -n "Would you like to install Node? (y/n): "
+    read -r response
 
-    source $(get_profile)
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Installing Node via Homebrew..."
+
+        brew install node
+
+        source $(get_profile)
+    else
+        echo "Please install Node manually from https://nodejs.org/."
+        exit 1
+    fi
+
 fi
 
 # install yarn globally
@@ -159,7 +169,6 @@ source $(get_profile)
 
 # Check if vscode is installed
 echo -n "Would you like to setup Visual Studio Code for coding? (y/n): "
-
 read -r response
 
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
@@ -188,6 +197,7 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
                 brew install --cask visual-studio-code
             else
                 echo "Please install Visual Studio Code manually from https://code.visualstudio.com/."
+                exit 1
             fi
 
         fi
@@ -206,6 +216,7 @@ if ! [ -x "$(command -v mongod)" ]; then
         brew install mongodb-community
     else
         echo "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
+        exit 1
     fi
 fi
 
@@ -225,6 +236,7 @@ if ! [ -x "$(command -v caddy)" ]; then
         brew install caddy
     else
         echo "Please install Caddy manually from https://caddyserver.com/docs/install."
+        exit 1
     fi
 fi
 
@@ -238,6 +250,7 @@ if ! [ -x "$(command -v jq)" ]; then
         brew install jq
     else
         echo "Please install jq manually from https://stedolan.github.io/jq/download/."
+        exit 1
     fi
 fi
 
@@ -263,10 +276,11 @@ if [ -z "$blueprint_path" ]; then
 
     clear
 
-    echo "Sprucebot Development Theatre installed into Applications..."
+    echo "Sprucebot Development Theatre installed into Applications."
+    echo "Opening now..."
     open /Applications/Sprucebot\ Theatre.app
 
-    exit 1
+    exit 0
 else
 
     # throw if bad path if file does not exist
@@ -275,7 +289,7 @@ else
         exit 1
     fi
 
-    echo "Setting you up with a Sprucebot Development Theatre based on your blueprint.yml..."
+    echo "Setting you up with a Sprucebot Development Theatre based on your blueprint.yml."
     echo "Where would you like to setup your Sprucebot Development Theatre?"
 
     echo -n "Destination: "
