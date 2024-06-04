@@ -42,9 +42,9 @@ hero "Logging in using cli..."
 
 hero "Registering all new skills..."
 
-./support/register-skills.sh
+./support/register-skills.sh --shouldForceRegister=true
 
-hero "Logging in as existing skills..."
+hero "Logging in as any existing skills..."
 
 ./support/login-skills.sh
 
