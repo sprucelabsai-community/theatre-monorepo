@@ -30,11 +30,14 @@ hero "Building skills..."
 
 yarn build
 
-hero "Booting Mercury..."
+# boot mercury if packages/spruce-mercury-api exists
+if [ -d "packages/spruce-mercury-api" ]; then
+    hero "Booting Mercury..."
 
-yarn boot mercury
+    yarn boot mercury
 
-sleep 3
+    sleep 3
+fi
 
 hero "Logging in using cli..."
 
