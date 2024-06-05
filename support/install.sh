@@ -50,7 +50,7 @@ min_node_version="20.0.0"
 should_install_node=false
 
 # Function to get the shell profile
-function get_profile() {
+get_profile() {
     if [[ $SHELL == "/bin/zsh" ]]; then
         echo "$HOME/.zshrc"
     else
@@ -91,35 +91,39 @@ is_node_outdated() {
     fi
 }
 
+install_homebrew() {
+    local fail_message="$1"
+
+    # Check if Homebrew is installed
+    if ! [ -x "$(command -v brew)" ]; then
+        echo -n "Homebrew is not installed...
+You OK if I install it now? (y/n): "
+        read -r response
+
+        # Check if user wants to install Homebrew
+        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+            echo "Installing Homebrew..."
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            echo "Homebrew installed..."
+
+            if [[ "$(uname -m)" == "arm64" ]]; then
+                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>$(get_profile)
+                eval "$(/opt/homebrew/bin/brew shellenv)"
+            else
+                echo 'eval "$(/usr/local/bin/brew shellenv)"' >>$(get_profile)
+                eval "$(/usr/local/bin/brew shellenv)"
+            fi
+
+            source $(get_profile)
+        else
+            echo "$fail_message"
+            exit 1
+        fi
+    fi
+}
+
 touch $(get_profile)
 source $(get_profile)
-
-# Check if Homebrew is installed
-if ! [ -x "$(command -v brew)" ]; then
-    echo -n "Homebrew is not installed...
-You OK if I install it now? (y/n): "
-    read -r response
-
-    # Check if user wants to install Homebrew
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-        echo "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        echo "Homebrew installed..."
-
-        if [[ "$(uname -m)" == "arm64" ]]; then
-            echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>$(get_profile)
-            eval "$(/opt/homebrew/bin/brew shellenv)"
-        else
-            echo 'eval "$(/usr/local/bin/brew shellenv)"' >>$(get_profile)
-            eval "$(/usr/local/bin/brew shellenv)"
-        fi
-
-        source $(get_profile)
-    else
-        echo "Please install Homebrew manually from https://brew.sh/."
-        exit 1
-    fi
-fi
 
 echo "Checking for Node..."
 
@@ -145,6 +149,7 @@ if [ "$should_install_node" = true ]; then
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         echo "Installing Node via Homebrew..."
 
+        install_homebrew "Please install Node manually from https://nodejs.org/."
         brew install node
 
         source $(get_profile)
@@ -193,6 +198,7 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
             read -r response
 
             if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+                install_homebrew "Please install Visual Studio Code manually from https://code.visualstudio.com/."
                 echo "Installing Visual Studio Code..."
                 brew install --cask visual-studio-code
             else
@@ -211,7 +217,9 @@ if ! [ -x "$(command -v mongod)" ]; then
     read -r response
 
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        install_homebrew "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
         echo "Installing MongoDB..."
+
         brew tap mongodb/brew
         brew install mongodb-community
     else
@@ -232,6 +240,7 @@ if ! [ -x "$(command -v caddy)" ]; then
     read -r response
 
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        install_homebrew "Please install Caddy manually from https://caddyserver.com/docs/install."
         echo "Installing Caddy..."
         brew install caddy
     else
@@ -246,6 +255,7 @@ if ! [ -x "$(command -v jq)" ]; then
     read -r response
 
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        install_homebrew "Please install jq manually from https://stedolan.github.io/jq/download/."
         echo "Installing jq..."
         brew install jq
     else
@@ -276,7 +286,7 @@ if [ -z "$blueprint_path" ]; then
 
     clear
 
-    echo "Sprucebot Development Theatre installed into Applications."
+    echo "Sprucebot Development Theatre installed into Applications as Sprucebot Theatre."
     echo "Opening now..."
     open /Applications/Sprucebot\ Theatre.app
 
