@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.9.0"
+echo "Version: 0.9.1"
 sleep 1
 echo "Hey there! 👋"
 sleep 1
