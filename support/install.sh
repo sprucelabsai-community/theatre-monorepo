@@ -29,7 +29,9 @@ echo "Sprucebot here! 🌲🤖"
 sleep 1
 echo "By the time I'm done, I'll have done the following:"
 sleep 1
-echo "1. Installed Node.js, Yarn and Mongo (or skipped any already installed). If any is not installed, I'll ask you if you want to install it via Brew."
+echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed). "
+sleep 2
+echo "If something is not installed, I'll ask you if you if you want me to use Brew to install it."
 sleep 2
 echo "2. Installed the Spruce CLI."
 sleep 1
@@ -172,13 +174,12 @@ echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
 # Source the profile file to apply changes immediately
 source $(get_profile)
 
-# Check if vscode is installed
-echo -n "Would you like to setup Visual Studio Code for coding? (y/n): "
-read -r response
+# Check if the 'code' command is available
+if ! command -v code >/dev/null 2>&1; then
+    echo -n "Would you like to setup Visual Studio Code for coding? (y/n): "
+    read -r response
 
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    # check for vscode
-    if ! [ -x "$(command -v code)" ]; then
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         echo "Visual Studio Code CLI tools is not installed..."
         echo "Checking for Visual Studio Code..."
 
@@ -208,7 +209,6 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
 
         fi
     fi
-
 fi
 
 # install mongodb if not installed
