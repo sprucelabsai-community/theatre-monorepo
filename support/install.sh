@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.9.1"
+echo "Version: 0.9.2"
 sleep 1
 echo "Hey there! 👋"
 sleep 1
@@ -32,6 +32,8 @@ sleep 1
 echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed). "
 sleep 2
 echo "  1a. If something is not installed, I'll ask you if you if you want me to use Brew to install it."
+sleep 2
+echo "  2a. If you don't want me to install something, I'll give you instructions to install it manually."
 sleep 2
 echo "2. Installed the Spruce CLI."
 sleep 1
