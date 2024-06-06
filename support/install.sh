@@ -31,15 +31,15 @@ echo "By the time I'm done, I'll have done the following:"
 sleep 1
 echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed). "
 sleep 2
-echo "If something is not installed, I'll ask you if you if you want me to use Brew to install it."
+echo "  1a. If something is not installed, I'll ask you if you if you want me to use Brew to install it."
 sleep 2
 echo "2. Installed the Spruce CLI."
 sleep 1
 echo "3. Setup your computer for development."
 sleep 1
-echo "4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
+echo "  4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
 sleep 2
-echo "4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
+echo "  4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
 sleep 3
 echo "Let's get started! 🚀"
 sleep 1
