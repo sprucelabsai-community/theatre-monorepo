@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.9.2"
+echo "Version: 0.9.3"
 sleep 1
 echo "Hey there! 👋"
 sleep 1
@@ -267,7 +267,7 @@ if ! [ -x "$(command -v jq)" ]; then
 fi
 
 # ask if the person already has a blueprint.yml by supplying a path or empty if nothing
-echo -n "Path to blueprinty.yml. Leave empty if you don't have one or have no idea what I'm talking about: "
+echo -n "Path to blueprint.yml. Leave empty if you don't have one or have no idea what I'm talking about: "
 read -r blueprint_path
 
 if [ -z "$blueprint_path" ]; then
