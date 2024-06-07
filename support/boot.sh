@@ -46,12 +46,9 @@ for skill_dir in $(pwd)/packages/*-skill; do
     namespace=$(echo "$skill_name" | cut -d '-' -f 2)
 
     if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" ]]; then
-        boot_skill "$namespace" "$vendor" >/dev/null &
+        echo "Booting ${namespace}..."
+        boot_skill "$namespace" "$vendor" >/dev/null
     fi
 done
-
-echo "Waiting for boot to complete..."
-
-wait
 
 yarn list.running

@@ -7,4 +7,4 @@ if [ $# -ge 1 ]; then
 fi
 
 yarn shutdown
-yarn boot
+yarn boot.serve
