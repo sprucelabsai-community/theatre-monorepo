@@ -21,33 +21,45 @@ echo "
                                                                          
 "
 
-echo "Version: 0.9.3"
-sleep 1
-echo "Hey there! 👋"
-sleep 1
-echo "Sprucebot here! 🌲🤖"
-sleep 1
-echo "By the time I'm done, I'll have done the following:"
-sleep 1
-echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed). "
-sleep 2
-echo "  1a. If something is not installed, I'll ask you if you if you want me to use Brew to install it."
-sleep 2
-echo "  2a. If you don't want me to install something, I'll give you instructions to install it manually."
-sleep 2
-echo "2. Installed the Spruce CLI."
-sleep 1
-echo "3. Setup your computer for development."
-sleep 1
-echo "  4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
-sleep 2
-echo "  4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
-sleep 3
-echo "Let's get started! 🚀"
-sleep 1
-echo -n "Press enter when ready: "
-read -r response
-# wait for return
+echo "Version: 0.10.0"
+
+# check if /Applications/Sprucebot Theatre.app exists
+if [ -d "/Applications/Sprucebot Theatre.app" ]; then
+    already_installed=true
+else
+    already_installed=false
+fi
+
+if [ "$already_installed" = false ]; then
+
+    sleep 1
+    echo "Hey there! 👋"
+    sleep 1
+    echo "Sprucebot here! 🌲🤖"
+    sleep 1
+    echo "By the time I'm done, I'll have done the following:"
+    sleep 1
+    echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed). "
+    sleep 2
+    echo "  1a. If something is not installed, I'll ask you if you if you want me to use Brew to install it."
+    sleep 2
+    echo "  2a. If you don't want me to install something, I'll give you instructions to install it manually."
+    sleep 2
+    echo "2. Installed the Spruce CLI."
+    sleep 1
+    echo "3. Setup your computer for development."
+    sleep 1
+    echo "  4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
+    sleep 2
+    echo "  4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
+    sleep 3
+    echo "Let's get started! 🚀"
+    sleep 1
+    echo -n "Press enter when ready: "
+    read -r response
+    # wait for return
+
+fi
 
 # Global configuration
 min_node_version="20.0.0"
