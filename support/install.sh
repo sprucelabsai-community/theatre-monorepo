@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.10.1"
+echo "Version: 0.11.0"
 
 # check if /Applications/Sprucebot Theatre.app exists
 if [ -d "/Applications/Sprucebot Theatre.app" ]; then
@@ -41,7 +41,7 @@ if [ "$already_installed" = false ]; then
     sleep 1
     echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed). "
     sleep 2
-    echo "  1a. If something is not installed, I'll ask you if you if you want me to use Brew to install it."
+    echo "  1a. If something is not installed, I'll ask you if you want me to use Brew to install it."
     sleep 2
     echo "  2a. If you don't want me to install something, I'll give you instructions to install it manually."
     sleep 2
@@ -113,11 +113,11 @@ install_homebrew() {
     # Check if Homebrew is installed
     if ! [ -x "$(command -v brew)" ]; then
         echo -n "Homebrew is not installed...
-You OK if I install it now? (y/n): "
+Would you like me to install it now? (Y/n): "
         read -r response
 
         # Check if user wants to install Homebrew
-        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
             echo "Installing Homebrew..."
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             echo "Homebrew installed..."
@@ -159,10 +159,10 @@ fi
 # Check if Node is installed, if not, ask to install it
 if [ "$should_install_node" = true ]; then
 
-    echo -n "Would you like to install Node? (y/n): "
+    echo -n "Would you like me to install Node? (Y/n): "
     read -r response
 
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         echo "Installing Node via Homebrew..."
 
         install_homebrew "Please install Node manually from https://nodejs.org/."
@@ -190,10 +190,10 @@ source $(get_profile)
 
 # Check if the 'code' command is available
 if ! command -v code >/dev/null 2>&1; then
-    echo -n "Would you like to setup Visual Studio Code for coding? (y/n): "
+    echo -n "Would you like me to setup Visual Studio Code for coding? (Y/n): "
     read -r response
 
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         echo "Visual Studio Code CLI tools is not installed..."
         echo "Checking for Visual Studio Code..."
 
@@ -209,10 +209,10 @@ if ! command -v code >/dev/null 2>&1; then
             source $(get_profile)
         else
 
-            echo -n "Would you like to install Visual Studio Code? (y/n): "
+            echo -n "Would you like me to install Visual Studio Code? (Y/n): "
             read -r response
 
-            if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+            if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
                 install_homebrew "Please install Visual Studio Code manually from https://code.visualstudio.com/."
                 echo "Installing Visual Studio Code..."
                 brew install --cask visual-studio-code
@@ -227,10 +227,10 @@ fi
 
 # install mongodb if not installed
 if ! [ -x "$(command -v mongod)" ]; then
-    echo -n "Would you like to install MongoDB? (y/n): "
+    echo -n "Would you like me to install MongoDB? (Y/n): "
     read -r response
 
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         install_homebrew "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
         echo "Installing MongoDB..."
 
@@ -250,10 +250,10 @@ fi
 
 # install caddy if not installed
 if ! [ -x "$(command -v caddy)" ]; then
-    echo -n "Would you like to install Caddy (to serve the front end)? (y/n): "
+    echo -n "Would you like me to install Caddy (to serve the front end)? (Y/n): "
     read -r response
 
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         install_homebrew "Please install Caddy manually from https://caddyserver.com/docs/install."
         echo "Installing Caddy..."
         brew install caddy
@@ -265,10 +265,10 @@ fi
 
 # install jq if it's not installed
 if ! [ -x "$(command -v jq)" ]; then
-    echo -n "Would you like to install jq (to parse JSON)? (y/n): "
+    echo -n "Would you like me to install jq (to parse JSON)? (Y/n): "
     read -r response
 
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         install_homebrew "Please install jq manually from https://stedolan.github.io/jq/download/."
         echo "Installing jq..."
         brew install jq
