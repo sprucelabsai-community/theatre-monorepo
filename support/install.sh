@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 0.10.0"
+echo "Version: 0.10.1"
 
 # check if /Applications/Sprucebot Theatre.app exists
 if [ -d "/Applications/Sprucebot Theatre.app" ]; then
@@ -300,8 +300,10 @@ if [ -z "$blueprint_path" ]; then
 
     clear
 
-    echo "Sprucebot Development Theatre installed into Applications as Sprucebot Theatre."
+    echo "Sprucebot Development Theatre installed into /Applications/Sprucebot Theatre."
+    sleep 3
     echo "Opening now..."
+    open /Applications
     open /Applications/Sprucebot\ Theatre.app
 
     exit 0
