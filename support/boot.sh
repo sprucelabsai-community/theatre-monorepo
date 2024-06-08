@@ -37,6 +37,17 @@ else
     echo "Heartwood Skill not found. Skipping..."
 fi
 
+# Boot theatre skill if it exists
+if [[ -d $(pwd)/packages/spruce-theatre-skill ]]; then
+    boot_skill "theatre" >/dev/null &
+    echo "Booting Theatre Skill..."
+    echo "Waiting 5 seconds for boot to complete..."
+    sleep
+    echo "Theatre Skill booted."
+else
+    echo "Theatre Skill not found. Skipping..."
+fi
+
 # Boot remaining skills
 echo "Booting remaining skills..."
 for skill_dir in $(pwd)/packages/*-skill; do
@@ -45,9 +56,9 @@ for skill_dir in $(pwd)/packages/*-skill; do
     vendor=$(echo "$skill_name" | cut -d '-' -f 1)
     namespace=$(echo "$skill_name" | cut -d '-' -f 2)
 
-    if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" ]]; then
+    if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" && "$namespace" != "theatre" ]]; then
         echo "Booting ${namespace}..."
-        boot_skill "$namespace" "$vendor" >/dev/null
+        boot_skill "$namespace" "$vendor" >/dev/null &
     fi
 done
 
