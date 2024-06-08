@@ -8,14 +8,12 @@ packages_dir="$(pwd)/packages"
 processes_dir="$(pwd)/.processes"
 logs_dir="${processes_dir}/logs"
 
-
 if [ $# -ge 2 ]; then
     vendor="$2"
 else
     # Use resolve-vendor script to determine the vendor
     vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
-
 
 # Ensure .processes directory exists
 mkdir -p "$processes_dir"
@@ -40,7 +38,7 @@ if [ -z "$yarn_path" ]; then
     exit 1
 fi
 
-max_restarts=0
+max_restarts=10
 restart_delay=5000 # Set the delay between restarts in milliseconds
 
 # Construct the JSON configuration
