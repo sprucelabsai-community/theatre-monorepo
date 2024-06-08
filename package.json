@@ -2,7 +2,7 @@
   "name": "theatre",
   "private": true,
   "scripts": {
-    "boot.serve": "./support/boot.sh && yarn serve.heartwood",
+    "boot.serve": "yarn serve.heartwood && ./support/boot.sh",
     "boot": "./support/boot.sh",
     "bundle.heartwood": "./support/build-heartwood.sh",
     "bundle.serve.heartwood": "yarn bundle.heartwood && yarn serve.heartwood",
