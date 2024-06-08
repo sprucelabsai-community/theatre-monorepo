@@ -29,6 +29,13 @@ skill_dir="${packages_dir}/${vendor}-${namespace}${suffix}"
 app_name="${vendor}-${namespace}${suffix}"
 config_file="${processes_dir}/${app_name}.json"
 
+# check if first boot if $config_file exists
+if [ -f "$config_file" ]; then
+    is_first_boot=false
+else
+    is_first_boot=true
+fi
+
 # Find the path to yarn
 yarn_path="yarn"
 
@@ -60,3 +67,8 @@ echo "$json_config" >"$config_file"
 # Start or Restart the application with PM2 using the JSON configuration file
 ./support/pm2.sh startOrRestart "$config_file"
 ./support/pm2.sh save
+
+if [ "$is_first_boot" = true ]; then
+    echo "Giving first boot delay of 5 seconds..."
+    sleep 5
+fi
