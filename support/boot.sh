@@ -44,6 +44,7 @@ if [[ -d $(pwd)/packages/spruce-theatre-skill ]]; then
     echo "Waiting 5 seconds for boot to complete..."
     sleep 10
     echo "Theatre Skill booted."
+    sleep 10
 else
     echo "Theatre Skill not found. Skipping..."
 fi
@@ -58,7 +59,7 @@ for skill_dir in $(pwd)/packages/*-skill; do
 
     if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" && "$namespace" != "theatre" ]]; then
         echo "Booting ${namespace}..."
-        boot_skill "$namespace" "$vendor" >/dev/null &
+        boot_skill "$namespace" "$vendor" >/dev/null
     fi
 done
 
