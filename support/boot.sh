@@ -42,7 +42,7 @@ if [[ -d $(pwd)/packages/spruce-theatre-skill ]]; then
     boot_skill "theatre" >/dev/null &
     echo "Booting Theatre Skill..."
     echo "Waiting 5 seconds for boot to complete..."
-    sleep
+    sleep 10
     echo "Theatre Skill booted."
 else
     echo "Theatre Skill not found. Skipping..."
