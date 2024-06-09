@@ -21,6 +21,7 @@ boot_skill() {
 if [[ -d $(pwd)/packages/spruce-mercury-api ]]; then
     echo "Booting Mercury API..."
     boot_skill "mercury" >/dev/null
+    sleep 5
     echo "Mercury API booted."
 else
     echo "Mercury API not found. Skipping..."
@@ -30,6 +31,7 @@ fi
 if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
     echo "Booting Heartwood Skill..."
     boot_skill "heartwood" >/dev/null
+    sleep 5
     echo "Heartwood Skill booted."
 else
     echo "Heartwood Skill not found. Skipping..."
