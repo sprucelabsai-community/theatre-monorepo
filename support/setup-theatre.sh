@@ -57,7 +57,7 @@ hero "Publishing core skills..."
 
 hero "Booting..."
 
-yarn boot.serve >/dev/null &
+yarn boot.serve
 
 wait
 
