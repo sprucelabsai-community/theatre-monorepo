@@ -19,32 +19,25 @@ boot_skill() {
 
 # Boot Mercury API if mercury exists
 if [[ -d $(pwd)/packages/spruce-mercury-api ]]; then
-    boot_skill "mercury" >/dev/null &
     echo "Booting Mercury API..."
-    echo "Waiting 5 seconds for boot to complete..."
-    sleep 5
+    boot_skill "mercury"
 else
     echo "Mercury API not found. Skipping..."
 fi
 
 # Boot Heartwood Skill if it exists
 if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
-    boot_skill "heartwood" >/dev/null &
     echo "Booting Heartwood Skill..."
-    echo "Waiting 5 seconds for boot to complete..."
-    sleep 5
+    boot_skill "heartwood"
 else
     echo "Heartwood Skill not found. Skipping..."
 fi
 
 # Boot theatre skill if it exists
 if [[ -d $(pwd)/packages/spruce-theatre-skill ]]; then
-    boot_skill "theatre" >/dev/null &
     echo "Booting Theatre Skill..."
-    echo "Waiting 5 seconds for boot to complete..."
-    sleep 10
+    boot_skill "theatre"
     echo "Theatre Skill booted."
-    sleep 10
 else
     echo "Theatre Skill not found. Skipping..."
 fi
@@ -59,7 +52,7 @@ for skill_dir in $(pwd)/packages/*-skill; do
 
     if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" && "$namespace" != "theatre" ]]; then
         echo "Booting ${namespace}..."
-        boot_skill "$namespace" "$vendor" >/dev/null
+        boot_skill "$namespace" "$vendor"
     fi
 done
 
