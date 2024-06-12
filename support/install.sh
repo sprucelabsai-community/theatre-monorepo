@@ -21,18 +21,18 @@ echo "
                                                                          
 "
 
-echo "Version: 2.0.2"
+echo "Version: 3.0.0"
 
-shouldSetupMonoRepoUntil=""
+shouldSetupTheatreUntil=""
 setupMode=""
 blueprint=""
-theatrePath=""
+theatreDestination=""
 already_installed=false
 
 for arg in "$@"; do
     case $arg in
-    --shouldSetupMonoRepoUntil=*)
-        shouldSetupMonoRepoUntil="${arg#*=}"
+    --shouldSetupTheatreUntil=*)
+        shouldSetupTheatreUntil="${arg#*=}"
         shift
         ;;
     --setupMode=*)
@@ -43,8 +43,8 @@ for arg in "$@"; do
         blueprint="${arg#*=}"
         shift
         ;;
-    --theatrePath=*)
-        theatrePath="${arg#*=}"
+    --theatreDestination=*)
+        theatreDestination="${arg#*=}"
         shift
         ;;
     *)
@@ -283,12 +283,12 @@ else
         exit 1
     fi
 
-    if [ -z "$theatrePath" ]; then
+    if [ -z "$theatreDestination" ]; then
         echo "Where would you like to setup your Sprucebot Development Theatre?"
         echo -n "Destination: "
         read -r path
     else
-        path=$theatrePath
+        path=$theatreDestination
     fi
 
     cd $path
@@ -298,7 +298,7 @@ else
     cp $blueprint_path ./blueprint.yml
     cd theatre-monorepo
 
-    yarn setup.theatre blueprint.yml --shouldRunUntil="$shouldSetupMonoRepoUntil"
+    yarn setup.theatre blueprint.yml --shouldRunUntil="$shouldSetupTheatreUntil"
 
     echo "You're all set up! 🚀"
     echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
