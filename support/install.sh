@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 2.0.1"
+echo "Version: 2.0.2"
 
 shouldSetupMonoRepoUntil=""
 setupMode=""
@@ -296,7 +296,7 @@ else
     # Clone theatre mono repo
     git clone git@github.com:sprucelabsai-community/theatre-monorepo.git
     cp $blueprint_path ./blueprint.yml
-    cb theatre-monorepo
+    cd theatre-monorepo
 
     yarn setup.theatre blueprint.yml --shouldRunUntil="$shouldSetupMonoRepoUntil"
 
