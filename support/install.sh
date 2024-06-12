@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 1.0.0"
+echo "Version: 1.0.1"
 
 shouldSetupMonoRepoUntil=""
 setupMode=""
@@ -119,11 +119,7 @@ install_homebrew() {
 
     # Check if Homebrew is installed
     if ! [ -x "$(command -v brew)" ]; then
-        echo -n "Homebrew is not installed. Would you like me to install it now? (Y/n): "
-        read -r response
-
-        # Check if user wants to install Homebrew
-        if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        if askToInstall "Homebrew"; then
             echo "Installing Homebrew..."
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             echo "Homebrew installed..."
