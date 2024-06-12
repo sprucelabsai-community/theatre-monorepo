@@ -2,12 +2,37 @@
 
 source ./support/hero.sh
 
-if [ $# -ne 1 ]; then
-    echo "Usage: yarn setup.theatre <blueprint.yml>"
+# Function to print usage and exit
+usage() {
+    echo "Usage: yarn setup.theatre <blueprint.yml> [--shouldRunUntil=<step>]"
+    echo "Steps: build"
     exit 1
+}
+
+# Check if the correct number of arguments is provided
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+    usage
 fi
 
 blueprint=$1
+shouldRunUntil=""
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+    --shouldRunUntil=*)
+        shouldRunUntil="${arg#*=}"
+        shift
+        ;;
+    *.yml)
+        blueprint=$arg
+        shift
+        ;;
+    *)
+        usage
+        ;;
+    esac
+done
 
 if [ ! -f "$blueprint" ]; then
     echo "Error: Blueprint file '$blueprint' does not exist."
@@ -30,7 +55,13 @@ hero "Building skills..."
 
 yarn build
 
-# boot mercury if packages/spruce-mercury-api exists
+# Check if we should end the script after the build step
+if [ "$shouldRunUntil" == "build" ]; then
+    hero "Reached 'build' step. Exiting as requested."
+    exit 0
+fi
+
+# Boot mercury if packages/spruce-mercury-api exists
 if [ -d "packages/spruce-mercury-api" ]; then
     hero "Booting Mercury..."
 
