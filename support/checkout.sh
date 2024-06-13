@@ -6,6 +6,7 @@ source ./support/hero.sh
 branch_name=""
 hard=false
 should_update_dependencies=true
+should_build=true
 
 # Function to display usage details
 show_help() {
@@ -15,6 +16,7 @@ show_help() {
     echo "  --branchName=<branch>         Specify the branch name to checkout."
     echo "  --hard                        Clobber all local changes."
     echo "  --shouldUpdateDependencies=   Specify whether to run 'yarn' after checking out. Default is true."
+    echo "  --shouldBuild                 Specify whether to run 'yarn build' after checking out. Default is true."
     echo "  --help                        Show this help message."
 }
 
@@ -64,6 +66,10 @@ wait
 
 if [ "$should_update_dependencies" == "true" ]; then
     yarn
+fi
+
+if [ "$should_build" == "true" ]; then
+    yarn build
 fi
 
 if [ -n "$branch_name" ]; then
