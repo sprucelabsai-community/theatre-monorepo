@@ -51,6 +51,12 @@ hero "Pulling skill dependencies..."
 
 yarn
 
+# Check if we should end the script after the build step
+if [ "$shouldRunUntil" == "skillDependencies" ]; then
+    hero "Reached 'skillDependencies' step. Exiting as requested."
+    exit 0
+fi
+
 hero "Building skills..."
 
 yarn build
