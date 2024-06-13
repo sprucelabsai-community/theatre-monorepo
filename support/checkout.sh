@@ -23,7 +23,7 @@ while [[ "$#" -gt 0 ]]; do
     case $1 in
     --branchName=*) branch_name="${1#*=}" ;;
     --hard) hard=true ;;
-    --shouldUpdateDependencies=false) should_update_dependencies=fal se ;;
+    --shouldUpdateDependencies=false) should_update_dependencies=false ;;
     --help)
         show_help
         exit 0
