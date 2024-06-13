@@ -47,6 +47,12 @@ hero "Syncing skills with blueprint..."
 
 ./support/sync-skills-with-blueprint.sh $blueprint
 
+# Check if we should end the script after the build step
+if [ "$shouldRunUntil" == "syncSkills" ]; then
+    hero "Reached 'syncSkills' step. Exiting as requested."
+    exit 0
+fi
+
 hero "Pulling skill dependencies..."
 
 yarn
