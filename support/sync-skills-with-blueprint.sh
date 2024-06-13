@@ -30,17 +30,6 @@ fi
 # Navigate to the correct directory
 cd $(dirname $0)
 
-ADMIN_SECTION=$(node blueprint.js $1 admin)
-
-# Check if admin section contains phone number
-if [[ $ADMIN_SECTION != *phone* ]]; then
-  echo "ERROR: The admin number is missing in your blueprint.yml. Add it as follows:"
-  echo ""
-  echo "admin:"
-  echo "  - phone: \"1234567890\""
-  exit 1
-fi
-
 # Fetch repos from blueprint.js
 REPOS=$(node blueprint.js $1 skills)
 

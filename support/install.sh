@@ -21,18 +21,18 @@ echo "
                                                                          
 "
 
-echo "Version: 1.0.0"
+echo "Version: 3.0.1"
 
-shouldSetupMonoRepoUntil=""
+shouldSetupTheatreUntil=""
 setupMode=""
 blueprint=""
-theatrePath=""
+theatreDestination=""
 already_installed=false
 
 for arg in "$@"; do
     case $arg in
-    --shouldSetupMonoRepoUntil=*)
-        shouldSetupMonoRepoUntil="${arg#*=}"
+    --shouldSetupTheatreUntil=*)
+        shouldSetupTheatreUntil="${arg#*=}"
         shift
         ;;
     --setupMode=*)
@@ -43,8 +43,8 @@ for arg in "$@"; do
         blueprint="${arg#*=}"
         shift
         ;;
-    --theatrePath=*)
-        theatrePath="${arg#*=}"
+    --theatreDestination=*)
+        theatreDestination="${arg#*=}"
         shift
         ;;
     *)
@@ -119,11 +119,7 @@ install_homebrew() {
 
     # Check if Homebrew is installed
     if ! [ -x "$(command -v brew)" ]; then
-        echo -n "Homebrew is not installed. Would you like me to install it now? (Y/n): "
-        read -r response
-
-        # Check if user wants to install Homebrew
-        if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        if askToInstall "Homebrew"; then
             echo "Installing Homebrew..."
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             echo "Homebrew installed..."
@@ -287,21 +283,22 @@ else
         exit 1
     fi
 
-    if [ -z "$theatrePath" ]; then
+    if [ -z "$theatreDestination" ]; then
         echo "Where would you like to setup your Sprucebot Development Theatre?"
         echo -n "Destination: "
         read -r path
     else
-        path=$theatrePath
+        path=$theatreDestination
     fi
 
     cd $path
 
     # Clone theatre mono repo
-    git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
+    git clone git@github.com:sprucelabsai-community/theatre-monorepo.git
+    cd theatre-monorepo
     cp $blueprint_path ./blueprint.yml
 
-    yarn setup.theatre blueprint.yml --shouldRunUntil="$shouldSetupMonoRepoUntil"
+    yarn setup.theatre blueprint.yml --shouldRunUntil="$shouldSetupTheatreUntil"
 
     echo "You're all set up! 🚀"
     echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
