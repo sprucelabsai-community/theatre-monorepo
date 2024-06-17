@@ -257,7 +257,7 @@ if [ -z "$blueprint_path" ]; then
 
     rm -f ~/Downloads/Sprucebot+Theatre-arm64.dmg
 
-    curl -o ~/Downloads/Sprucebot+Theatre-arm64.dmg https://spruce-theater.s3.amazonaws.com/Sprucebot+Theatre-arm64.dmg
+    curl -o ~/Downloads/Sprucebot+Theatre-arm64.dmg https://spruce-theatre.s3.amazonaws.com/Sprucebot+Theatre-arm64.dmg
 
     echo "Installing Sprucebot Development Theatre..."
 
