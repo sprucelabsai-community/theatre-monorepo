@@ -65,8 +65,10 @@ json_config="{
 echo "$json_config" >"$config_file"
 
 # Start or Restart the application with PM2 using the JSON configuration file
-./support/pm2.sh startOrRestart "$config_file"
-./support/pm2.sh save
+(
+    ./support/pm2.sh startOrRestart "$config_file"
+    ./support/pm2.sh save
+) &
 
 if [ "$is_first_boot" = true ]; then
     echo "Giving first boot delay of 5 seconds..."
