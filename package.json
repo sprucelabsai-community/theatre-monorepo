@@ -29,7 +29,7 @@
     "shutdown": "./support/shutdown.sh",
     "setup.theatre": "./support/setup-theatre.sh",
     "stop.serving.heartwood": "./support/stop-serving-heartwood.sh",
-    "test": "lerna run test",
+    "test": "lerna run test --concurrency 1",
     "update": "./support/update.sh",
     "upgrade": "./support/upgrade.sh",
     "postinstall": "./support/cleanup-dependencies.sh"
