@@ -2,15 +2,11 @@
 
 # Initialize variables
 BASE_DIR="."
-INCLUDE_CONFIG=false
 DO_BACKUP=false
 RELEASE=false
 
 # Parse command line arguments
 for arg in "$@"; do
-    if [[ "$arg" == "--shouldIncludeConfig" ]]; then
-        INCLUDE_CONFIG=true
-    fi
     if [[ "$arg" == "--release" ]]; then
         RELEASE=true
         RELEASE_DATE=$(date +%Y-%m-%d)
@@ -31,17 +27,6 @@ fi
 
 # Ensure the ZIP_DIR exists
 mkdir -p "${ZIP_DIR}"
-
-# Export configuration if requested
-if $INCLUDE_CONFIG; then
-    echo "Including configuration export..."
-    cd "${BASE_DIR}"
-    if $DO_BACKUP; then
-        yarn export.blueprint --backup
-    else
-        yarn export.blueprint
-    fi
-fi
 
 # Navigate to the base directory for other operations
 cd "${BASE_DIR}"

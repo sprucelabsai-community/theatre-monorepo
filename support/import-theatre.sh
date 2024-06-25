@@ -2,7 +2,7 @@
 
 # Check if at least one command line argument is provided
 if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 path_to_theatre_zip [--shouldIncludeConfig path_to_config_zip]"
+    echo "Usage: $0 path_to_theatre_zip"
     exit 1
 fi
 
@@ -13,21 +13,15 @@ THEATRE_ZIP="$1"
 SHOULD_INCLUDE_CONFIG=false
 CONFIG_ZIP=""
 
-# Check if additional arguments are provided for config
-if [ "$#" -eq 3 ] && [ "$2" == "--shouldIncludeConfig" ]; then
-    SHOULD_INCLUDE_CONFIG=true
-    CONFIG_ZIP="$3"
-fi
-
 # Check if the theatre zip file exists
 if [ ! -f "$THEATRE_ZIP" ]; then
     echo "Theatre zip file does not exist: $THEATRE_ZIP"
     exit 1
 fi
 
-# Perform a backup using yarn export.theatre with the --backup and --shouldIncludeConfig flags
+# Perform a backup using yarn export.theatre
 echo "Performing backup..."
-yarn export.theatre.zip --backup --shouldIncludeConfig
+yarn export.theatre.zip --backup
 
 # Remove the existing 'packages' and 'node_modules' directories
 echo "Removing existing theatre and node_modules..."

@@ -15,23 +15,25 @@ ENV=$(node support/blueprint.js $2 env)
 
 # Skip if .env if exists
 case $ENV_STRATEGY in
-    skip)
-        echo "Skipping due to 'skip' strategy."
-        exit 0
-        ;;
-    replace)
-        echo "Deleting .env due to 'replace' strategy."
-        rm $REPO_PATH/.env
-        ;;
-    *)
-        # Other strategies can be handled here in the future
-        ;;
+skip)
+    echo "Skipping due to 'skip' strategy."
+    exit 0
+    ;;
+replace)
+    echo "Deleting .env due to 'replace' strategy."
+    rm $REPO_PATH/.env
+    ;;
+*)
+    # Other strategies can be handled here in the future
+    ;;
 esac
 
 ## drop in ENV logic here
 SKILL_NAMESPACE=$(jq -r '.skill.namespace' $REPO_PATH/package.json)
 
 cd $REPO_PATH
+
+touch .env
 
 # Loop to set the environment variables
 for key in $(jq -r 'keys[]' <<<"$ENV"); do

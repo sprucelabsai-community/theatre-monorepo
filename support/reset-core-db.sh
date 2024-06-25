@@ -70,12 +70,7 @@ else
 fi
 
 echo "Next steps:"
-echo "1. Shutdown the platform: yarn shutdown"
-echo "2. Start mercury: yarn boot.mercury"
-echo "3. Login: yarn login blueprint.yml"
-if [ -n "$dump_dir" ]; then
-    echo "4. Register skills: yarn register"
-else
-    echo "4. Register skills: yarn register -shouldForceRegister=true"
-fi
-echo "5. Reboot the platform: yarn reboot"
+echo "1. Shutdown the Theatre: yarn shutdown"
+echo "2. Start Mercury: yarn boot mercury"
+echo "3. Setup the Theatre: yarn setup.theatre blueprint.yml"
+echo "4. (Re)boot the platform: yarn reboot"

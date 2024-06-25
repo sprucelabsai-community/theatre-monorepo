@@ -19,22 +19,32 @@ boot_skill() {
 
 # Boot Mercury API if mercury exists
 if [[ -d $(pwd)/packages/spruce-mercury-api ]]; then
-    boot_skill "mercury" >/dev/null &
     echo "Booting Mercury API..."
-    echo "Waiting 5 seconds for boot to complete..."
+    boot_skill "mercury" >/dev/null
     sleep 5
+    echo "Mercury API booted."
 else
     echo "Mercury API not found. Skipping..."
 fi
 
 # Boot Heartwood Skill if it exists
 if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
-    boot_skill "heartwood" >/dev/null &
     echo "Booting Heartwood Skill..."
-    echo "Waiting 5 seconds for boot to complete..."
+    boot_skill "heartwood" >/dev/null
     sleep 5
+    echo "Heartwood Skill booted."
 else
     echo "Heartwood Skill not found. Skipping..."
+fi
+
+# Boot theatre skill if it exists
+if [[ -d $(pwd)/packages/spruce-theatre-skill ]]; then
+    echo "Booting Theatre Skill..."
+    boot_skill "theatre" >/dev/null
+    sleep 5
+    echo "Theatre Skill booted."
+else
+    echo "Theatre Skill not found. Skipping..."
 fi
 
 # Boot remaining skills
@@ -45,13 +55,10 @@ for skill_dir in $(pwd)/packages/*-skill; do
     vendor=$(echo "$skill_name" | cut -d '-' -f 1)
     namespace=$(echo "$skill_name" | cut -d '-' -f 2)
 
-    if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" ]]; then
-        boot_skill "$namespace" "$vendor" >/dev/null &
+    if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" && "$namespace" != "theatre" ]]; then
+        echo "Booting ${namespace}..."
+        boot_skill "$namespace" "$vendor" >/dev/null
     fi
 done
-
-echo "Waiting for boot to complete..."
-
-wait
 
 yarn list.running

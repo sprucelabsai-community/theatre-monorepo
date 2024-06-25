@@ -8,14 +8,12 @@ packages_dir="$(pwd)/packages"
 processes_dir="$(pwd)/.processes"
 logs_dir="${processes_dir}/logs"
 
-
 if [ $# -ge 2 ]; then
     vendor="$2"
 else
     # Use resolve-vendor script to determine the vendor
     vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
-
 
 # Ensure .processes directory exists
 mkdir -p "$processes_dir"
@@ -31,6 +29,13 @@ skill_dir="${packages_dir}/${vendor}-${namespace}${suffix}"
 app_name="${vendor}-${namespace}${suffix}"
 config_file="${processes_dir}/${app_name}.json"
 
+# check if first boot if $config_file exists
+if [ -f "$config_file" ]; then
+    is_first_boot=false
+else
+    is_first_boot=true
+fi
+
 # Find the path to yarn
 yarn_path="yarn"
 
@@ -40,12 +45,12 @@ if [ -z "$yarn_path" ]; then
     exit 1
 fi
 
-max_restarts=0
+max_restarts=10
 restart_delay=5000 # Set the delay between restarts in milliseconds
 
 # Construct the JSON configuration
 json_config="{
-     \"name\": \"$app_name\",
+    \"name\": \"$app_name\",
     \"script\": \"$yarn_path\",
     \"args\": \"boot\",
     \"cwd\": \"$skill_dir\",
@@ -60,5 +65,12 @@ json_config="{
 echo "$json_config" >"$config_file"
 
 # Start or Restart the application with PM2 using the JSON configuration file
-./support/pm2.sh startOrRestart "$config_file"
-./support/pm2.sh save
+(
+    ./support/pm2.sh startOrRestart "$config_file"
+    ./support/pm2.sh save
+) &
+
+if [ "$is_first_boot" = true ]; then
+    echo "Giving first boot delay of 5 seconds..."
+    sleep 5
+fi
