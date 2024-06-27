@@ -20,8 +20,12 @@ skip)
     exit 0
     ;;
 replace)
-    echo "Deleting .env due to 'replace' strategy."
-    rm $REPO_PATH/.env
+    if [ -f "$REPO_PATH/.env" ]; then
+        echo "Deleting .env due to 'replace' strategy."
+        rm "$REPO_PATH/.env"
+    else
+        echo ".env file not found, nothing to delete."
+    fi
     ;;
 *)
     # Other strategies can be handled here in the future
