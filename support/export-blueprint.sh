@@ -49,13 +49,3 @@ mkdir -p "${SNAPSHOT_DIR}"
 # Navigate to the base directory
 cd "${BASE_DIR}"
 
-# Prepare the blueprint.yml: Merge with unit-specific config if provided and write to the output directory
-if [ -n "$UNIT_CONFIG_PATH" ]; then
-    # Merge and store in the output directory
-    python3 support/export-blueprint.py "${SNAPSHOT_DIR}/blueprint${UNIT_NUMBER}.yml" --unit-config "$UNIT_CONFIG_PATH"
-else
-    # If no unit-specific config, copy the original blueprint.yml to the output directory
-    python3 support/export-blueprint.py "${SNAPSHOT_DIR}/blueprint${UNIT_NUMBER}.yml"
-fi
-
-echo "Blueprint.yml has been prepared and written to ${SNAPSHOT_DIR}"
