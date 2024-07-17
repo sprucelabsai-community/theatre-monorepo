@@ -77,10 +77,12 @@ askToInstall() {
 }
 
 get_profile() {
-    if [[ $SHELL == "/bin/zsh" ]]; then
+    if [ -n "$ZSH_VERSION" ]; then
         echo "$HOME/.zshrc"
+    elif [ -n "$BASH_VERSION" ]; then
+        echo "$HOME/.bashrc"
     else
-        echo "$HOME/.bash_profile"
+        echo "$HOME/.profile"
     fi
 }
 
