@@ -121,16 +121,36 @@ install_homebrew() {
     if ! [ -x "$(command -v brew)" ]; then
         if askToInstall "Homebrew"; then
             echo "Installing Homebrew..."
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            echo "Homebrew installed..."
 
-            if [[ "$(uname -m)" == "arm64" ]]; then
-                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>$(get_profile)
-                eval "$(/opt/homebrew/bin/brew shellenv)"
-            else
-                echo 'eval "$(/usr/local/bin/brew shellenv)"' >>$(get_profile)
-                eval "$(/usr/local/bin/brew shellenv)"
-            fi
+            # Detect the operating system
+            OS="$(uname)"
+            case $OS in
+            'Linux')
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+                echo "Homebrew installed..."
+
+                # Add Homebrew to PATH
+                echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>$(get_profile)
+                eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+                ;;
+            'Darwin')
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+                echo "Homebrew installed..."
+
+                # Add Homebrew to PATH for macOS
+                if [[ "$(uname -m)" == "arm64" ]]; then
+                    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>$(get_profile)
+                    eval "$(/opt/homebrew/bin/brew shellenv)"
+                else
+                    echo 'eval "$(/usr/local/bin/brew shellenv)"' >>$(get_profile)
+                    eval "$(/usr/local/bin/brew shellenv)"
+                fi
+                ;;
+            *)
+                echo "Unsupported operating system: $OS"
+                exit 1
+                ;;
+            esac
 
             source $(get_profile)
         else
