@@ -60,7 +60,7 @@ check_already_installed() {
     fi
 }
 
-askToInstall() {
+ask_to_install() {
     local message="$1"
 
     if [ "$setupMode" == "production" ]; then
@@ -119,21 +119,25 @@ is_node_outdated() {
 install_homebrew() {
     local fail_message="$1"
 
-    # Check if Homebrew is installed
-    if ! [ -x "$(command -v brew)" ]; then
-        if askToInstall "Homebrew"; then
+    # Check if Homebrew or apt is installed
+    if ! [ -x "$(command -v brew)" ] && ! [ -x "$(command -v apt)" ]; then
+        if ask_to_install "Homebrew"; then
             echo "Installing Homebrew..."
 
             # Detect the operating system
             OS="$(uname)"
             case $OS in
             'Linux')
-                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-                echo "Homebrew installed..."
+                if [ -x "$(command -v apt)" ]; then
+                    echo "apt is available, skipping Homebrew installation."
+                else
+                    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+                    echo "Homebrew installed..."
 
-                # Add Homebrew to PATH
-                echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>$(get_profile)
-                eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+                    # Add Homebrew to PATH
+                    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>$(get_profile)
+                    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+                fi
                 ;;
             'Darwin')
                 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -162,7 +166,124 @@ install_homebrew() {
     fi
 }
 
+install_node() {
+    if [ -x "$(command -v apt)" ]; then
+        sudo apt-get update
+        sudo apt-get install -y nodejs npm
+        sudo mkdir -p /usr/local/lib/node_modules/
+        sudo chown -R root:$(whoami) /usr/local/lib/node_modules/
+        sudo chmod -R 775 /usr/local/lib/node_modules/
+    elif [ -x "$(command -v brew)" ]; then
+        brew install node
+    else
+        echo "No suitable package manager found for installing Node.js."
+        exit 1
+    fi
+}
+
+install_mongo() {
+    if [ -x "$(command -v apt)" ]; then
+        echo "Installing MongoDB using apt..."
+        sudo apt-get install -y mongodb-org
+    elif [ -x "$(command -v brew)" ]; then
+        echo "Installing MongoDB using Homebrew..."
+        brew tap mongodb/brew
+        brew install mongodb-community
+    else
+        echo "No suitable package manager found for installing MongoDB."
+        exit 1
+    fi
+}
+
+update_package_manager() {
+    if [ -x "$(command -v apt)" ]; then
+        echo "Updating apt package list..."
+        sudo apt-get update
+    elif [ -x "$(command -v brew)" ]; then
+        echo "Updating Homebrew..."
+        brew update
+    else
+        echo "No suitable package manager found for updating."
+        exit 1
+    fi
+}
+
+install_yarn() {
+    if [ -x "$(command -v apt)" ]; then
+        echo "Installing Yarn using npm without sudo..."
+        sudo npm install -g yarn
+    elif [ -x "$(command -v brew)" ]; then
+        echo "Installing Yarn using Homebrew..."
+        brew install yarn
+    else
+        echo "No suitable package manager found for installing Yarn."
+        exit 1
+    fi
+}
+
+install_mongo() {
+    if [ -x "$(command -v apt)" ]; then
+        echo "Installing MongoDB using apt..."
+
+        sudo apt-get install gnupg curl
+
+        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc |
+            sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+                --dearmor
+
+        echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+        sudo apt-get update
+        sudo apt-get install -y mongodb-org
+    elif [ -x "$(command -v brew)" ]; then
+        echo "Installing MongoDB using Homebrew..."
+        brew tap mongodb/brew
+        brew install mongodb-community
+    else
+        echo "No suitable package manager found for installing MongoDB."
+        exit 1
+    fi
+}
+
+start_mongo() {
+    if [ -x "$(command -v brew)" ]; then
+        echo "Starting MongoDB using Homebrew services..."
+        brew services start mongodb-community
+    elif [ -x "$(command -v systemctl)" ]; then
+        echo "Starting MongoDB using systemctl..."
+        sudo systemctl daemon-reload
+        sudo systemctl start mongod
+        sudo systemctl enable mongod
+    else
+        echo "No suitable method found for starting MongoDB."
+        exit 1
+    fi
+}
+
+install_caddy() {
+    if [ -x "$(command -v apt)" ]; then
+        echo "Installing Caddy using apt..."
+
+        # Install required dependencies
+        sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
+
+        # Add the official Caddy repository
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo apt-key add -
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+
+        # Update package list and install Caddy
+        sudo apt-get update
+        sudo apt-get install -y caddy
+    elif [ -x "$(command -v brew)" ]; then
+        echo "Installing Caddy using Homebrew..."
+        brew install caddy
+    else
+        echo "No suitable package manager found for installing Caddy."
+        exit 1
+    fi
+}
+
 check_already_installed
+
 if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
     sleep 1
     echo "Hey there! 👋"
@@ -194,6 +315,8 @@ fi
 min_node_version="20.0.0"
 should_install_node=false
 
+update_package_manager
+
 touch $(get_profile)
 source $(get_profile)
 
@@ -213,9 +336,9 @@ else
 fi
 
 if [ "$should_install_node" = true ]; then
-    if askToInstall "Node"; then
+    if ask_to_install "Node"; then
         install_homebrew "Please install Node manually from https://nodejs.org/."
-        brew install node
+        install_node
         source $(get_profile)
     else
         echo "Please install Node manually from https://nodejs.org/."
@@ -223,7 +346,7 @@ if [ "$should_install_node" = true ]; then
     fi
 fi
 
-npm install --global yarn
+install_yarn
 
 yarn global add @sprucelabs/spruce-cli
 
@@ -232,10 +355,9 @@ echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
 source $(get_profile)
 
 if ! [ -x "$(command -v mongod)" ]; then
-    if askToInstall "MongoDB"; then
+    if ask_to_install "MongoDB"; then
         install_homebrew "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
-        brew tap mongodb/brew
-        brew install mongodb-community
+        install_mongo
     else
         echo "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
         exit 1
@@ -244,13 +366,13 @@ fi
 
 if ! pgrep -x "mongod" >/dev/null; then
     echo "Starting MongoDB..."
-    brew services start mongodb-community
+    start_mongo
 fi
 
 if ! [ -x "$(command -v caddy)" ]; then
-    if askToInstall "Caddy (to serve the front end)"; then
+    if ask_to_install "Caddy (to serve the front end)"; then
         install_homebrew "Please install Caddy manually from https://caddyserver.com/docs/install."
-        brew install caddy
+        install_caddy
     else
         echo "Please install Caddy manually from https://caddyserver.com/docs/install."
         exit 1
@@ -258,7 +380,7 @@ if ! [ -x "$(command -v caddy)" ]; then
 fi
 
 if ! [ -x "$(command -v jq)" ]; then
-    if askToInstall "jq (to parse JSON)"; then
+    if ask_to_install "jq (to parse JSON)"; then
         install_homebrew "Please install jq manually from https://stedolan.github.io/jq/download/."
         brew install jq
     else
