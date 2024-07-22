@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.1.4"
+echo "Version: 3.2.0"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -183,16 +183,23 @@ install_homebrew() {
 install_node() {
     if [ -x "$(command -v apt)" ]; then
         sudo apt-get update
-        sudo apt-get install -y nodejs npm
+        sudo apt-get install -y curl
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+        sudo apt-get install -y nodejs
         sudo mkdir -p /usr/local/lib/node_modules/
         sudo chown -R root:$(whoami) /usr/local/lib/node_modules/
         sudo chmod -R 775 /usr/local/lib/node_modules/
     elif [ -x "$(command -v brew)" ]; then
-        brew install node
+        brew install node@20
+        echo 'export PATH="/usr/local/opt/node@20/bin:$PATH"' >>~/.zshrc
+        source ~/.zshrc
     else
         echo "No suitable package manager found for installing Node.js."
         exit 1
     fi
+    # Verify installation
+    node --version
+    npm --version
 }
 
 install_mongo() {

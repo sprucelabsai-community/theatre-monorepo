@@ -32,7 +32,9 @@
     "test": "lerna run test --concurrency 1",
     "update": "./support/update.sh",
     "upgrade": "./support/upgrade.sh",
-    "postinstall": "./support/cleanup-dependencies.sh"
+    "postinstall": "./support/cleanup-dependencies.sh",
+    "build.docker.ubuntu.x86": "docker build -f support/dockerfile.ubuntu-x86 -t ubuntu-x86 .",
+    "run.docker.ubuntu.x86": "docker run -d -p 2222:22 --name ubuntu-x86 ubuntu-x86"
   },
   "workspaces": [
     "packages/*"
