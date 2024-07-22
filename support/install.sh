@@ -449,11 +449,11 @@ else
         path=$theatreDestination
     fi
 
+    mkdir -p $path
     cd $path
 
     # Clone theatre mono repo
-    git clone git@github.com:sprucelabsai-community/theatre-monorepo.git
-    cd theatre-monorepo
+    git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
     cp $blueprint_path ./blueprint.yml
 
     yarn setup.theatre blueprint.yml --shouldRunUntil="$shouldSetupTheatreUntil"
