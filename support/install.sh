@@ -332,7 +332,7 @@ if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
     read -r response
 fi
 
-min_node_version="18.19.0"
+min_node_version="20.0.0"
 should_install_node=false
 
 update_package_manager
