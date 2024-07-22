@@ -86,6 +86,20 @@ get_profile() {
     fi
 }
 
+install_jq() {
+    if [ -x "$(command -v apt)" ]; then
+        echo "Installing jq using apt..."
+        sudo apt-get update
+        sudo apt-get install -y jq
+    elif [ -x "$(command -v brew)" ]; then
+        echo "Installing jq using Homebrew..."
+        brew install jq
+    else
+        echo "No suitable package manager found for installing jq."
+        exit 1
+    fi
+}
+
 is_node_installed() {
     if command -v node >/dev/null 2>&1; then
         return 0 # Node is installed
@@ -382,7 +396,7 @@ fi
 if ! [ -x "$(command -v jq)" ]; then
     if ask_to_install "jq (to parse JSON)"; then
         install_homebrew "Please install jq manually from https://stedolan.github.io/jq/download/."
-        brew install jq
+        install_jq
     else
         echo "Please install jq manually from https://stedolan.github.io/jq/download/."
         exit 1
@@ -390,7 +404,7 @@ if ! [ -x "$(command -v jq)" ]; then
 fi
 
 if [ -z "$blueprint" ]; then
-    echo -n "Path to blueprint.yml. Leave empty if you don't have one or have no idea what I'm talking about: "
+    echo -n "Path to blueprint.yml (optional):"
     read -r blueprint_path
 else
     blueprint_path=$blueprint
