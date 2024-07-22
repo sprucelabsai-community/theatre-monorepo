@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.1.2"
+echo "Version: 3.1.3"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -326,7 +326,7 @@ if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
     read -r response
 fi
 
-min_node_version="20.0.0"
+min_node_version="18.19.0"
 should_install_node=false
 
 update_package_manager
