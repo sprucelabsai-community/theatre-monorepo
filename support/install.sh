@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.1.3"
+echo "Version: 3.1.4"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -277,12 +277,11 @@ install_caddy() {
     if [ -x "$(command -v apt)" ]; then
         echo "Installing Caddy using apt..."
 
-        # Install required dependencies
         sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
 
-        # Add the official Caddy repository
-        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo apt-key add -
-        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-archive-keyring.gpg
+
+        echo "deb [signed-by=/usr/share/keyrings/caddy-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
 
         # Update package list and install Caddy
         sudo apt-get update
