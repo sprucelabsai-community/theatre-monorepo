@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.1.0"
+echo "Version: 3.1.1"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -437,7 +437,7 @@ if [ -z "$blueprint_path" ]; then
     exit 0
 else
     if [ ! -f "$blueprint_path" ]; then
-        echo "Invalid path to blueprint.yml. You can try this whole thing again."
+        echo "Could not find blueprint.yml @ '$blueprint_path'. Verify the path and try again."
         exit 1
     fi
 
