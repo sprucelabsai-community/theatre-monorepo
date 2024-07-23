@@ -1,0 +1,31 @@
+# Use the official Ubuntu image as a base
+FROM --platform=linux/amd64 ubuntu:latest
+
+# Set environment variables to non-interactive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    sudo \
+    curl \
+    gnupg \
+    lsb-release \
+    vim \
+    net-tools \
+    iputils-ping
+
+# Create a user with sudo privileges
+RUN useradd -ms /bin/bash docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+# Set up SSH
+RUN mkdir /var/run/sshd
+RUN mkdir -p /home/docker/.ssh
+RUN chown -R docker:docker /home/docker/.ssh
+RUN chmod 600 /home/docker/.ssh/authorized_keys
+
+# Expose SSH port
+EXPOSE 22
+
+# Set the default command to run sshd
+CMD ["/usr/sbin/sshd", "-D"]
