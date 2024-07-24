@@ -4,6 +4,13 @@ FROM --platform=linux/amd64 ubuntu:latest
 # Set environment variables to non-interactive
 ENV DEBIAN_FRONTEND=noninteractive
 
+
+ARG BLUEPRINT_PATH=./blueprint.yml
+COPY ${BLUEPRINT_PATH} /app/config/blueprint.yml
+
+# Example of using the blueprint
+RUN echo "Blueprint contents:" && cat /app/config/blueprint.yml
+
 # Install required packages
 RUN apt-get update && apt-get install -y \
     openssh-server \
@@ -22,10 +29,11 @@ RUN useradd -ms /bin/bash docker && echo "docker:docker" | chpasswd && adduser d
 RUN mkdir /var/run/sshd
 RUN mkdir -p /home/docker/.ssh
 RUN chown -R docker:docker /home/docker/.ssh
-RUN chmod 600 /home/docker/.ssh/authorized_keys
 
 # Expose SSH port
 EXPOSE 22
+
+RUN curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/theatre-monorepo/master/support/install.sh | bash -s -- --setupMode=production --blueprint=/app/config/blueprint.yml
 
 # Set the default command to run sshd
 CMD ["/usr/sbin/sshd", "-D"]
