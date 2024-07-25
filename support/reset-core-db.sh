@@ -11,21 +11,21 @@ usage() {
 }
 
 # Parse command-line arguments
-for arg in "$@"; do
-    case $arg in
-    --dumpDir=*)
-        dump_dir="${arg#*=}"
-        shift # Remove argument from processing
-        ;;
-    --mongoConnectionString=*)
-        mongo_connection_string="${arg#*=}"
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --dumpDir=*)
+        dump_dir="${1#*=}"
         shift
         ;;
-    --shouldUsePin=false)
-        should_use_pin=false
-        shift # Remove argument from processing
+        --mongoConnectionString=*)
+        mongo_connection_string="${1#*=}"
+        shift
         ;;
-    *)
+        --shouldUsePin=false)
+        should_use_pin=false
+        shift
+        ;;
+        *)
         # Unknown option
         usage
         ;;
