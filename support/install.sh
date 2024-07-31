@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.3.3"
+echo "Version: 3.3.4"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -59,6 +59,10 @@ get_package_manager() {
         echo "brew"
     elif command -v apt-get &>/dev/null; then
         echo "apt-get"
+    elif command -v yum &>/dev/null; then
+        echo "yum"
+    elif command -v apk &>/dev/null; then
+        echo "apk"
     else
         echo "unknown"
     fi
@@ -106,6 +110,24 @@ install_package() {
         sudo apt-get install -y "$package_name"
     else
         echo "Unsupported package manager. Please install $package_name manually."
+        exit 1
+    fi
+}
+
+install_git() {
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
+        brew install git
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+        sudo apt-get update
+        sudo apt-get install -y git
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+        sudo yum update
+        sudo yum install -y git
+    elif [ "$PACKAGE_MANAGER" == "apk" ]; then
+        sudo apk update
+        sudo apk add git
+    else
+        echo "Unsupported package manager. Please install Git manually."
         exit 1
     fi
 }
@@ -258,9 +280,9 @@ if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
     sleep 1
     echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed)."
     sleep 2
-    echo "  1a. If something is not installed, I'll ask you if you want me to use Brew to install it."
+    echo "  1a. If something is not installed, I'll ask you if you want me to use a package manager to install it."
     sleep 2
-    echo "  2a. If you don't want me to install something, I'll give you instructions to install it manually."
+    echo "  2a. If you don't want me to install something, I'll bail and give you instructions to install it manually."
     sleep 2
     echo "2. Installed the Spruce CLI."
     sleep 1
@@ -287,6 +309,16 @@ fi
 update_package_manager
 
 source $(get_profile)
+
+echo "Checking for Git..."
+if ! [ -x "$(command -v git)" ]; then
+    if ask_to_install "Git"; then
+        install_git
+    else
+        echo "Please install Git manually from https://git-scm.com/downloads."
+        exit 1
+    fi
+fi
 
 echo "Checking for Node..."
 
