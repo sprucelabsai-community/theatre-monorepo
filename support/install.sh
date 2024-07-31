@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.3.1"
+echo "Version: 3.3.2"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -57,7 +57,7 @@ done
 get_package_manager() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "brew"
-    elif command -v apt-get &> /dev/null; then
+    elif command -v apt-get &>/dev/null; then
         echo "apt-get"
     else
         echo "unknown"
@@ -153,15 +153,15 @@ is_node_outdated() {
 
 install_homebrew() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        if ! command -v brew &> /dev/null; then
+        if ! command -v brew &>/dev/null; then
             echo "Installing Homebrew..."
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            
+
             if [[ "$(uname -m)" == "arm64" ]]; then
-                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zshrc
                 eval "$(/opt/homebrew/bin/brew shellenv)"
             else
-                echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zshrc
+                echo 'eval "$(/usr/local/bin/brew shellenv)"' >>~/.zshrc
                 eval "$(/usr/local/bin/brew shellenv)"
             fi
         else
@@ -175,7 +175,7 @@ install_homebrew() {
 install_node() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew install node@20
-        echo 'export PATH="/usr/local/opt/node@20/bin:$PATH"' >> ~/.zshrc
+        echo 'export PATH="/usr/local/opt/node@20/bin:$PATH"' >>~/.zshrc
         source ~/.zshrc
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
@@ -317,7 +317,7 @@ install_yarn
 
 yarn global add @sprucelabs/spruce-cli
 
-echo 'export PATH="$PATH:$(yarn global bin)"' >> $(get_profile)
+echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
 
 source $(get_profile)
 
@@ -406,4 +406,10 @@ else
     git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
     cp $blueprint_path ./blueprint.yml
 
-    yarn setup.theatre blueprint.yml --shouldRunUntil
+    yarn setup.theatre blueprint.yml --shouldRunUntil="$shouldSetupTheatreUntil"
+
+    echo "You're all set up! 🚀"
+    echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
+    echo "When you're ready to build your first skill, run \"mkdir [skill-name] && spruce onboard\""
+    echo "Go team! 🌲🤖"
+fi
