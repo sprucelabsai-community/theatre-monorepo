@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.3.2"
+echo "Version: 3.3.3"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -151,7 +151,7 @@ is_node_outdated() {
     fi
 }
 
-install_homebrew() {
+install_brew() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         if ! command -v brew &>/dev/null; then
             echo "Installing Homebrew..."
@@ -282,7 +282,7 @@ should_install_node=false
 touch $(get_profile)
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    install_homebrew
+    install_brew
 fi
 update_package_manager
 
@@ -314,10 +314,9 @@ if [ "$should_install_node" = true ]; then
 fi
 
 install_yarn
+echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
 
 yarn global add @sprucelabs/spruce-cli
-
-echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
 
 source $(get_profile)
 
