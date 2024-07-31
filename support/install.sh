@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.2.0"
+echo "Version: 3.3.0"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -229,6 +229,24 @@ update_package_manager() {
     fi
 }
 
+optionally_install_brew() {
+    # only install of on a mac
+    if [ "$(uname)" == "Darwin" ]; then
+        if ! [ -x "$(command -v brew)" ]; then
+            echo "Homebrew is not installed. Would you like to install it? (Y/n)"
+            read -r response
+            if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            else
+                echo "Please install Homebrew manually from https://brew.sh/."
+                exit 1
+            fi
+        fi
+    fi
+    # source it
+    source $(get_profile)
+}
+
 install_yarn() {
     if [ -x "$(command -v apt)" ]; then
         echo "Installing Yarn using npm without sudo..."
@@ -335,9 +353,11 @@ fi
 min_node_version="20.0.0"
 should_install_node=false
 
+touch $(get_profile)
+
+optionally_install_brew
 update_package_manager
 
-touch $(get_profile)
 source $(get_profile)
 
 echo "Checking for Node..."
