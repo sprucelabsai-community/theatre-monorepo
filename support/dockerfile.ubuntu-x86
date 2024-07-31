@@ -5,8 +5,8 @@ FROM --platform=linux/amd64 ubuntu:latest
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG BLUEPRINT_PATH=./blueprint.yml
-ARG SSH_PRIVATE_KEY
-ARG SSH_PUBLIC_KEY
+ARG SSH_PRIVATE_KEY_PATH
+ARG SSH_PUBLIC_KEY_PATH
 
 COPY ${BLUEPRINT_PATH} /app/config/blueprint.yml
 
@@ -33,9 +33,9 @@ RUN mkdir -p /home/docker/.ssh
 RUN chown -R docker:docker /home/docker/.ssh
 
 # Add SSH keys
-RUN echo "${SSH_PRIVATE_KEY}" > /home/docker/.ssh/id_rsa && \
-    echo "${SSH_PUBLIC_KEY}" > /home/docker/.ssh/id_rsa.pub && \
-    chmod 600 /home/docker/.ssh/id_rsa && \
+COPY ${SSH_PRIVATE_KEY_PATH} /home/docker/.ssh/id_rsa
+COPY ${SSH_PUBLIC_KEY_PATH} /home/docker/.ssh/id_rsa.pub
+RUN chmod 600 /home/docker/.ssh/id_rsa && \
     chmod 644 /home/docker/.ssh/id_rsa.pub && \
     chown docker:docker /home/docker/.ssh/id_rsa /home/docker/.ssh/id_rsa.pub
 

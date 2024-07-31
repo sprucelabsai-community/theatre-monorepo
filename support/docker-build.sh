@@ -87,8 +87,8 @@ IMAGE_NAME="theatre-$ARCH"
 # Build the Docker command
 DOCKER_CMD="docker build --no-cache --progress=plain -f $DOCKERFILE_PATH -t $IMAGE_NAME \
     --build-arg BLUEPRINT_PATH=${BLUEPRINT_PATH} \
-    --build-arg SSH_PRIVATE_KEY=\"$(cat $SSH_PRIVATE_KEY)\" \
-    --build-arg SSH_PUBLIC_KEY=\"$(cat $SSH_PUBLIC_KEY)\" \
+    --build-arg SSH_PRIVATE_KEY_PATH=${SSH_PRIVATE_KEY} \
+    --build-arg SSH_PUBLIC_KEY_PATH=${SSH_PUBLIC_KEY} \
     ."
 
 # Echo the command (optional, for debugging)
