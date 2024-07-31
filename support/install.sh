@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.3.4"
+echo "Version: 3.3.5"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -197,8 +197,10 @@ install_brew() {
 install_node() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew install node@20
-        echo 'export PATH="/usr/local/opt/node@20/bin:$PATH"' >>~/.zshrc
-        source ~/.zshrc
+        echo 'export PATH="/opt/homebrew/opt/node@20/bin:$PATH"' >>$(get_profile)
+        echo 'export LDFLAGS="-L/opt/homebrew/opt/node@20/lib"' >>$(get_profile)
+        echo 'export CPPFLAGS="-I/opt/homebrew/opt/node@20/include"' >>$(get_profile)
+        source $(get_profile)
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
         sudo apt-get install -y nodejs

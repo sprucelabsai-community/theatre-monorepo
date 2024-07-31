@@ -4,8 +4,10 @@ FROM --platform=linux/amd64 ubuntu:latest
 # Set environment variables to non-interactive
 ENV DEBIAN_FRONTEND=noninteractive
 
-
 ARG BLUEPRINT_PATH=./blueprint.yml
+ARG SSH_PRIVATE_KEY
+ARG SSH_PUBLIC_KEY
+
 COPY ${BLUEPRINT_PATH} /app/config/blueprint.yml
 
 # Example of using the blueprint
@@ -30,10 +32,26 @@ RUN mkdir /var/run/sshd
 RUN mkdir -p /home/docker/.ssh
 RUN chown -R docker:docker /home/docker/.ssh
 
+# Add SSH keys
+RUN echo "${SSH_PRIVATE_KEY}" > /home/docker/.ssh/id_rsa && \
+    echo "${SSH_PUBLIC_KEY}" > /home/docker/.ssh/id_rsa.pub && \
+    chmod 600 /home/docker/.ssh/id_rsa && \
+    chmod 644 /home/docker/.ssh/id_rsa.pub && \
+    chown docker:docker /home/docker/.ssh/id_rsa /home/docker/.ssh/id_rsa.pub
+
+# Set up SSH config
+RUN echo "Host github.com\n\
+    HostName github.com\n\
+    User git\n\
+    IdentityFile ~/.ssh/id_rsa\n\
+    IdentitiesOnly yes" > /home/docker/.ssh/config && \
+    chmod 600 /home/docker/.ssh/config && \
+    chown docker:docker /home/docker/.ssh/config
+
 # Expose SSH port
 EXPOSE 22
 
-RUN curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/theatre-monorepo/master/support/install.sh | bash -s -- --setupMode=production --blueprint=/app/config/blueprint.yml
+# RUN curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/theatre-monorepo/master/support/install.sh | bash -s -- --setupMode=production --blueprint=/app/config/blueprint.yml
 
 # Set the default command to run sshd
 CMD ["/usr/sbin/sshd", "-D"]
