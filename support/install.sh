@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.4.3"
+echo "Version: 3.4.4"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -416,7 +416,7 @@ if [ -z "$blueprint_path" ]; then
 
     # Set the download URL and filename based on architecture
     DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/Sprucebot+Theatre-${ARCH}.dmg"
-    DOWNLOAD_FILE="$HOME/Downloads/Sprucebot\ Theatre-${ARCH}.dmg"
+    DOWNLOAD_FILE="$HOME/Downloads/Sprucebot Theatre-${ARCH}.dmg"
 
     echo "Downloading Sprucebot Development Theatre from ${DOWNLOAD_URL}..."
     rm -f "$DOWNLOAD_FILE"
