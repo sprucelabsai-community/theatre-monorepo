@@ -73,6 +73,8 @@ if [ "$shouldRunUntil" == "build" ]; then
     exit 0
 fi
 
+yarn shutdown
+
 # Boot mercury if packages/spruce-mercury-api exists
 if [ -d "packages/spruce-mercury-api" ]; then
     hero "Booting Mercury..."
