@@ -405,29 +405,35 @@ else
 fi
 
 if [ -z "$blueprint_path" ]; then
-    echo "Downloading Sprucebot Development Theatre..."
+    # Detect Mac architecture
+    if [[ $(uname -m) == 'arm64' ]]; then
+        ARCH="arm64"
+    else
+        ARCH="mac"
+    fi
 
-    rm -f ~/Downloads/Sprucebot+Theatre-arm64.dmg
+    echo "Detected architecture: $ARCH"
 
-    curl -o ~/Downloads/Sprucebot+Theatre-arm64.dmg https://spruce-theatre.s3.amazonaws.com/Sprucebot+Theatre-arm64.dmg
+    # Set the download URL and filename based on architecture
+    DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/Sprucebot+Theatre-${ARCH}.dmg"
+    DOWNLOAD_FILE="~/Downloads/Sprucebot+Theatre-${ARCH}.dmg"
+
+    echo "Downloading Sprucebot Development Theatre for $ARCH..."
+    rm -f "$DOWNLOAD_FILE"
+    curl -o "$DOWNLOAD_FILE" "$DOWNLOAD_URL"
 
     echo "Installing Sprucebot Development Theatre..."
-
-    hdiutil attach ~/Downloads/Sprucebot+Theatre-arm64.dmg -mountpoint /Volumes/Sprucebot\ Theatre
-
+    hdiutil attach "$DOWNLOAD_FILE" -mountpoint /Volumes/Sprucebot\ Theatre
     rm -rf /Applications/Sprucebot\ Theatre.app
     cp -R /Volumes/Sprucebot\ Theatre/Sprucebot\ Theatre.app /Applications
-
     hdiutil detach /Volumes/Sprucebot\ Theatre
 
     clear
-
     echo "Sprucebot Development Theatre installed into /Applications/Sprucebot Theatre."
     sleep 3
     echo "Opening now..."
     open /Applications
     open /Applications/Sprucebot\ Theatre.app
-
     exit 0
 else
     if [ ! -f "$blueprint_path" ]; then
