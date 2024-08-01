@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.3.6"
+echo "Version: 3.4.0"
 
 shouldSetupTheatreUntil=""
 setupMode=""
