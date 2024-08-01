@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.4.1"
+echo "Version: 3.4.2"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -406,7 +406,6 @@ else
 fi
 
 if [ -z "$blueprint_path" ]; then
-    # Detect Mac architecture
     if [[ $(uname -m) == 'arm64' ]]; then
         ARCH="arm64"
     else
@@ -417,11 +416,28 @@ if [ -z "$blueprint_path" ]; then
 
     # Set the download URL and filename based on architecture
     DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/Sprucebot+Theatre-${ARCH}.dmg"
-    DOWNLOAD_FILE="~/Downloads/Sprucebot+Theatre-${ARCH}.dmg"
+    DOWNLOAD_FILE="$HOME/Downloads/Sprucebot+Theatre-${ARCH}.dmg"
 
     echo "Downloading Sprucebot Development Theatre from ${DOWNLOAD_URL}..."
     rm -f "$DOWNLOAD_FILE"
-    curl -o "$DOWNLOAD_FILE" "$DOWNLOAD_URL"
+
+    # Use the curl command that worked manually
+    if curl -o "$DOWNLOAD_FILE" "$DOWNLOAD_URL"; then
+        echo "Download completed successfully"
+    else
+        echo "Error downloading file. Exit code: $?"
+        echo "Attempted to download from: $DOWNLOAD_URL"
+        echo "Attempted to save to: $DOWNLOAD_FILE"
+        exit 1
+    fi
+
+    # Verify the download
+    if [ -f "$DOWNLOAD_FILE" ] && [ -s "$DOWNLOAD_FILE" ]; then
+        echo "File downloaded successfully to $DOWNLOAD_FILE"
+    else
+        echo "Download seems to have failed. File is missing or empty."
+        exit 1
+    fi
 
     echo "Installing Sprucebot Development Theatre..."
     hdiutil attach "$DOWNLOAD_FILE" -mountpoint /Volumes/Sprucebot\ Theatre
