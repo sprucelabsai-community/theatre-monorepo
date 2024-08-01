@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.4.0"
+echo "Version: 3.4.1"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -418,7 +418,7 @@ if [ -z "$blueprint_path" ]; then
     DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/Sprucebot+Theatre-${ARCH}.dmg"
     DOWNLOAD_FILE="~/Downloads/Sprucebot+Theatre-${ARCH}.dmg"
 
-    echo "Downloading Sprucebot Development Theatre for $ARCH..."
+    echo "Downloading Sprucebot Development Theatre from ${DOWNLOAD_URL}..."
     rm -f "$DOWNLOAD_FILE"
     curl -o "$DOWNLOAD_FILE" "$DOWNLOAD_URL"
 
