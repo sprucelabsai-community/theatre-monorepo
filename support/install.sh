@@ -71,7 +71,8 @@ get_package_manager() {
 PACKAGE_MANAGER=$(get_package_manager)
 
 check_already_installed() {
-    if [ -d "/Applications/Sprucebot Theatre.app" ]; then
+    # check if spruce cli is installed
+    if command -v spruce &>/dev/null; then
         already_installed=true
     fi
 }
