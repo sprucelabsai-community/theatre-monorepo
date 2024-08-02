@@ -518,7 +518,7 @@ install_executable() {
         sudo rpm -i "$DOWNLOAD_FILE"
         ;;
     *.AppImage)
-        sudo apt-get install fuse libfuse2
+        sudo apt-get install fuse libfuse2 pkg-config
         echo "Installing Sprucebot Development Theatre..."
         chmod +x "$DOWNLOAD_FILE"
         "$DOWNLOAD_FILE" &
