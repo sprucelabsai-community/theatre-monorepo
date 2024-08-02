@@ -21,13 +21,15 @@ echo "
                                                                          
 "
 
-echo "Version: 3.4.4"
+echo "Version: 3.5.0"
 
 shouldSetupTheatreUntil=""
 setupMode=""
 blueprint=""
 theatreDestination=""
 already_installed=false
+min_node_version="20.0.0"
+should_install_node=false
 
 for arg in "$@"; do
     case $arg in
@@ -142,6 +144,8 @@ update_package_manager() {
         echo "Unsupported package manager. Please update your system manually."
         exit 1
     fi
+
+    source $(get_profile)
 }
 
 is_node_installed() {
@@ -236,6 +240,8 @@ install_yarn() {
         echo "Unsupported package manager. Please install Yarn manually."
         exit 1
     fi
+
+    echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
 }
 
 install_mongo() {
@@ -282,146 +288,190 @@ install_caddy() {
     fi
 }
 
-check_already_installed
-
-if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
-    sleep 1
-    echo "Hey there! 👋"
-    sleep 1
-    echo "Sprucebot here! 🌲🤖"
-    sleep 1
-    echo "By the time I'm done, I'll have done the following:"
-    sleep 1
-    echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed)."
-    sleep 2
-    echo "  1a. If something is not installed, I'll ask you if you want me to use a package manager to install it."
-    sleep 2
-    echo "  2a. If you don't want me to install something, I'll bail and give you instructions to install it manually."
-    sleep 2
-    echo "2. Installed the Spruce CLI."
-    sleep 1
-    echo "3. Setup your computer for development."
-    sleep 1
-    echo "  4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
-    sleep 2
-    echo "  4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
-    sleep 3
-    echo "Let's get started! 🚀"
-    sleep 1
-    echo -n "Press enter when ready: "
-    read -r response
-fi
-
-min_node_version="20.0.0"
-should_install_node=false
-
-touch $(get_profile)
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    install_brew
-fi
-update_package_manager
-
-source $(get_profile)
-
-echo "Checking for Git..."
-if ! [ -x "$(command -v git)" ]; then
-    if ask_to_install "Git"; then
-        install_git
+optionall_install_node() {
+    if is_node_installed; then
+        echo "Node is installed..."
+        if is_node_outdated; then
+            echo "Node is outdated..."
+            should_install_node=true
+        else
+            echo "Node is up to date..."
+        fi
     else
-        echo "Please install Git manually from https://git-scm.com/downloads."
-        exit 1
-    fi
-fi
-
-echo "Checking for Node..."
-
-if is_node_installed; then
-    echo "Node is installed..."
-    if is_node_outdated; then
-        echo "Node is outdated..."
+        echo "Node is not installed..."
         should_install_node=true
-    else
-        echo "Node is up to date..."
     fi
-else
-    echo "Node is not installed..."
-    should_install_node=true
-fi
 
-if [ "$should_install_node" = true ]; then
-    if ask_to_install "Node"; then
-        install_node
-        source $(get_profile)
+    if [ "$should_install_node" = true ]; then
+        if ask_to_install "Node"; then
+            install_node
+            source $(get_profile)
+        else
+            echo "Please install Node manually from https://nodejs.org/."
+            exit 1
+        fi
+    fi
+}
+
+introduction_message() {
+    if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
+        sleep 1
+        echo "Hey there! 👋"
+        sleep 1
+        echo "Sprucebot here! 🌲🤖"
+        sleep 1
+        echo "By the time I'm done, I'll have done the following:"
+        sleep 1
+        echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed)."
+        sleep 2
+        echo "  1a. If something is not installed, I'll ask you if you want me to use a package manager to install it."
+        sleep 2
+        echo "  2a. If you don't want me to install something, I'll bail and give you instructions to install it manually."
+        sleep 2
+        echo "2. Installed the Spruce CLI."
+        sleep 1
+        echo "3. Setup your computer for development."
+        sleep 1
+        echo "  4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
+        sleep 2
+        echo "  4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
+        sleep 3
+        echo "Let's get started! 🚀"
+        sleep 1
+        echo -n "Press enter when ready: "
+        read -r response
+    fi
+}
+
+optionally_install_brew() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        install_brew
+    fi
+}
+
+optionally_install_git() {
+    if ! [ -x "$(command -v git)" ]; then
+        if ask_to_install "Git"; then
+            install_git
+        else
+            echo "Please install Git manually from https://git-scm.com/downloads."
+            exit 1
+        fi
+    fi
+}
+
+install_spruce_cli() {
+    yarn global add @sprucelabs/spruce-cli
+    source $(get_profile)
+}
+
+optionally_install_and_boot_mongo() {
+    if ! [ -x "$(command -v mongod)" ]; then
+        if ask_to_install "MongoDB"; then
+            install_mongo
+        else
+            echo "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
+            exit 1
+        fi
+    fi
+
+    if ! pgrep -x "mongod" >/dev/null; then
+        echo "Starting MongoDB..."
+        start_mongo
+    fi
+}
+
+optionally_install_caddy() {
+    if ! [ -x "$(command -v caddy)" ]; then
+        if ask_to_install "Caddy (to serve the front end)"; then
+            install_caddy
+        else
+            echo "Please install Caddy manually from https://caddyserver.com/docs/install."
+            exit 1
+        fi
+    fi
+}
+
+optionall_install_jq() {
+    if ! [ -x "$(command -v jq)" ]; then
+        if ask_to_install "jq (to parse JSON)"; then
+            install_package jq
+        else
+            echo "Please install jq manually from https://stedolan.github.io/jq/download/."
+            exit 1
+        fi
+    fi
+
+}
+
+ask_for_blueprint() {
+    if [ -z "$blueprint" ]; then
+        echo -n "Path to blueprint.yml (optional):"
+        read -r blueprint_path
     else
-        echo "Please install Node manually from https://nodejs.org/."
+        blueprint_path=$blueprint
+    fi
+}
+
+determine_executable() {
+    local architecture
+    architecture=$(uname -m)
+    local os_type
+    os_type=$(uname -s)
+
+    case "$os_type" in
+    Linux)
+        case "$architecture" in
+        x86_64)
+            if command -v snap &>/dev/null; then
+                echo "sprucebot-theatre_amd64.snap"
+            elif command -v rpm &>/dev/null; then
+                echo "Sprucebot Theatre-x86_64.rpm"
+            else
+                echo "Sprucebot Theatre-x86_64.AppImage"
+            fi
+            ;;
+        arm64)
+            echo "Sprucebot Theatre-arm64.AppImage"
+            ;;
+        *)
+            echo "Unsupported architecture: $architecture"
+            exit 1
+            ;;
+        esac
+        ;;
+    Darwin)
+        case "$architecture" in
+        x86_64)
+            echo "Sprucebot Theatre-x64.dmg"
+            ;;
+        arm64)
+            echo "Sprucebot Theatre-arm64.dmg"
+            ;;
+        *)
+            echo "Unsupported architecture: $architecture"
+            exit 1
+            ;;
+        esac
+        ;;
+    *)
+        echo "Unsupported OS: $os_type"
         exit 1
-    fi
-fi
+        ;;
+    esac
+}
 
-install_yarn
-echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
-
-yarn global add @sprucelabs/spruce-cli
-
-source $(get_profile)
-
-if ! [ -x "$(command -v mongod)" ]; then
-    if ask_to_install "MongoDB"; then
-        install_mongo
-    else
-        echo "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
-        exit 1
-    fi
-fi
-
-if ! pgrep -x "mongod" >/dev/null; then
-    echo "Starting MongoDB..."
-    start_mongo
-fi
-
-if ! [ -x "$(command -v caddy)" ]; then
-    if ask_to_install "Caddy (to serve the front end)"; then
-        install_caddy
-    else
-        echo "Please install Caddy manually from https://caddyserver.com/docs/install."
-        exit 1
-    fi
-fi
-
-if ! [ -x "$(command -v jq)" ]; then
-    if ask_to_install "jq (to parse JSON)"; then
-        install_package jq
-    else
-        echo "Please install jq manually from https://stedolan.github.io/jq/download/."
-        exit 1
-    fi
-fi
-
-if [ -z "$blueprint" ]; then
-    echo -n "Path to blueprint.yml (optional):"
-    read -r blueprint_path
-else
-    blueprint_path=$blueprint
-fi
-
-if [ -z "$blueprint_path" ]; then
-    if [[ $(uname -m) == 'arm64' ]]; then
-        ARCH="arm64"
-    else
-        ARCH="mac"
-    fi
-
-    echo "Detected architecture: $ARCH"
+install_executable() {
+    local executable="$1"
 
     # Set the download URL and filename based on architecture
-    DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/Sprucebot+Theatre-${ARCH}.dmg"
-    DOWNLOAD_FILE="$HOME/Downloads/Sprucebot Theatre-${ARCH}.dmg"
+    DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/${executable}"
+    DOWNLOAD_FILE="$HOME/Downloads/${executable}"
 
     echo "Downloading Sprucebot Development Theatre from ${DOWNLOAD_URL}..."
     rm -f "$DOWNLOAD_FILE"
 
-    # Use the curl command that worked manually
+    # Use the curl command to download the file
     if curl -o "$DOWNLOAD_FILE" "$DOWNLOAD_URL"; then
         echo "Download completed successfully"
     else
@@ -439,19 +489,71 @@ if [ -z "$blueprint_path" ]; then
         exit 1
     fi
 
-    echo "Installing Sprucebot Development Theatre..."
-    hdiutil attach "$DOWNLOAD_FILE" -mountpoint /Volumes/Sprucebot\ Theatre
-    rm -rf /Applications/Sprucebot\ Theatre.app
-    cp -R /Volumes/Sprucebot\ Theatre/Sprucebot\ Theatre.app /Applications
-    hdiutil detach /Volumes/Sprucebot\ Theatre
+    # Install the downloaded file based on its type
+    case "$executable" in
+    *.dmg)
+        echo "Installing Sprucebot Development Theatre..."
+        hdiutil attach "$DOWNLOAD_FILE" -mountpoint /Volumes/Sprucebot\ Theatre
+        rm -rf /Applications/Sprucebot\ Theatre.app
+        cp -R /Volumes/Sprucebot\ Theatre/Sprucebot\ Theatre.app /Applications
+        hdiutil detach /Volumes/Sprucebot\ Theatre
 
-    clear
-    echo "Sprucebot Development Theatre installed into /Applications/Sprucebot Theatre."
-    sleep 3
-    echo "Opening now..."
-    open /Applications
-    open /Applications/Sprucebot\ Theatre.app
-    exit 0
+        clear
+        echo "Sprucebot Development Theatre installed into /Applications/Sprucebot Theatre."
+        sleep 3
+        echo "Opening now..."
+        open /Applications/Sprucebot\ Theatre.app
+        ;;
+    *.deb)
+        echo "Installing Sprucebot Development Theatre..."
+        sudo dpkg -i "$DOWNLOAD_FILE"
+        sudo apt-get install -f # Fix any dependency issues
+        ;;
+    *.rpm)
+        echo "Installing Sprucebot Development Theatre..."
+        sudo rpm -i "$DOWNLOAD_FILE"
+        ;;
+    *.AppImage)
+        echo "Installing Sprucebot Development Theatre..."
+        chmod +x "$DOWNLOAD_FILE"
+        "$DOWNLOAD_FILE" &
+        ;;
+    *.snap)
+        echo "Installing Sprucebot Development Theatre..."
+        sudo snap install --dangerous "$DOWNLOAD_FILE"
+        ;;
+    *)
+        echo "Unsupported file type: $executable"
+        exit 1
+        ;;
+    esac
+}
+
+check_already_installed
+introduction_message
+
+touch $(get_profile)
+
+optionally_install_brew
+update_package_manager
+
+echo "Checking for Git..."
+optionally_install_git
+
+echo "Checking for Node..."
+optionall_install_node
+install_yarn
+
+install_spruce_cli
+optionally_install_and_boot_mongo
+optionally_install_caddy
+optionall_install_jq
+ask_for_blueprint
+
+if [ -z "$blueprint_path" ]; then
+    executable=$(determine_executable)
+    install_executable "$executable"
+
 else
     if [ ! -f "$blueprint_path" ]; then
         echo "Could not find blueprint.yml @ '$blueprint_path'. Verify the path and try again."
