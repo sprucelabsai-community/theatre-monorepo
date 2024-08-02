@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.1"
+echo "Version: 3.5.3"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -431,7 +431,7 @@ determine_executable() {
                 echo "Sprucebot Theatre-x86_64.AppImage"
             fi
             ;;
-        arm64)
+        arm64 | aarch64)
             echo "Sprucebot Theatre-arm64.AppImage"
             ;;
         *)
@@ -464,7 +464,7 @@ install_executable() {
 
     # Check for error conditions
     if [[ "$executable" == ERROR_UNSUPPORTED_ARCH* || "$executable" == ERROR_UNSUPPORTED_OS* ]]; then
-        echo "Unsupported architecture or OS: $executable"
+        echo "Unsupported system configuration: $executable"
         exit 1
     fi
 
