@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.7"
+echo "Version: 3.5.8"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -140,7 +140,8 @@ update_package_manager() {
         brew update
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get update
-        sudo apt-get install fuse libfuse2 pkg-config libpixman-1-dev libcairo2-dev
+        sudo apt-get install fuse libfuse2 pkg-config libpixman-1-dev build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
     else
         echo "Unsupported package manager. Please update your system manually."
         exit 1
