@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.4"
+echo "Version: 3.5.5"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -518,6 +518,7 @@ install_executable() {
         sudo rpm -i "$DOWNLOAD_FILE"
         ;;
     *.AppImage)
+        sudo apt-get install fuse libfuse2
         echo "Installing Sprucebot Development Theatre..."
         chmod +x "$DOWNLOAD_FILE"
         "$DOWNLOAD_FILE" &
