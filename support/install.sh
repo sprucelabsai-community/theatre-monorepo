@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.3"
+echo "Version: 3.5.4"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -469,7 +469,7 @@ install_executable() {
     fi
 
     # Set the download URL and filename based on architecture
-    DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/${executable}"
+    DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/$(echo ${executable} | sed 's/ /%20/g')"
     DOWNLOAD_FILE="$HOME/Downloads/${executable}"
 
     echo "Downloading Sprucebot Development Theatre from ${DOWNLOAD_URL}..."
