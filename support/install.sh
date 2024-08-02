@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.5"
+echo "Version: 3.5.6"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -140,6 +140,7 @@ update_package_manager() {
         brew update
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get update
+        sudo apt-get install fuse libfuse2 pkg-config libpixman-1-dev
     else
         echo "Unsupported package manager. Please update your system manually."
         exit 1
@@ -288,7 +289,7 @@ install_caddy() {
     fi
 }
 
-optionall_install_node() {
+optionally_install_node() {
     if is_node_installed; then
         echo "Node is installed..."
         if is_node_outdated; then
@@ -518,7 +519,6 @@ install_executable() {
         sudo rpm -i "$DOWNLOAD_FILE"
         ;;
     *.AppImage)
-        sudo apt-get install fuse libfuse2 pkg-config
         echo "Installing Sprucebot Development Theatre..."
         chmod +x "$DOWNLOAD_FILE"
         "$DOWNLOAD_FILE" &
@@ -546,7 +546,7 @@ echo "Checking for Git..."
 optionally_install_git
 
 echo "Checking for Node..."
-optionall_install_node
+optionally_install_node
 install_yarn
 
 install_spruce_cli
