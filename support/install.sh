@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.0"
+echo "Version: 3.5.1"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -435,8 +435,7 @@ determine_executable() {
             echo "Sprucebot Theatre-arm64.AppImage"
             ;;
         *)
-            echo "Unsupported architecture: $architecture"
-            exit 1
+            echo "ERROR_UNSUPPORTED_ARCH: $architecture"
             ;;
         esac
         ;;
@@ -449,20 +448,25 @@ determine_executable() {
             echo "Sprucebot Theatre-arm64.dmg"
             ;;
         *)
-            echo "Unsupported architecture: $architecture"
-            exit 1
+            echo "ERROR_UNSUPPORTED_ARCH: $architecture"
             ;;
         esac
         ;;
     *)
-        echo "Unsupported OS: $os_type"
-        exit 1
+        echo "ERROR_UNSUPPORTED_OS: $os_type"
         ;;
     esac
 }
 
+# Function to install the downloaded executable
 install_executable() {
     local executable="$1"
+
+    # Check for error conditions
+    if [[ "$executable" == ERROR_UNSUPPORTED_ARCH* || "$executable" == ERROR_UNSUPPORTED_OS* ]]; then
+        echo "Unsupported architecture or OS: $executable"
+        exit 1
+    fi
 
     # Set the download URL and filename based on architecture
     DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/${executable}"
@@ -553,7 +557,6 @@ ask_for_blueprint
 if [ -z "$blueprint_path" ]; then
     executable=$(determine_executable)
     install_executable "$executable"
-
 else
     if [ ! -f "$blueprint_path" ]; then
         echo "Could not find blueprint.yml @ '$blueprint_path'. Verify the path and try again."
