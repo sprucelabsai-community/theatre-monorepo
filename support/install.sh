@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.8"
+echo "Version: 3.5.9"
 
 shouldSetupTheatreUntil=""
 setupMode=""
@@ -522,7 +522,7 @@ install_executable() {
     *.AppImage)
         echo "Installing Sprucebot Development Theatre..."
         chmod +x "$DOWNLOAD_FILE"
-        "$DOWNLOAD_FILE" &
+        "$DOWNLOAD_FILE" --no-sandbox &
         ;;
     *.snap)
         echo "Installing Sprucebot Development Theatre..."
