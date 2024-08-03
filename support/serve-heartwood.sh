@@ -16,6 +16,7 @@ fi
 
 # Create a Caddyfile
 echo ":8080
+
 bind 0.0.0.0
 root * $heartwood_skill_dir
 file_server" >Caddyfile
