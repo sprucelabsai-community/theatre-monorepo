@@ -16,8 +16,11 @@ for dir in *-skill; do
             spruce set.remote --remote=local
         fi
 
-        spruce login.skill --skillSlug="$NAMESPACE"
+        echo "Logging in as $NAMESPACE..."
+        spruce login.skill --skillSlug="$NAMESPACE" >/dev/null &
 
         cd ..
     fi
 done
+
+wait
