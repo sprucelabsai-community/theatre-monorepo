@@ -21,13 +21,15 @@ echo "
                                                                          
 "
 
-echo "Version: 3.2.0"
+echo "Version: 3.5.9"
 
 shouldSetupTheatreUntil=""
 setupMode=""
 blueprint=""
 theatreDestination=""
 already_installed=false
+min_node_version="20.0.0"
+should_install_node=false
 
 for arg in "$@"; do
     case $arg in
@@ -54,8 +56,25 @@ for arg in "$@"; do
     esac
 done
 
+get_package_manager() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "brew"
+    elif command -v apt-get &>/dev/null; then
+        echo "apt-get"
+    elif command -v yum &>/dev/null; then
+        echo "yum"
+    elif command -v apk &>/dev/null; then
+        echo "apk"
+    else
+        echo "unknown"
+    fi
+}
+
+PACKAGE_MANAGER=$(get_package_manager)
+
 check_already_installed() {
-    if [ -d "/Applications/Sprucebot Theatre.app" ]; then
+    # check if spruce cli is installed
+    if command -v spruce &>/dev/null; then
         already_installed=true
     fi
 }
@@ -86,18 +105,49 @@ get_profile() {
     fi
 }
 
-install_jq() {
-    if [ -x "$(command -v apt)" ]; then
-        echo "Installing jq using apt..."
-        sudo apt-get update
-        sudo apt-get install -y jq
-    elif [ -x "$(command -v brew)" ]; then
-        echo "Installing jq using Homebrew..."
-        brew install jq
+install_package() {
+    local package_name="$1"
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
+        brew install "$package_name"
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+        sudo apt-get install -y "$package_name"
     else
-        echo "No suitable package manager found for installing jq."
+        echo "Unsupported package manager. Please install $package_name manually."
         exit 1
     fi
+}
+
+install_git() {
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
+        brew install git
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+        sudo apt-get update
+        sudo apt-get install -y git
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+        sudo yum update
+        sudo yum install -y git
+    elif [ "$PACKAGE_MANAGER" == "apk" ]; then
+        sudo apk update
+        sudo apk add git
+    else
+        echo "Unsupported package manager. Please install Git manually."
+        exit 1
+    fi
+}
+
+update_package_manager() {
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
+        brew update
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+        sudo apt-get update
+        sudo apt-get install fuse libfuse2 pkg-config libpixman-1-dev build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
+    else
+        echo "Unsupported package manager. Please update your system manually."
+        exit 1
+    fi
+
+    source $(get_profile)
 }
 
 is_node_installed() {
@@ -130,317 +180,385 @@ is_node_outdated() {
     fi
 }
 
-install_homebrew() {
-    local fail_message="$1"
-
-    # Check if Homebrew or apt is installed
-    if ! [ -x "$(command -v brew)" ] && ! [ -x "$(command -v apt)" ]; then
-        if ask_to_install "Homebrew"; then
+install_brew() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        if ! command -v brew &>/dev/null; then
             echo "Installing Homebrew..."
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-            # Detect the operating system
-            OS="$(uname)"
-            case $OS in
-            'Linux')
-                if [ -x "$(command -v apt)" ]; then
-                    echo "apt is available, skipping Homebrew installation."
-                else
-                    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-                    echo "Homebrew installed..."
-
-                    # Add Homebrew to PATH
-                    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>$(get_profile)
-                    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-                fi
-                ;;
-            'Darwin')
-                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-                echo "Homebrew installed..."
-
-                # Add Homebrew to PATH for macOS
-                if [[ "$(uname -m)" == "arm64" ]]; then
-                    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>$(get_profile)
-                    eval "$(/opt/homebrew/bin/brew shellenv)"
-                else
-                    echo 'eval "$(/usr/local/bin/brew shellenv)"' >>$(get_profile)
-                    eval "$(/usr/local/bin/brew shellenv)"
-                fi
-                ;;
-            *)
-                echo "Unsupported operating system: $OS"
-                exit 1
-                ;;
-            esac
-
-            source $(get_profile)
+            if [[ "$(uname -m)" == "arm64" ]]; then
+                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zshrc
+                eval "$(/opt/homebrew/bin/brew shellenv)"
+            else
+                echo 'eval "$(/usr/local/bin/brew shellenv)"' >>~/.zshrc
+                eval "$(/usr/local/bin/brew shellenv)"
+            fi
         else
-            echo "$fail_message"
-            exit 1
+            echo "Homebrew is already installed."
         fi
+    else
+        echo "Homebrew is only supported on macOS. Skipping installation."
     fi
 }
 
 install_node() {
-    if [ -x "$(command -v apt)" ]; then
-        sudo apt-get update
-        sudo apt-get install -y curl
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
+        brew install node@20
+
+        # Get the correct Homebrew prefix
+        BREW_PREFIX=$(brew --prefix)
+
+        # Update PATH
+        echo "export PATH=\"$BREW_PREFIX/opt/node@20/bin:\$PATH\"" >>$(get_profile)
+
+        # Set LDFLAGS and CPPFLAGS
+        echo "export LDFLAGS=\"-L$BREW_PREFIX/opt/node@20/lib\"" >>$(get_profile)
+        echo "export CPPFLAGS=\"-I$BREW_PREFIX/opt/node@20/include\"" >>$(get_profile)
+
+        # Source the profile
+        source $(get_profile)
+
+        brew link --force --overwrite node@20
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
         sudo apt-get install -y nodejs
         sudo mkdir -p /usr/local/lib/node_modules/
         sudo chown -R root:$(whoami) /usr/local/lib/node_modules/
         sudo chmod -R 775 /usr/local/lib/node_modules/
-    elif [ -x "$(command -v brew)" ]; then
-        brew install node@20
-        echo 'export PATH="/usr/local/opt/node@20/bin:$PATH"' >>~/.zshrc
-        source ~/.zshrc
     else
-        echo "No suitable package manager found for installing Node.js."
+        echo "Unsupported package manager. Please install Node.js manually."
         exit 1
     fi
-    # Verify installation
     node --version
     npm --version
 }
 
+install_yarn() {
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
+        brew install yarn
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+        sudo npm install -g yarn
+    else
+        echo "Unsupported package manager. Please install Yarn manually."
+        exit 1
+    fi
+
+    echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
+}
+
 install_mongo() {
-    if [ -x "$(command -v apt)" ]; then
-        echo "Installing MongoDB using apt..."
-        sudo apt-get install -y mongodb-org
-    elif [ -x "$(command -v brew)" ]; then
-        echo "Installing MongoDB using Homebrew..."
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew tap mongodb/brew
         brew install mongodb-community
-    else
-        echo "No suitable package manager found for installing MongoDB."
-        exit 1
-    fi
-}
-
-update_package_manager() {
-    if [ -x "$(command -v apt)" ]; then
-        echo "Updating apt package list..."
-        sudo apt-get update
-    elif [ -x "$(command -v brew)" ]; then
-        echo "Updating Homebrew..."
-        brew update
-    else
-        echo "No suitable package manager found for updating."
-        exit 1
-    fi
-}
-
-install_yarn() {
-    if [ -x "$(command -v apt)" ]; then
-        echo "Installing Yarn using npm without sudo..."
-        sudo npm install -g yarn
-    elif [ -x "$(command -v brew)" ]; then
-        echo "Installing Yarn using Homebrew..."
-        brew install yarn
-    else
-        echo "No suitable package manager found for installing Yarn."
-        exit 1
-    fi
-}
-
-install_mongo() {
-    if [ -x "$(command -v apt)" ]; then
-        echo "Installing MongoDB using apt..."
-
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get install gnupg curl
-
-        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc |
-            sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
-                --dearmor
-
+        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
         echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
         sudo apt-get update
         sudo apt-get install -y mongodb-org
-    elif [ -x "$(command -v brew)" ]; then
-        echo "Installing MongoDB using Homebrew..."
-        brew tap mongodb/brew
-        brew install mongodb-community
     else
-        echo "No suitable package manager found for installing MongoDB."
+        echo "Unsupported package manager. Please install MongoDB manually."
         exit 1
     fi
 }
 
 start_mongo() {
-    if [ -x "$(command -v brew)" ]; then
-        echo "Starting MongoDB using Homebrew services..."
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew services start mongodb-community
-    elif [ -x "$(command -v systemctl)" ]; then
-        echo "Starting MongoDB using systemctl..."
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo systemctl daemon-reload
         sudo systemctl start mongod
         sudo systemctl enable mongod
     else
-        echo "No suitable method found for starting MongoDB."
+        echo "Unsupported package manager. Please start MongoDB manually."
         exit 1
     fi
 }
 
 install_caddy() {
-    if [ -x "$(command -v apt)" ]; then
-        echo "Installing Caddy using apt..."
-
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
+        brew install caddy
+    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
-
         curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-archive-keyring.gpg
-
         echo "deb [signed-by=/usr/share/keyrings/caddy-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-
-        # Update package list and install Caddy
         sudo apt-get update
         sudo apt-get install -y caddy
-    elif [ -x "$(command -v brew)" ]; then
-        echo "Installing Caddy using Homebrew..."
-        brew install caddy
     else
-        echo "No suitable package manager found for installing Caddy."
+        echo "Unsupported package manager. Please install Caddy manually."
         exit 1
     fi
 }
 
+optionally_install_node() {
+    if is_node_installed; then
+        echo "Node is installed..."
+        if is_node_outdated; then
+            echo "Node is outdated..."
+            should_install_node=true
+        else
+            echo "Node is up to date..."
+        fi
+    else
+        echo "Node is not installed..."
+        should_install_node=true
+    fi
+
+    if [ "$should_install_node" = true ]; then
+        if ask_to_install "Node"; then
+            install_node
+            source $(get_profile)
+        else
+            echo "Please install Node manually from https://nodejs.org/."
+            exit 1
+        fi
+    fi
+}
+
+introduction_message() {
+    if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
+        sleep 1
+        echo "Hey there! 👋"
+        sleep 1
+        echo "Sprucebot here! 🌲🤖"
+        sleep 1
+        echo "By the time I'm done, I'll have done the following:"
+        sleep 1
+        echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed)."
+        sleep 2
+        echo "  1a. If something is not installed, I'll ask you if you want me to use a package manager to install it."
+        sleep 2
+        echo "  2a. If you don't want me to install something, I'll bail and give you instructions to install it manually."
+        sleep 2
+        echo "2. Installed the Spruce CLI."
+        sleep 1
+        echo "3. Setup your computer for development."
+        sleep 1
+        echo "  4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
+        sleep 2
+        echo "  4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
+        sleep 3
+        echo "Let's get started! 🚀"
+        sleep 1
+        echo -n "Press enter when ready: "
+        read -r response
+    fi
+}
+
+optionally_install_brew() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        install_brew
+    fi
+}
+
+optionally_install_git() {
+    if ! [ -x "$(command -v git)" ]; then
+        if ask_to_install "Git"; then
+            install_git
+        else
+            echo "Please install Git manually from https://git-scm.com/downloads."
+            exit 1
+        fi
+    fi
+}
+
+install_spruce_cli() {
+    yarn global add @sprucelabs/spruce-cli
+    source $(get_profile)
+}
+
+optionally_install_and_boot_mongo() {
+    if ! [ -x "$(command -v mongod)" ]; then
+        if ask_to_install "MongoDB"; then
+            install_mongo
+        else
+            echo "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
+            exit 1
+        fi
+    fi
+
+    if ! pgrep -x "mongod" >/dev/null; then
+        echo "Starting MongoDB..."
+        start_mongo
+    fi
+}
+
+optionally_install_caddy() {
+    if ! [ -x "$(command -v caddy)" ]; then
+        if ask_to_install "Caddy (to serve the front end)"; then
+            install_caddy
+        else
+            echo "Please install Caddy manually from https://caddyserver.com/docs/install."
+            exit 1
+        fi
+    fi
+}
+
+optionall_install_jq() {
+    if ! [ -x "$(command -v jq)" ]; then
+        if ask_to_install "jq (to parse JSON)"; then
+            install_package jq
+        else
+            echo "Please install jq manually from https://stedolan.github.io/jq/download/."
+            exit 1
+        fi
+    fi
+
+}
+
+ask_for_blueprint() {
+    if [ -z "$blueprint" ]; then
+        echo -n "Path to blueprint.yml (optional):"
+        read -r blueprint_path
+    else
+        blueprint_path=$blueprint
+    fi
+}
+
+determine_executable() {
+    local architecture
+    architecture=$(uname -m)
+    local os_type
+    os_type=$(uname -s)
+
+    case "$os_type" in
+    Linux)
+        case "$architecture" in
+        x86_64)
+            if command -v snap &>/dev/null; then
+                echo "sprucebot-theatre_amd64.snap"
+            elif command -v rpm &>/dev/null; then
+                echo "Sprucebot Theatre-x86_64.rpm"
+            else
+                echo "Sprucebot Theatre-x86_64.AppImage"
+            fi
+            ;;
+        arm64 | aarch64)
+            echo "Sprucebot Theatre-arm64.AppImage"
+            ;;
+        *)
+            echo "ERROR_UNSUPPORTED_ARCH: $architecture"
+            ;;
+        esac
+        ;;
+    Darwin)
+        case "$architecture" in
+        x86_64)
+            echo "Sprucebot Theatre-x64.dmg"
+            ;;
+        arm64)
+            echo "Sprucebot Theatre-arm64.dmg"
+            ;;
+        *)
+            echo "ERROR_UNSUPPORTED_ARCH: $architecture"
+            ;;
+        esac
+        ;;
+    *)
+        echo "ERROR_UNSUPPORTED_OS: $os_type"
+        ;;
+    esac
+}
+
+# Function to install the downloaded executable
+install_executable() {
+    local executable="$1"
+
+    # Check for error conditions
+    if [[ "$executable" == ERROR_UNSUPPORTED_ARCH* || "$executable" == ERROR_UNSUPPORTED_OS* ]]; then
+        echo "Unsupported system configuration: $executable"
+        exit 1
+    fi
+
+    # Set the download URL and filename based on architecture
+    DOWNLOAD_URL="https://spruce-theatre.s3.amazonaws.com/$(echo ${executable} | sed 's/ /%20/g')"
+    DOWNLOAD_FILE="$HOME/Downloads/${executable}"
+
+    echo "Downloading Sprucebot Development Theatre from ${DOWNLOAD_URL}..."
+    rm -f "$DOWNLOAD_FILE"
+
+    # Use the curl command to download the file
+    if curl -o "$DOWNLOAD_FILE" "$DOWNLOAD_URL"; then
+        echo "Download completed successfully"
+    else
+        echo "Error downloading file. Exit code: $?"
+        echo "Attempted to download from: $DOWNLOAD_URL"
+        echo "Attempted to save to: $DOWNLOAD_FILE"
+        exit 1
+    fi
+
+    # Verify the download
+    if [ -f "$DOWNLOAD_FILE" ] && [ -s "$DOWNLOAD_FILE" ]; then
+        echo "File downloaded successfully to $DOWNLOAD_FILE"
+    else
+        echo "Download seems to have failed. File is missing or empty."
+        exit 1
+    fi
+
+    # Install the downloaded file based on its type
+    case "$executable" in
+    *.dmg)
+        echo "Installing Sprucebot Development Theatre..."
+        hdiutil attach "$DOWNLOAD_FILE" -mountpoint /Volumes/Sprucebot\ Theatre
+        rm -rf /Applications/Sprucebot\ Theatre.app
+        cp -R /Volumes/Sprucebot\ Theatre/Sprucebot\ Theatre.app /Applications
+        hdiutil detach /Volumes/Sprucebot\ Theatre
+
+        clear
+        echo "Sprucebot Development Theatre installed into /Applications/Sprucebot Theatre."
+        sleep 3
+        echo "Opening now..."
+        open /Applications/Sprucebot\ Theatre.app
+        ;;
+    *.deb)
+        echo "Installing Sprucebot Development Theatre..."
+        sudo dpkg -i "$DOWNLOAD_FILE"
+        sudo apt-get install -f # Fix any dependency issues
+        ;;
+    *.rpm)
+        echo "Installing Sprucebot Development Theatre..."
+        sudo rpm -i "$DOWNLOAD_FILE"
+        ;;
+    *.AppImage)
+        echo "Installing Sprucebot Development Theatre..."
+        chmod +x "$DOWNLOAD_FILE"
+        "$DOWNLOAD_FILE" --no-sandbox &
+        ;;
+    *.snap)
+        echo "Installing Sprucebot Development Theatre..."
+        sudo snap install --dangerous "$DOWNLOAD_FILE"
+        ;;
+    *)
+        echo "Unsupported file type: $executable"
+        exit 1
+        ;;
+    esac
+}
+
 check_already_installed
-
-if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
-    sleep 1
-    echo "Hey there! 👋"
-    sleep 1
-    echo "Sprucebot here! 🌲🤖"
-    sleep 1
-    echo "By the time I'm done, I'll have done the following:"
-    sleep 1
-    echo "1. Installed Node.js, Yarn and Mongo (or skip any already installed)."
-    sleep 2
-    echo "  1a. If something is not installed, I'll ask you if you want me to use Brew to install it."
-    sleep 2
-    echo "  2a. If you don't want me to install something, I'll give you instructions to install it manually."
-    sleep 2
-    echo "2. Installed the Spruce CLI."
-    sleep 1
-    echo "3. Setup your computer for development."
-    sleep 1
-    echo "  4a. If you have a blueprint.yml, I'll setup a Sprucebot Development Theatre based on that."
-    sleep 2
-    echo "  4b. If you don't have a blueprint.yml, I'll setup a Sprucebot Development Theatre from scratch."
-    sleep 3
-    echo "Let's get started! 🚀"
-    sleep 1
-    echo -n "Press enter when ready: "
-    read -r response
-fi
-
-min_node_version="20.0.0"
-should_install_node=false
-
-update_package_manager
+introduction_message
 
 touch $(get_profile)
-source $(get_profile)
+
+optionally_install_brew
+update_package_manager
+
+echo "Checking for Git..."
+optionally_install_git
 
 echo "Checking for Node..."
-
-if is_node_installed; then
-    echo "Node is installed..."
-    if is_node_outdated; then
-        echo "Node is outdated..."
-        should_install_node=true
-    else
-        echo "Node is up to date..."
-    fi
-else
-    echo "Node is not installed..."
-    should_install_node=true
-fi
-
-if [ "$should_install_node" = true ]; then
-    if ask_to_install "Node"; then
-        install_homebrew "Please install Node manually from https://nodejs.org/."
-        install_node
-        source $(get_profile)
-    else
-        echo "Please install Node manually from https://nodejs.org/."
-        exit 1
-    fi
-fi
-
+optionally_install_node
 install_yarn
 
-yarn global add @sprucelabs/spruce-cli
-
-echo 'export PATH="$PATH:$(yarn global bin)"' >>$(get_profile)
-
-source $(get_profile)
-
-if ! [ -x "$(command -v mongod)" ]; then
-    if ask_to_install "MongoDB"; then
-        install_homebrew "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
-        install_mongo
-    else
-        echo "Please install MongoDB manually from https://docs.mongodb.com/manual/installation/."
-        exit 1
-    fi
-fi
-
-if ! pgrep -x "mongod" >/dev/null; then
-    echo "Starting MongoDB..."
-    start_mongo
-fi
-
-if ! [ -x "$(command -v caddy)" ]; then
-    if ask_to_install "Caddy (to serve the front end)"; then
-        install_homebrew "Please install Caddy manually from https://caddyserver.com/docs/install."
-        install_caddy
-    else
-        echo "Please install Caddy manually from https://caddyserver.com/docs/install."
-        exit 1
-    fi
-fi
-
-if ! [ -x "$(command -v jq)" ]; then
-    if ask_to_install "jq (to parse JSON)"; then
-        install_homebrew "Please install jq manually from https://stedolan.github.io/jq/download/."
-        install_jq
-    else
-        echo "Please install jq manually from https://stedolan.github.io/jq/download/."
-        exit 1
-    fi
-fi
-
-if [ -z "$blueprint" ]; then
-    echo -n "Path to blueprint.yml (optional):"
-    read -r blueprint_path
-else
-    blueprint_path=$blueprint
-fi
+install_spruce_cli
+optionally_install_and_boot_mongo
+optionally_install_caddy
+optionall_install_jq
+ask_for_blueprint
 
 if [ -z "$blueprint_path" ]; then
-    echo "Downloading Sprucebot Development Theatre..."
-
-    rm -f ~/Downloads/Sprucebot+Theatre-arm64.dmg
-
-    curl -o ~/Downloads/Sprucebot+Theatre-arm64.dmg https://spruce-theatre.s3.amazonaws.com/Sprucebot+Theatre-arm64.dmg
-
-    echo "Installing Sprucebot Development Theatre..."
-
-    hdiutil attach ~/Downloads/Sprucebot+Theatre-arm64.dmg -mountpoint /Volumes/Sprucebot\ Theatre
-
-    rm -rf /Applications/Sprucebot\ Theatre.app
-    cp -R /Volumes/Sprucebot\ Theatre/Sprucebot\ Theatre.app /Applications
-
-    hdiutil detach /Volumes/Sprucebot\ Theatre
-
-    clear
-
-    echo "Sprucebot Development Theatre installed into /Applications/Sprucebot Theatre."
-    sleep 3
-    echo "Opening now..."
-    open /Applications
-    open /Applications/Sprucebot\ Theatre.app
-
-    exit 0
+    executable=$(determine_executable)
+    install_executable "$executable"
 else
     if [ ! -f "$blueprint_path" ]; then
         echo "Could not find blueprint.yml @ '$blueprint_path'. Verify the path and try again."

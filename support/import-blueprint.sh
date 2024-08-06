@@ -42,14 +42,22 @@ echo "Processing blueprint: $BLUEPRINT"
 # Convert BLUEPRINT to blueprint.yml in the base directory
 cp "$BLUEPRINT" blueprint.yml
 
+# Detect the operating system
+OS=$(uname)
+
 # Replace parameters in the blueprint.yml
 while IFS= read -r line; do
     if [[ "$line" =~ \$([a-zA-Z_][a-zA-Z_0-9]*) ]]; then # Match $ followed by variable name
         param="${BASH_REMATCH[1]}"
         # Check if the variable is set using an older method
         if [ ! -z "${!param}" ]; then # Check if variable is set
-            # Use sed suitable for macOS. Notice the '' after -i, which is required for macOS
-            sed -i '' "s|\$$param|${!param}|g" blueprint.yml
+            if [[ "$OS" == "Darwin" ]]; then
+                # Use sed suitable for macOS. Notice the '' after -i, which is required for macOS
+                sed -i '' "s|\$$param|${!param}|g" blueprint.yml
+            else
+                # Use sed suitable for Linux
+                sed -i "s|\$$param|${!param}|g" blueprint.yml
+            fi
         fi
     fi
 done <blueprint.yml

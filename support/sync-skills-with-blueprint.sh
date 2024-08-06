@@ -40,7 +40,7 @@ PIDS=()
 
 # Capture additional arguments passed to this script
 # We skip the first argument since it's the path to the blueprint.yml
-ADDITIONAL_ARGS="${@:2}"
+ADDITIONAL_ARGS="${@:2} --configStrategy=replace"
 
 # Prompt the user for each skill to remove
 for SKILL in $INSTALLED_SKILLS; do

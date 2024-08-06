@@ -6,27 +6,39 @@ should_use_pin=true
 
 # Function to show usage
 usage() {
-    echo "Usage: yarn reset.core.database --dumpDir=/path/to/dump [--shouldUsePin=false]"
+    echo "Usage: yarn reset.core.database [--dumpDir=/path/to/dump] [--mongoConnectionString=mongodb://...] [--shouldUsePin=false]"
     exit 1
 }
 
 # Parse command-line arguments
-for arg in "$@"; do
-    case $arg in
-    --dumpDir=*)
-        dump_dir="${arg#*=}"
-        shift # Remove argument from processing
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --dumpDir=*)
+        dump_dir="${1#*=}"
+        shift
         ;;
-    --shouldUsePin=false)
+        --mongoConnectionString=*)
+        mongo_connection_string="${1#*=}"
+        shift
+        ;;
+        --shouldUsePin=false)
         should_use_pin=false
-        shift # Remove argument from processing
+        shift
         ;;
-    *)
+        *)
         # Unknown option
         usage
         ;;
     esac
 done
+
+# Set default connection string if not provided
+if [ -z "$mongo_connection_string" ]; then
+    mongo_connection_string="mongodb://localhost:27017"
+    echo "Using local MongoDB instance."
+else
+    echo "Using provided MongoDB connection string."
+fi
 
 # Generate a random 5-digit PIN if should_use_pin is true
 if [ "$should_use_pin" = false ]; then
@@ -58,12 +70,12 @@ fi
 
 # Clear the core database
 echo "Clearing core database..."
-mongosh --quiet --eval 'db.getMongo().getDBNames().forEach(function(i){try { console.log("Dropping",i);db.getSiblingDB(i).dropDatabase() } catch {}})'
+mongosh "$mongo_connection_string" --quiet --eval 'db.getMongo().getDBNames().forEach(function(i){try { console.log("Dropping",i);db.getSiblingDB(i).dropDatabase() } catch {}})'
 
 # Restore from dump if the dump_dir is provided and valid
 if [ -n "$dump_dir" ]; then
     echo "Dump directory found. Restoring databases now..."
-    mongorestore --dir "$dump_dir"
+    mongorestore --uri "$mongo_connection_string" --dir "$dump_dir"
     echo "Restore complete!"
 else
     echo "Database cleared!"
