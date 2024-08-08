@@ -16,12 +16,17 @@ fi
 
 blueprint=$1
 shouldRunUntil=""
+shouldServeHeartwood=true
 
 # Parse arguments
 for arg in "$@"; do
     case $arg in
     --shouldRunUntil=*)
         shouldRunUntil="${arg#*=}"
+        shift
+        ;;
+    --shouldServeHeartwood=*)
+        shouldServeHeartwood="${arg#*=}"
         shift
         ;;
     *.yml)
@@ -102,7 +107,12 @@ hero "Publishing core skills..."
 
 hero "Booting..."
 
-yarn boot.serve
+if [ "$shouldServeHeartwood" = true ]; then
+    yarn boot.serve
+else
+    yarn boot
+fi
+
 
 wait
 
