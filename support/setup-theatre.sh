@@ -4,18 +4,19 @@ source ./support/hero.sh
 
 # Function to print usage and exit
 usage() {
-    echo "Usage: yarn setup.theatre <blueprint.yml> [--shouldRunUntil=<step>]"
+    echo "Usage: yarn setup.theatre <blueprint.yml> [--shouldRunUntil=<step>] [--shouldServeHeartwood=<true|false>]"
     echo "Steps: build"
     exit 1
 }
 
 # Check if the correct number of arguments is provided
-if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+if [ $# -lt 1 ]; then
     usage
 fi
 
 blueprint=$1
 shouldRunUntil=""
+shouldServeHeartwood=true
 shouldServeHeartwood=true
 
 # Parse arguments
@@ -23,6 +24,10 @@ for arg in "$@"; do
     case $arg in
     --shouldRunUntil=*)
         shouldRunUntil="${arg#*=}"
+        shift
+        ;;
+    --shouldServeHeartwood=*)
+        shouldServeHeartwood="${arg#*=}"
         shift
         ;;
     --shouldServeHeartwood=*)
@@ -112,7 +117,6 @@ if [ "$shouldServeHeartwood" = true ]; then
 else
     yarn boot
 fi
-
 
 wait
 
