@@ -37,10 +37,11 @@ for dir in *-skill; do
 
             # Check if SKILL_ID is defined in .env file
             if ! grep -q "^SKILL_ID=" .env || [ "$shouldForceRegister" = "true" ]; then
-                spruce register --nameReadable="$NAMESPACE" --nameKebab="$NAMESPACE"
+                echo "Registering $NAMESPACE..."
+                spruce register --nameReadable="$NAMESPACE" --nameKebab="$NAMESPACE" >/dev/null &
             else
                 echo "$NAMESPACE is already registered, logging in..."
-                spruce login.skill --skillSlug="$NAMESPACE"
+                spruce login.skill --skillSlug="$NAMESPACE" >/dev/null &
             fi
         else
             echo "$NAMESPACE is missing a .env file!" >&2
@@ -50,3 +51,5 @@ for dir in *-skill; do
         cd ..
     fi
 done
+
+wait
