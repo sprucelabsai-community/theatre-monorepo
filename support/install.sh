@@ -138,8 +138,11 @@ install_git() {
 update_package_manager() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew update
+        # canvas requirements (heartwood)
+        brew install pkg-config cairo pango libpng jpeg giflib librsvg pixman
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get update
+        # canvas requirements (heartwood)
         sudo apt-get install fuse libfuse2 pkg-config libpixman-1-dev build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
     else
