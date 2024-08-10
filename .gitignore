@@ -9,3 +9,4 @@ package-lock.json
 snapshots/
 .pm2
 caddy
+bun

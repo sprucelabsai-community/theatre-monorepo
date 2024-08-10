@@ -22,7 +22,7 @@
     "push.latest.to": "./support/push-latest-to.sh",
     "push.to": "./support/push-to.sh",
     "reboot": "./support/reboot.sh",
-    "rebuild": "yarn clean && yarn && lerna run clean.build && lerna run build.dev",
+    "rebuild": "./support/rebuild.sh",
     "reset.core.database": "./support/reset-core-db.sh",
     "reset": "./support/reset.sh",
     "serve.heartwood": "./support/serve-heartwood.sh",
