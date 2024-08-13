@@ -7,6 +7,25 @@ DIR="$(pwd)"
 
 source ./support/hero.sh
 
+# Default value for shouldCreateCaddyfile
+shouldCreateCaddyfile=true
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --shouldCreateCaddyfile=*)
+        shouldCreateCaddyfile="${key#*=}"
+        shift
+        ;;
+        *)
+        # Unknown option
+        echo "Unknown option: $1"
+        exit 1
+        ;;
+    esac
+done
+
 # Define the path to the heartwood-skill directory
 heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill/dist"
 
@@ -16,12 +35,18 @@ if [ ! -d "$heartwood_skill_dir" ]; then
     exit 0
 fi
 
-# Create a Caddyfile
-echo ":8080
 
-bind 0.0.0.0
-root * $heartwood_skill_dir
-file_server" >Caddyfile
+# Create a Caddyfile if shouldCreateCaddyfile is true
+if [ "$shouldCreateCaddyfile" = true ]; then
+    echo ":8080 {
+    bind 0.0.0.0
+    root * $heartwood_skill_dir
+    file_server
+}" > Caddyfile
+    echo "Caddyfile created."
+else
+    echo "Skipping Caddyfile creation."
+fi
 
 # Ensure the .processes directory exists
 mkdir -p .processes

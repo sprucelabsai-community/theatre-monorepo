@@ -1,10 +1,21 @@
 #!/bin/bash
 
-# if any arguments, call reboot-skill.sh
-if [ $# -ge 1 ]; then
-    ./support/reboot-skill.sh "$@"
-    exit $?
-fi
+shouldServeHeartwood=true
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+    --shouldServeHeartwood=*)
+        shouldServeHeartwood="${arg#*=}"
+        shift
+        ;;
+    *)
+        # If any other arguments are provided, call reboot-skill.sh
+        ./support/reboot-skill.sh "$@"
+        exit $?
+        ;;
+    esac
+done
 
 yarn shutdown
 
@@ -18,4 +29,8 @@ sleep 2
 
 wait
 
-yarn boot.serve
+if [ "$shouldServeHeartwood" = true ]; then
+    yarn boot.serve
+else
+    yarn boot
+fi

@@ -38,24 +38,9 @@ echo "Done pulling latest..."
 
 cd ..
 
-echo "Starting to update dependencies..."
+echo "Starting rebuild..."
 
-# remove if exists
-rm -rf node_modules/npm >/dev/null 2>&1
+yarn rebuild
 
-echo "Removing yarn lock..."
-
-rm -f yarn.lock >/dev/null 2>&1
-
-echo "Removing npm lock..."
-
-rm -f package-lock.json >/dev/null 2>&1
-
-echo "Installing dependencies..."
-
-yarn
-
-yarn build
-
-rm -f yarn.lock >/dev/null 2>&1
-rm -f package-lock.json >/dev/null 2>&1
+echo "Rebuild done."
+echo "Please restart the Theatre (yarn reboot) to apply changes."

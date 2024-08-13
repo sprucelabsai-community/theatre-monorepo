@@ -8,3 +8,5 @@ package-lock.json
 **/Caddyfile
 snapshots/
 .pm2
+caddy
+bun
