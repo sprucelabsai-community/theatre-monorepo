@@ -53,7 +53,7 @@ for skill_dir in $(pwd)/packages/*-skill; do
     # Extract vendor and namespace from directory name
     skill_name=$(basename "$skill_dir" -skill)
     vendor=$(echo "$skill_name" | cut -d '-' -f 1)
-    namespace=$(echo "$skill_name" | cut -d '-' -f 2)
+    namespace=$(echo "$skill_name" | cut -d '-' -f 2-)
 
     if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" && "$namespace" != "theatre" ]]; then
         echo "Booting ${namespace}..."
