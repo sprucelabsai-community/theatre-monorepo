@@ -97,10 +97,8 @@ fi
 #if there is a mercury block in the bluprint, use it's port
 MERCURY_SECTION=$(node ./support/blueprint.js $blueprint mercury)
 MERCURY_PORT=$(echo "$MERCURY_SECTION" | jq -r '.port')
-mercury_port = ${MERCURY_PORT:-8081}
 
-# write HOST="http://127.0.0.1:$mercury_port" to .env (overwriting it if it's there)
-echo "HOST=http://127.0.0.1:$mercury_port" >.env
+echo "HOST=http://127.0.0.1:${MERCURY_PORT:-8081}" >.env
 
 hero "Logging in using cli..."
 
@@ -128,4 +126,4 @@ fi
 
 wait
 
-hero "Theatre setup complete! Visit http://localhost:8080"
+hero "Theatre setup complete!"
