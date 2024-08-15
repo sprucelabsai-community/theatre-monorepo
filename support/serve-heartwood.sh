@@ -39,8 +39,8 @@ web_server_port=8080
 
 # look inside packages/spruce-heartwood-skill/.env
 # if it exists, source it
-if [ -f "$heartwood_skill_dir/.env" ]; then
-    source "$heartwood_skill_dir/.env"
+if [ -f "$heartwood_skill_dir/../.env" ]; then
+    source "$heartwood_skill_dir/../.env"
     # if WEB_SERVER_PORT is set, use it
     web_server_port=${WEB_SERVER_PORT:-8080}
 fi
