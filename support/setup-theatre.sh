@@ -49,6 +49,11 @@ if [ ! -f "$blueprint" ]; then
     exit 1
 fi
 
+#if there is a mercury block in the bluprint, use it's port
+ENV=$(node support/blueprint.js $blueprint env)
+MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
+echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
+
 hero "Setting up theatre dependencies..."
 
 yarn
@@ -93,12 +98,6 @@ if [ -d "packages/spruce-mercury-api" ]; then
 
     sleep 3
 fi
-
-#if there is a mercury block in the bluprint, use it's port
-MERCURY_SECTION=$(node ./support/blueprint.js $blueprint mercury)
-MERCURY_PORT=$(echo "$MERCURY_SECTION" | jq -r '.port')
-
-echo "HOST=http://127.0.0.1:${MERCURY_PORT:-8081}" >.env
 
 hero "Logging in using cli..."
 

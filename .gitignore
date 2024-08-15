@@ -10,3 +10,4 @@ snapshots/
 .pm2
 caddy
 bun
+.env
