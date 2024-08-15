@@ -94,6 +94,20 @@ if [ -d "packages/spruce-mercury-api" ]; then
     sleep 3
 fi
 
+mercury_port = 8081
+
+#if there is a mercury block in the bluprint, use it's port
+MERCURY_SECTION=$(node ./blueprint.js $blueprint mercury)
+MERCURY_PORT=$(echo "$MERCURY_SECTION" | jq -r '.port')
+
+# if it found MERCURY_PORT, set it to mercury_port
+if [ -z "$MERCURY_PORT" ]; then
+    mercury_port = $MERCURY_PORT
+fi
+
+# write HOST="http://127.0.0.1:$mercury_port" to .env (overwriting it if it's there)
+echo "HOST=http://127.0.0.1:$mercury_port" >.env
+
 hero "Logging in using cli..."
 
 ./support/login.sh $blueprint
