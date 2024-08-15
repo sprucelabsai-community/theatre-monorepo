@@ -14,11 +14,11 @@ shouldCreateCaddyfile=true
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
-        --shouldCreateCaddyfile=*)
+    --shouldCreateCaddyfile=*)
         shouldCreateCaddyfile="${key#*=}"
         shift
         ;;
-        *)
+    *)
         # Unknown option
         echo "Unknown option: $1"
         exit 1
@@ -35,14 +35,23 @@ if [ ! -d "$heartwood_skill_dir" ]; then
     exit 0
 fi
 
+web_server_port=8080
+
+# look inside packages/spruce-heartwood-skill/.env
+# if it exists, source it
+if [ -f "$heartwood_skill_dir/.env" ]; then
+    source "$heartwood_skill_dir/.env"
+    # if WEB_SERVER_PORT is set, use it
+    web_server_port=${WEB_SERVER_PORT:-8080}
+fi
 
 # Create a Caddyfile if shouldCreateCaddyfile is true
 if [ "$shouldCreateCaddyfile" = true ]; then
-    echo ":8080 {
+    echo ":$web_server_port {
     bind 0.0.0.0
     root * $heartwood_skill_dir
     file_server
-}" > Caddyfile
+}" >Caddyfile
     echo "Caddyfile created."
 else
     echo "Skipping Caddyfile creation."
