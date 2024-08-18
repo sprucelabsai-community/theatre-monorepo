@@ -15,6 +15,16 @@ cd packages || {
     exit 1
 }
 
+# if any dir has local changes, blow up
+for dir in */; do
+    if [ -d "$dir" ]; then
+        if ! git -C "$dir" diff --quiet; then
+            echo "There are local changes in $dir. Please commit or stash them before updating."
+            exit 1
+        fi
+    fi
+done
+
 for dir in */; do
     echo "Pulling latest from $dir"
 

@@ -30,6 +30,12 @@ fi
 
 cd packages/$skill_dir_name
 
+# if there are local changes, blow up
+if ! git diff --quiet; then
+    echo "There are local changes in $skill_dir_name. Please commit or stash them before updating."
+    exit 1
+fi
+
 git checkout .
 git pull
 rm yarn.lock
