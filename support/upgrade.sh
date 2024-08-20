@@ -14,7 +14,8 @@ for dir in *-skill; do
     if [[ -d $dir ]]; then
         cd "$dir"
 
-        git pull
+        # if pull fails, bail
+        git pull || exit 1
 
         # Upgrade skill
         spruce upgrade
