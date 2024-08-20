@@ -1,25 +1,34 @@
 #!/bin/bash
 
-echo "Upgrading skills..."
+shouldOpenVsCode=false
 
-# if any arguments are passed, we'll use upgrade-skill.sh
+for arg in "$@"; do
+    case $arg in
+    --shouldOpenVsCodeAfterUpgrade=*)
+        shouldOpenVsCode="${arg#*=}"
+        shift
+        ;;
+    esac
+done
+
+echo "Upgrading skills..."
 if [ $# -ge 1 ]; then
     ./support/upgrade-skill.sh "$@"
     exit 0
 fi
 
 cd ./packages
-
 for dir in *-skill; do
     if [[ -d $dir ]]; then
         cd "$dir"
-
         # if pull fails, bail
         git pull || exit 1
-
         # Upgrade skill
         spruce upgrade
-
+        # Open VS Code if flag is set
+        if [ "$shouldOpenVsCode" = true ]; then
+            code .
+        fi
         cd ..
     fi
 done
@@ -30,4 +39,8 @@ if [[ -d "spruce-mercury-api" ]]; then
     git pull
     yarn upgrade.packages.all
     yarn build.dev
+    # Open VS Code if flag is set
+    if [ "$shouldOpenVsCode" = true ]; then
+        code .
+    fi
 fi
