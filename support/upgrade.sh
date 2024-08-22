@@ -38,9 +38,10 @@ if [[ -d "spruce-mercury-api" ]]; then
     cd "spruce-mercury-api"
     git pull
     yarn upgrade.packages.all
-    yarn build.dev
     # Open VS Code if flag is set
     if [ "$shouldOpenVsCode" = true ]; then
         code .
     fi
 fi
+
+yarn build
