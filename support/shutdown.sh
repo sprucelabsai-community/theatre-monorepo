@@ -55,4 +55,7 @@ yarn stop.serving.heartwood
 
 wait
 
+./support/pm2.sh kill
+rm -rf ./.pm2
+
 hero "All skills shutdown and Heartwood is no longer serving."

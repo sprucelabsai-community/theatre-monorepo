@@ -21,10 +21,6 @@ yarn shutdown
 
 wait
 
-./support/pm2.sh kill
-
-rm -rf ./.pm2
-
 sleep 2
 
 wait
