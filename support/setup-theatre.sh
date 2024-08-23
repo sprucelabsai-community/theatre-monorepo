@@ -54,6 +54,9 @@ ENV=$(node support/blueprint.js $blueprint env)
 MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
 echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
 
+hero "Updating Theatre..."
+git pull
+
 hero "Setting up theatre dependencies..."
 
 yarn
