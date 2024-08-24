@@ -8,6 +8,10 @@ if [ $# -ge 1 ]; then
     exit 0
 fi
 
+# upgrade the cli first
+yarn global add @sprucelabs/spruce-cli
+
+# pull latest theatre
 git pull
 
 cd packages || {
