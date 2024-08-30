@@ -18,6 +18,16 @@ if [ $# -ge 1 ]; then
 fi
 
 cd ./packages
+
+for dir in */; do
+    if [ -d "$dir" ]; then
+        if ! git -C "$dir" diff --quiet; then
+            echo "There are local changes in $dir. Please commit or stash them before updating."
+            exit 1
+        fi
+    fi
+done
+
 for dir in *-skill; do
     if [[ -d $dir ]]; then
         cd "$dir"
