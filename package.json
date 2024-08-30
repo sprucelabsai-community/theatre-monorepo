@@ -23,6 +23,7 @@
     "push.to": "./support/push-to.sh",
     "reboot": "./support/reboot.sh",
     "rebuild": "./support/rebuild.sh",
+    "repair": "./support/repair.sh",
     "reset.core.database": "./support/reset-core-db.sh",
     "reset": "./support/reset.sh",
     "serve.heartwood": "./support/serve-heartwood.sh",
