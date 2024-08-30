@@ -54,4 +54,5 @@ if [[ -d "spruce-mercury-api" ]]; then
     fi
 fi
 
+yarn
 yarn build
