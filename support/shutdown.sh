@@ -55,4 +55,8 @@ yarn stop.serving.heartwood
 
 wait
 
-hero "All skills shutdown and Heartwood is no longer serving."
+if [ ! -d packages/spruce-heartwood-skill ]; then
+    hero "All skills shutdown."
+else
+    hero "All skills shutdown and Heartwood is no longer serving."
+fi

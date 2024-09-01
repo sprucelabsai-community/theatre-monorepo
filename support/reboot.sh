@@ -23,7 +23,7 @@ wait
 
 sleep 2
 
-wait
+./support/pm2.sh reset all
 
 if [ "$shouldServeHeartwood" = true ]; then
     yarn boot.serve
