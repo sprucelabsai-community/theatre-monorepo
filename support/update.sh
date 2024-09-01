@@ -8,16 +8,22 @@ if [ $# -ge 1 ]; then
     exit 0
 fi
 
-# upgrade the cli first
+source ./support/hero.sh
+
+hero "Updating the Spruce CLI"
+
 yarn global add @sprucelabs/spruce-cli
 
-# pull latest theatre
+hero "Updating the Theatre"
+
 git pull
 
 cd packages || {
     echo "Failed to change directory to 'packages'"
     exit 1
 }
+
+hero "Checking for local changes"
 
 # if any dir has local changes, blow up
 for dir in */; do
@@ -28,6 +34,8 @@ for dir in */; do
         fi
     fi
 done
+
+hero "Pulling latest"
 
 for dir in */; do
     echo "Pulling latest from $dir"
@@ -52,7 +60,7 @@ echo "Done pulling latest..."
 
 cd ..
 
-echo "Starting rebuild..."
+hero "Starting rebuild..."
 
 yarn rebuild
 
