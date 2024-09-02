@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 echo "
    _____                          
   / ___/____  _______  __________ 
@@ -21,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.9"
+echo "Version: 3.5.10"
 
 shouldSetupTheatreUntil=""
 setupMode=""
