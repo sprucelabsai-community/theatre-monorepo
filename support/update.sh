@@ -10,6 +10,19 @@ fi
 
 source ./support/hero.sh
 
+cd ./packages
+# if any dir has local changes, blow up
+for dir in */; do
+    if [ -d "$dir" ]; then
+        if ! git -C "$dir" diff --quiet; then
+            echo "There are local changes in $dir. Please commit or stash them before updating."
+            exit 1
+        fi
+    fi
+done
+
+cd ..
+
 hero "Updating the Spruce CLI"
 
 yarn global add @sprucelabs/spruce-cli
@@ -24,16 +37,6 @@ cd packages || {
 }
 
 hero "Checking for local changes"
-
-# if any dir has local changes, blow up
-for dir in */; do
-    if [ -d "$dir" ]; then
-        if ! git -C "$dir" diff --quiet; then
-            echo "There are local changes in $dir. Please commit or stash them before updating."
-            exit 1
-        fi
-    fi
-done
 
 hero "Pulling latest"
 
