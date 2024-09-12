@@ -60,3 +60,5 @@ if [ ! -d packages/spruce-heartwood-skill ]; then
 else
     hero "All skills shutdown and Heartwood is no longer serving."
 fi
+
+yarn list.running
