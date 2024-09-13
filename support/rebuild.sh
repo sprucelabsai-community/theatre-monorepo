@@ -1,11 +1,15 @@
 #!/bin/bash
 
-echo "Cleaning old build files..."
+source ./support/hero.sh
+
+hero "Cleaning old build files..."
 yarn clean
 
-echo "Starting to update dependencies..."
+hero "Starting to update dependencies..."
 rm -rf node_modules
+rm yarn.lock
+
 yarn
 
-echo "Building..."
+hero "Building..."
 yarn run build

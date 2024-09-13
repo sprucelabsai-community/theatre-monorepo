@@ -21,13 +21,9 @@ yarn shutdown
 
 wait
 
-./support/pm2.sh kill
-
-rm -rf ./.pm2
-
 sleep 2
 
-wait
+./support/pm2.sh reset all
 
 if [ "$shouldServeHeartwood" = true ]; then
     yarn boot.serve

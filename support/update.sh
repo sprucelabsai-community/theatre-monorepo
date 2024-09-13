@@ -8,12 +8,37 @@ if [ $# -ge 1 ]; then
     exit 0
 fi
 
+source ./support/hero.sh
+
+cd ./packages
+# if any dir has local changes, blow up
+for dir in */; do
+    if [ -d "$dir" ]; then
+        if ! git -C "$dir" diff --quiet; then
+            echo "There are local changes in $dir. Please commit or stash them before updating."
+            exit 1
+        fi
+    fi
+done
+
+cd ..
+
+hero "Updating the Spruce CLI"
+
+yarn global add @sprucelabs/spruce-cli
+
+hero "Updating the Theatre"
+
 git pull
 
 cd packages || {
     echo "Failed to change directory to 'packages'"
     exit 1
 }
+
+hero "Checking for local changes"
+
+hero "Pulling latest"
 
 for dir in */; do
     echo "Pulling latest from $dir"
@@ -38,7 +63,7 @@ echo "Done pulling latest..."
 
 cd ..
 
-echo "Starting rebuild..."
+hero "Starting rebuild..."
 
 yarn rebuild
 

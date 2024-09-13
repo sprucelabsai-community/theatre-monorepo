@@ -35,6 +35,8 @@ cd $REPO_NAME
 
 REPO_PATH=$(pwd)
 
+git pull
+
 cd ../../
 
 ./support/propagate-blueprint.sh $REPO_PATH $ADDITIONAL_ARGS

@@ -51,8 +51,12 @@ echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
     ./support/shutdown-skill.sh "$namespace" "$vendor" >/dev/null &
 done
 
-yarn stop.serving.heartwood
+if [ ! -d packages/spruce-heartwood-skill ]; then
+    hero "All skills shutdown."
+else
+    yarn stop.serving.heartwood
+    wait
+    hero "All skills shutdown and Heartwood is no longer serving."
+fi
 
-wait
-
-hero "All skills shutdown and Heartwood is no longer serving."
+yarn list.running
