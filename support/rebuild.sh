@@ -7,6 +7,8 @@ yarn clean
 
 hero "Starting to update dependencies..."
 rm -rf node_modules
+rm yarn.lock
+
 yarn
 
 hero "Building..."
