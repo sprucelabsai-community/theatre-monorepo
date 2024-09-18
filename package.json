@@ -44,9 +44,7 @@
     "js-yaml": "^4.1.0",
     "lerna": "^8.1.5"
   },
-  "resolutions": {
-    "date-fns": ">=3.6.0"
-  },
+  "resolutions": {},
   "dependencies": {
     "pm2": "^5.4.1"
   }
