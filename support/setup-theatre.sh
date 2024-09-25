@@ -114,7 +114,7 @@ hero "Logging in as any existing skills..."
 
 hero "Publishing core skills..."
 
-./support/publish-skills.sh --mongoConnectionString=$DB_CONNECTION_STRING
+./support/publish-skills.sh --mongoConnectionString="$DB_CONNECTION_STRING"
 
 hero "Booting..."
 

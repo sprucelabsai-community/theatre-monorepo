@@ -4,18 +4,17 @@
 mongo_connection_string="mongodb://localhost:27017/mercury"
 
 # Parse command line arguments
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-    --mongoConnectionString)
-        mongo_connection_string="$2"
+for arg in "$@"; do
+    case $arg in
+    --mongoConnectionString=*)
+        mongo_connection_string="${arg#*=}"
         shift
         ;;
     *)
-        echo "Unknown parameter passed: $1"
+        echo "Unknown parameter passed: $arg"
         exit 1
         ;;
     esac
-    shift
 done
 
 echo -e "Publishing skills...\n"
