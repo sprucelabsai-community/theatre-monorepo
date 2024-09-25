@@ -49,6 +49,12 @@ ENV=$(node support/blueprint.js $blueprint env)
 MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
 echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
 
+#if there is a env.universal.DB_CONNECTION_STRING in the bluprint, use it
+DB_CONNECTION_STRING=$(echo "$ENV" | jq -r '.universal.DB_CONNECTION_STRING' 2>/dev/null)
+
+echo $DB_CONNECTION_STRING
+exit 1
+
 hero "Updating Theatre..."
 git pull
 

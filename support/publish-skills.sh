@@ -1,7 +1,24 @@
 #!/bin/bash
 
-echo -e "Publishing skills...\n"
+# Default MongoDB connection string
+mongo_connection_string="mongodb://localhost:27017/mercury"
 
+# Parse command line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+    --mongoConnectionString)
+        mongo_connection_string="$2"
+        shift
+        ;;
+    *)
+        echo "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+echo -e "Publishing skills...\n"
 cd packages
 
 # namespaces of skills that cannot be installed
@@ -12,11 +29,11 @@ for dir in *-skill; do
         cd "$dir"
         namespace=$(grep '"namespace"' package.json | awk -F: '{print $2}' | tr -d '," ')
         if [[ " ${namespaces[*]} " == *"$namespace"* ]]; then
-            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: false}})" >/dev/null &
+            mongosh "$mongo_connection_string" --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: false}})" >/dev/null &
             echo "Publishing "$namespace" and setting canBeInstalled to false"
         else
             echo "Publishing "$namespace" and setting canBeInstalled to true"
-            mongosh mercury --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: true}})" >/dev/null &
+            mongosh "$mongo_connection_string" --eval "db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: true}})" >/dev/null &
         fi
         cd ..
     fi
