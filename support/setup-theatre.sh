@@ -17,17 +17,12 @@ fi
 blueprint=$1
 shouldRunUntil=""
 shouldServeHeartwood=true
-shouldServeHeartwood=true
 
 # Parse arguments
 for arg in "$@"; do
     case $arg in
     --shouldRunUntil=*)
         shouldRunUntil="${arg#*=}"
-        shift
-        ;;
-    --shouldServeHeartwood=*)
-        shouldServeHeartwood="${arg#*=}"
         shift
         ;;
     --shouldServeHeartwood=*)
