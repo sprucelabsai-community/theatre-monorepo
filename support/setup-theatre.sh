@@ -50,7 +50,7 @@ MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>
 echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
 
 #if there is a env.universal.DB_CONNECTION_STRING in the bluprint, use it
-DB_CONNECTION_STRING=$(echo "$ENV" | jq -r '.universal.DB_CONNECTION_STRING' 2>/dev/null)
+DB_CONNECTION_STRING=$(echo "$ENV" | jq -r '.universal[] | select(has("DB_CONNECTION_STRING")) | .DB_CONNECTION_STRING' 2>/dev/null)
 
 echo $DB_CONNECTION_STRING
 exit 1
@@ -117,7 +117,7 @@ hero "Logging in as any existing skills..."
 
 hero "Publishing core skills..."
 
-./support/publish-skills.sh
+./support/publish-skills.sh --mongoConnectionString=$DB_CONNECTION_STRING
 
 hero "Booting..."
 
