@@ -8,8 +8,6 @@ for arg in "$@"; do
     case $arg in
     --mongoConnectionString=*)
         mongo_connection_string="${arg#*=}"
-        # Escape dollar signs in the connection string
-        # mongo_connection_string="${mongo_connection_string//\$/\\\$}"
         shift
         ;;
     *)
