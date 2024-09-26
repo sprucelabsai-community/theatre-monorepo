@@ -9,7 +9,7 @@ for arg in "$@"; do
     --mongoConnectionString=*)
         mongo_connection_string="${arg#*=}"
         # Escape dollar signs in the connection string
-        mongo_connection_string="${mongo_connection_string//\$/\\\$}"
+        # mongo_connection_string="${mongo_connection_string//\$/\\\$}"
         shift
         ;;
     *)
