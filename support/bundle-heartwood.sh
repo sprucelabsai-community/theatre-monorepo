@@ -34,4 +34,6 @@ if [ -n "$PUBLIC_ASSETS_DIR" ]; then
   echo "Copying public assets to $heartwood_dir/dist/public/assets"
   mkdir -p $heartwood_dir/dist/public/assets
   cp -r $PUBLIC_ASSETS_DIR/* $heartwood_dir/dist/public/assets
+
+  echo "command: cp -r $PUBLIC_ASSETS_DIR/* $heartwood_dir/dist/public/assets"
 fi
