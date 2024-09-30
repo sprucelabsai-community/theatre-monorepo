@@ -13,7 +13,7 @@ if [ ! -d "$heartwood_dir" ]; then
   exit 0
 fi
 
-cd packages/spruce-heartwood-skill
+cd $heartwood_dir
 yarn build.cdn
 
 # Get the current timestamp
@@ -30,7 +30,8 @@ fi
 
 # if there is a PUBLIC_ASSETS_DIR, copy everything from it to $heartwood_dir/dist/public/assets
 if [ -n "$PUBLIC_ASSETS_DIR" ]; then
+  cd ../..
   echo "Copying public assets to $heartwood_dir/dist/public/assets"
-  mkdir -p ./dist/public/assets
+  mkdir -p $heartwood_dir/dist/public/assets
   cp -r $PUBLIC_ASSETS_DIR/* ./dist/public/assets
 fi
