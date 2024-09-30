@@ -30,6 +30,7 @@ fi
 
 # if there is a PUBLIC_ASSETS_DIR, copy everything from it to $heartwood_dir/dist/public/assets
 if [ -n "$PUBLIC_ASSETS_DIR" ]; then
+  echo "Copying public assets to $heartwood_dir/dist/public/assets"
   mkdir -p ./dist/public/assets
   cp -r $PUBLIC_ASSETS_DIR/* ./dist/public/assets
 fi
