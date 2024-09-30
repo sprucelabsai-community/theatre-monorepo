@@ -31,9 +31,8 @@ fi
 # if there is a PUBLIC_ASSETS_DIR, copy everything from it to $heartwood_dir/dist/public/assets
 if [ -n "$PUBLIC_ASSETS_DIR" ]; then
   cd ../..
-  echo "Copying public assets to $heartwood_dir/dist/public/assets"
-  mkdir -p $heartwood_dir/dist/public/assets
-  cp -r $PUBLIC_ASSETS_DIR/* $heartwood_dir/dist/public/assets
+  echo "Copying public assets to $heartwood_dir/dist/assets"
+  mkdir -p $heartwood_dir/dist/assets
+  cp -r $PUBLIC_ASSETS_DIR/* $heartwood_dir/dist/assets
 
-  echo "command: cp -r $PUBLIC_ASSETS_DIR/* $heartwood_dir/dist/public/assets"
 fi
