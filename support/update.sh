@@ -23,9 +23,10 @@ done
 
 cd ..
 
-hero "Updating the Spruce CLI"
-
-yarn global add @sprucelabs/spruce-cli
+if [ "$SHOULD_THEATRE_UPGRADE_SPRUCE_CLI" != "false" ]; then
+    hero "Updating the Spruce CLI"
+    yarn global add @sprucelabs/spruce-cli
+fi
 
 hero "Updating the Theatre"
 

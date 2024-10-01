@@ -4,7 +4,7 @@
   "scripts": {
     "boot.serve": "yarn serve.heartwood && ./support/boot.sh",
     "boot": "./support/boot.sh",
-    "bundle.heartwood": "./support/build-heartwood.sh",
+    "bundle.heartwood": "./support/bundle-heartwood.sh",
     "bundle.serve.heartwood": "yarn bundle.heartwood && yarn serve.heartwood",
     "build": "lerna run build.dev && yarn bundle.heartwood",
     "checkout": "./support/checkout.sh",
@@ -42,12 +42,12 @@
   ],
   "devDependencies": {
     "js-yaml": "^4.1.0",
-    "lerna": "^8.1.5"
+    "lerna": "^8.1.8"
   },
   "resolutions": {
     "date-fns": ">=3.6.0"
   },
   "dependencies": {
-    "pm2": "^5.4.1"
+    "pm2": "^5.4.2"
   }
 }

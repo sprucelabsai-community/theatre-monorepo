@@ -60,7 +60,8 @@ for SKILL in $INSTALLED_SKILLS; do
     read -p "Do you want to remove the skill '$SKILL' from the PM2 setup? (y/n): " REMOVE_SKILL
     if [[ $REMOVE_SKILL =~ ^[Yy]$ ]]; then
       # Remove the skill from the PM2 setup
-      ./support/pm2.sh delete $SKILL
+      ./pm2.sh delete $SKILL
+      rm -rf ../$PACKAGES_DIR/$SKILL
     fi
   fi
 done
