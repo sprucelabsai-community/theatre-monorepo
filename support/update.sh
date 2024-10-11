@@ -11,6 +11,7 @@ fi
 source ./support/hero.sh
 
 cd ./packages
+
 # if any dir has local changes, blow up
 for dir in */; do
     if [ -d "$dir" ]; then
