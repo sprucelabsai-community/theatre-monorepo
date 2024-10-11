@@ -1,15 +1,41 @@
 #!/bin/bash
 
-shouldOpenVsCode=false
+shouldOpenVsCodeAfterUpgrade=false
+shouldOpenVsCodeOnPendingChanges=false
+shouldCheckForPendingChanges=true
+shouldShowHelp=false
 
 for arg in "$@"; do
     case $arg in
     --shouldOpenVsCodeAfterUpgrade=*)
-        shouldOpenVsCode="${arg#*=}"
+        shouldOpenVsCodeAfterUpgrade="${arg#*=}"
+        shift
+        ;;
+    --shouldOpenVsCodeOnPendingChanges=*)
+        shouldOpenVsCodeOnPendingChanges="${arg#*=}"
+        shift
+        ;;
+    --shouldCheckForPendingChanges=*)
+        shouldCheckForPendingChanges="${arg#*=}"
+        shift
+        ;;
+    --help)
+        shouldShowHelp=true
         shift
         ;;
     esac
 done
+
+if [ "$shouldShowHelp" = true ]; then
+    echo "Usage: ./support/upgrade.sh [--shouldOpenVsCodeAfterUpgrade=true|false] [--shouldOpenVsCodeOnPendingChanges=true|false] [--shouldCheckForPendingChanges=true|false]"
+    echo ""
+    echo "Options:"
+    echo "  --shouldOpenVsCodeAfterUpgrade: Open VS Code after upgrading each skill. Default is false."
+    echo "  --shouldOpenVsCodeOnPendingChanges: Open VS Code if there are pending changes in a skill. Default is false."
+    echo "  --shouldCheckForPendingChanges: Check for pending changes in skills before upgrading. Default is true."
+    echo "  --help: Show this help message."
+    exit 0
+fi
 
 echo "Upgrading skills..."
 if [ $# -ge 1 ]; then
@@ -19,14 +45,19 @@ fi
 
 cd ./packages
 
-for dir in */; do
-    if [ -d "$dir" ]; then
-        if ! git -C "$dir" diff --quiet; then
-            echo "There are local changes in $dir. Please commit or stash them before updating."
-            exit 1
+if [ "$shouldCheckForPendingChanges" = true ]; then
+    for dir in */; do
+        if [ -d "$dir" ]; then
+            if ! git -C "$dir" diff --quiet; then
+                echo "There are local changes in $dir. Please commit or stash them before updating."
+                if [ "$shouldOpenVsCodeOnPendingChanges" = true ]; then
+                    code "$dir"
+                fi
+                exit 1
+            fi
         fi
-    fi
-done
+    done
+fi
 
 for dir in *-skill; do
     if [[ -d $dir ]]; then
@@ -36,7 +67,7 @@ for dir in *-skill; do
         # Upgrade skill
         spruce upgrade
         # Open VS Code if flag is set
-        if [ "$shouldOpenVsCode" = true ]; then
+        if [ "$shouldOpenVsCodeAfterUpgrade" = true ]; then
             code .
         fi
         cd ..
@@ -49,7 +80,7 @@ if [[ -d "spruce-mercury-api" ]]; then
     git pull
     yarn upgrade.packages.all
     # Open VS Code if flag is set
-    if [ "$shouldOpenVsCode" = true ]; then
+    if [ "$shouldOpenVsCodeAfterUpgrade" = true ]; then
         code .
     fi
 fi
