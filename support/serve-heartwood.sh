@@ -30,7 +30,7 @@ done
 heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill"
 
 if [ ! -d "$heartwood_skill_dir" ]; then
-    echo "Heartwood not installed... skipping."
+    echo "Heartwood not installed. Skipping serve..."
     exit 0
 fi
 

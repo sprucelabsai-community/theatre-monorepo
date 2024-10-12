@@ -17,13 +17,18 @@ for arg in "$@"; do
     esac
 done
 
-yarn shutdown
+yarn shutdown --shouldListRunning=false
 
-wait
+source ./support/hero.sh
 
-sleep 2
+hero "Resetting reboot counts..."
 
-./support/pm2.sh reset all
+./support/pm2.sh reset all --silent
+
+# check if heartwood is installed at packages/spruce-heartwood-skill
+if [ ! -d packages/spruce-heartwood-skill ]; then
+    shouldServeHeartwood=false
+fi
 
 if [ "$shouldServeHeartwood" = true ]; then
     yarn boot.serve

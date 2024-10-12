@@ -1,8 +1,25 @@
 #!/bin/bash
 
-# if any arguments are passed, call shutdown-skill.sh and pass everything through
-if [ "$#" -gt 0 ]; then
-    ./support/shutdown-skill.sh "$@"
+shouldListRunning=true
+positional_args=()
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+    --shouldListRunning=*)
+        shouldListRunning="${1#*=}"
+        shift
+        ;;
+    *)
+        positional_args+=("$1")
+        shift
+        ;;
+    esac
+done
+
+# If there are positional arguments, call shutdown-skill.sh and pass them through
+if [ ${#positional_args[@]} -gt 0 ]; then
+    ./support/shutdown-skill.sh "${positional_args[@]}"
     exit 0
 fi
 
@@ -16,10 +33,10 @@ get_pm2_json() {
 
 # Try to get PM2 list
 pm2_json=$(get_pm2_json)
-#
+
 # Check if pm2 jlist was successful
 if ! echo "$pm2_json" | jq empty; then
-    echo "pm2 jlist failed, attempting to update PM2 and retry."
+    echo "Getting PM2 list failed. Going to update PM2 and retry..."
 
     # Update PM2 and retry
     ./support/pm2.sh update
@@ -27,7 +44,7 @@ if ! echo "$pm2_json" | jq empty; then
 
     # Check again if pm2 jlist was successful
     if ! echo "$pm2_json" | jq empty; then
-        echo "pm2 jlist failed again after update. Exiting script."
+        echo "Failed to get PM2 list. Exiting..."
         exit 1
     fi
 fi
@@ -59,4 +76,7 @@ else
     hero "All skills shutdown and Heartwood is no longer serving."
 fi
 
-yarn list.running
+# Check if shouldListRunning is true before running yarn list.running
+if [ "$shouldListRunning" = true ]; then
+    yarn list.running
+fi
