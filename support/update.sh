@@ -69,5 +69,5 @@ hero "Starting rebuild..."
 
 yarn rebuild
 
-echo "Rebuild done."
+hero "Rebuild complete."
 echo "Please restart the Theatre (yarn reboot) to apply changes."
