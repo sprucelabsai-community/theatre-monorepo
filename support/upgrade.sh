@@ -4,6 +4,7 @@ shouldOpenVsCodeAfterUpgrade=false
 shouldOpenVsCodeOnPendingChanges=false
 shouldCheckForPendingChanges=true
 shouldShowHelp=false
+startWith=""
 
 for arg in "$@"; do
     case $arg in
@@ -19,6 +20,10 @@ for arg in "$@"; do
         shouldCheckForPendingChanges="${arg#*=}"
         shift
         ;;
+    --startWith=*)
+        startWith="${arg#*=}"
+        shift
+        ;;
     --help)
         shouldShowHelp=true
         shift
@@ -27,12 +32,13 @@ for arg in "$@"; do
 done
 
 if [ "$shouldShowHelp" = true ]; then
-    echo "Usage: ./support/upgrade.sh [--shouldOpenVsCodeAfterUpgrade=true|false] [--shouldOpenVsCodeOnPendingChanges=true|false] [--shouldCheckForPendingChanges=true|false]"
+    echo "Usage: ./support/upgrade.sh [options]"
     echo ""
     echo "Options:"
     echo "  --shouldOpenVsCodeAfterUpgrade: Open VS Code after upgrading each skill. Default is false."
     echo "  --shouldOpenVsCodeOnPendingChanges: Open VS Code if there are pending changes in a skill. Default is false."
     echo "  --shouldCheckForPendingChanges: Check for pending changes in skills before upgrading. Default is true."
+    echo "  --startWith: Start the upgrade process with the specified skill directory."
     echo "  --help: Show this help message."
     exit 0
 fi
@@ -43,11 +49,28 @@ if [ $# -ge 1 ]; then
     exit 0
 fi
 
-cd ./packages
+if [ "$startWith" ]; then
+    startWith=$(./support/resolve-skill-dir.sh "$startWith")
+fi
+
+foundStart=false
 
 if [ "$shouldCheckForPendingChanges" = true ]; then
-    for dir in */; do
+    for dir in packages/*/; do
         if [ -d "$dir" ]; then
+            dir="${dir%/}"               # Remove trailing slash
+            dirName="$(basename "$dir")" # Get directory name without path
+
+            # If startWith is set, skip until we reach the startWith directory
+            if [ -n "$startWith" ]; then
+                if [ "$foundStart" = false ]; then
+                    if [ "$dirName" = "$startWith" ]; then
+                        foundStart=true
+                    else
+                        continue
+                    fi
+                fi
+            fi
             if ! git -C "$dir" diff --quiet; then
                 echo "There are local changes in $dir. Please commit or stash them before updating."
                 if [ "$shouldOpenVsCodeOnPendingChanges" = true ]; then
@@ -59,30 +82,43 @@ if [ "$shouldCheckForPendingChanges" = true ]; then
     done
 fi
 
-for dir in *-skill; do
+foundStart=false
+
+for dir in packages/*-skill/; do
     if [[ -d $dir ]]; then
-        cd "$dir"
-        # if pull fails, bail
-        git pull || exit 1
-        # Upgrade skill
-        spruce upgrade
+        dir="${dir%/}"               # Remove trailing slash
+        dirName="$(basename "$dir")" # Get directory name without path
+
+        # If startWith is set, skip until we reach the startWith directory
+        if [ -n "$startWith" ]; then
+            if [ "$foundStart" = false ]; then
+                if [ "$dirName" = "$startWith" ]; then
+                    foundStart=true
+                else
+                    continue
+                fi
+            fi
+        fi
+
+        ./support/upgrade-skill.sh "$dirName"
+
         # Open VS Code if flag is set
         if [ "$shouldOpenVsCodeAfterUpgrade" = true ]; then
-            code .
+            code "$dir"
         fi
-        cd ..
     fi
 done
 
-# if spruce-mercury-api exists, do the same thing but run "yarn upgrade.packages.all" instead of "spruce upgrade"
-if [[ -d "spruce-mercury-api" ]]; then
-    cd "spruce-mercury-api"
+# If packages/spruce-mercury-api exists, do the same thing but run "yarn upgrade.packages.all" instead of "spruce upgrade"
+if [[ -d "packages/spruce-mercury-api" ]]; then
+    cd "packages/spruce-mercury-api"
     git pull
     yarn upgrade.packages.all
     # Open VS Code if flag is set
     if [ "$shouldOpenVsCodeAfterUpgrade" = true ]; then
         code .
     fi
+    cd ../../
 fi
 
 yarn
