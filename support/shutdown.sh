@@ -56,10 +56,20 @@ echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
         continue
     fi
 
-    # Assume app_name is formatted as 'vendor-namespace-suffix'
+    # Check if the app_name has 2 or 3 segments
     IFS='-' read -ra ADDR <<<"$app_name"
-    vendor="${ADDR[0]}"
-    namespace="${ADDR[1]}"
+    if [ ${#ADDR[@]} -eq 3 ]; then
+        # If app_name has two segments: vendor-name-skill
+        vendor="${ADDR[0]}"
+        namespace="${ADDR[1]}"
+    elif [ ${#ADDR[@]} -eq 4 ]; then
+        # If app_name has three segments: vendor-name1-name2-skill
+        vendor="${ADDR[0]}"
+        namespace="${ADDR[1]}-${ADDR[2]}"
+    else
+        echo "Invalid app name format: $app_name"
+        continue
+    fi
 
     if [ "$namespace" == "mercury" ]; then
         vendor="spruce"
