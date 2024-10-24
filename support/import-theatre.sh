@@ -19,10 +19,6 @@ if [ ! -f "$THEATRE_ZIP" ]; then
     exit 1
 fi
 
-# Perform a backup using yarn export.theatre
-echo "Performing backup..."
-yarn export.theatre.zip --backup
-
 # Remove the existing 'packages' and 'node_modules' directories
 echo "Removing existing theatre and node_modules..."
 rm -rf packages node_modules
