@@ -6,6 +6,8 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+source ./support/hero.sh
+
 commit_message="$1"
 
 cd packages
@@ -13,7 +15,7 @@ cd packages
 # Commit and push changes for each skill + spruce-mercury-api
 for skill_dir in *-skill *-api; do
     (
-        echo "Committing changes for $skill_dir..."
+        hero "Committing changes for $skill_dir..."
 
         cd "$skill_dir"
 

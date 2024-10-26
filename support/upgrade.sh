@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./support/hero.sh
+
 shouldOpenVsCodeAfterUpgrade=false
 shouldOpenVsCodeOnPendingChanges=false
 shouldCheckForPendingChanges=true
@@ -43,7 +45,7 @@ if [ "$shouldShowHelp" = true ]; then
     exit 0
 fi
 
-echo "Upgrading skills..."
+hero "Upgrading skills..."
 if [ $# -ge 1 ]; then
     ./support/upgrade-skill.sh "$@"
     exit 0
