@@ -83,7 +83,7 @@ if [ ! -d packages/spruce-heartwood-skill ]; then
 else
     yarn stop.serving.heartwood
     wait
-    hero "All skills shutdown and Heartwood is no longer serving."
+    hero "All skills shutdown."
 fi
 
 # Check if shouldListRunning is true before running yarn list.running
