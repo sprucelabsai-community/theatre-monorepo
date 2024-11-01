@@ -118,10 +118,10 @@ echo "Booting ${vendor}-${namespace}-${suffix}..."
 } &
 
 # Wait after boot if necessary
-if [ "$should_register_views" = true ]; then
-    # echo "Waiting 5 seconds for view compiling..."
-    # sleep 5
-fi
+# if [ "$should_register_views" = true ]; then
+# echo "Waiting 5 seconds for view compiling..."
+# sleep 5
+# fi
 
 # Store the current version for next run
 # if [ -n "$current_version" ]; then
