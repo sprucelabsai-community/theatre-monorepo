@@ -9,4 +9,3 @@ hero "Killing PM2..."
 rm -rf ./.pm2
 
 yarn reboot
-yarn serve.heartwood
