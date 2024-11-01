@@ -8,4 +8,5 @@ hero "Killing PM2..."
 ./support/pm2.sh kill
 rm -rf ./.pm2
 
-yarn boot.serve
+yarn reboot
+yarn serve.heartwood
