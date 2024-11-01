@@ -100,11 +100,8 @@ json_config=$(
     "interpreter": "bash",
     "max_restarts": $max_restarts,
     "restart_delay": $restart_delay,
-    "out_file": "${logs_dir}/${app_name}.log",
-    "error_file": "${logs_dir}/${app_name}.log",
-    "env": {
-        "SHOULD_REGISTER_VIEWS": "$should_register_views_str"
-    }
+    "out_file": "${logs_dir}/${app_name}-out.log",
+    "error_file": "${logs_dir}/${app_name}-error.log",
 }
 EOF
 )
@@ -122,11 +119,11 @@ echo "Booting ${vendor}-${namespace}-${suffix}..."
 
 # Wait after boot if necessary
 if [ "$should_register_views" = true ]; then
-    echo "Waiting 5 seconds for view compiling..."
-    sleep 5
+    # echo "Waiting 5 seconds for view compiling..."
+    # sleep 5
 fi
 
 # Store the current version for next run
-if [ -n "$current_version" ]; then
-    echo "$current_version" >"$version_file"
-fi
+# if [ -n "$current_version" ]; then
+#     echo "$current_version" >"$version_file"
+# fi
