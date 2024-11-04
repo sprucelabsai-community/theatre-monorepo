@@ -107,6 +107,9 @@ for dir in packages/*-skill/; do
         # Open VS Code if flag is set
         if [ "$shouldOpenVsCodeAfterUpgrade" = true ]; then
             code "$dir"
+            echo "Opened VS Code for $dirName"
+            echo "Press any key to continue:"
+            read -n 1 -s
         fi
     fi
 done
