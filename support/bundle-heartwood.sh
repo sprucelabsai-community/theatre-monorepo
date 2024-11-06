@@ -9,7 +9,7 @@ PUBLIC_ASSETS_DIR=$(echo "$ENV" | jq -r '.heartwood[] | select(has("PUBLIC_ASSET
 heartwood_dir="packages/spruce-heartwood-skill"
 
 if [ ! -d "$heartwood_dir" ]; then
-  echo "Skipping building Heartwood."
+  echo "Heartwood not found. Skipping bundling..."
   exit 0
 fi
 

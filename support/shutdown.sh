@@ -1,8 +1,25 @@
 #!/bin/bash
 
-# if any arguments are passed, call shutdown-skill.sh and pass everything through
-if [ "$#" -gt 0 ]; then
-    ./support/shutdown-skill.sh "$@"
+shouldListRunning=true
+positional_args=()
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+    --shouldListRunning=*)
+        shouldListRunning="${1#*=}"
+        shift
+        ;;
+    *)
+        positional_args+=("$1")
+        shift
+        ;;
+    esac
+done
+
+# If there are positional arguments, call shutdown-skill.sh and pass them through
+if [ ${#positional_args[@]} -gt 0 ]; then
+    ./support/shutdown-skill.sh "${positional_args[@]}"
     exit 0
 fi
 
@@ -16,10 +33,10 @@ get_pm2_json() {
 
 # Try to get PM2 list
 pm2_json=$(get_pm2_json)
-#
+
 # Check if pm2 jlist was successful
 if ! echo "$pm2_json" | jq empty; then
-    echo "pm2 jlist failed, attempting to update PM2 and retry."
+    echo "Getting PM2 list failed. Going to update PM2 and retry..."
 
     # Update PM2 and retry
     ./support/pm2.sh update
@@ -27,7 +44,7 @@ if ! echo "$pm2_json" | jq empty; then
 
     # Check again if pm2 jlist was successful
     if ! echo "$pm2_json" | jq empty; then
-        echo "pm2 jlist failed again after update. Exiting script."
+        echo "Failed to get PM2 list. Exiting..."
         exit 1
     fi
 fi
@@ -39,10 +56,20 @@ echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
         continue
     fi
 
-    # Assume app_name is formatted as 'vendor-namespace-suffix'
+    # Check if the app_name has 2 or 3 segments
     IFS='-' read -ra ADDR <<<"$app_name"
-    vendor="${ADDR[0]}"
-    namespace="${ADDR[1]}"
+    if [ ${#ADDR[@]} -eq 3 ]; then
+        # If app_name has two segments: vendor-name-skill
+        vendor="${ADDR[0]}"
+        namespace="${ADDR[1]}"
+    elif [ ${#ADDR[@]} -eq 4 ]; then
+        # If app_name has three segments: vendor-name1-name2-skill
+        vendor="${ADDR[0]}"
+        namespace="${ADDR[1]}-${ADDR[2]}"
+    else
+        echo "Invalid app name format: $app_name"
+        continue
+    fi
 
     if [ "$namespace" == "mercury" ]; then
         vendor="spruce"
@@ -56,7 +83,10 @@ if [ ! -d packages/spruce-heartwood-skill ]; then
 else
     yarn stop.serving.heartwood
     wait
-    hero "All skills shutdown and Heartwood is no longer serving."
+    hero "All skills shutdown."
 fi
 
-yarn list.running
+# Check if shouldListRunning is true before running yarn list.running
+if [ "$shouldListRunning" = true ]; then
+    yarn list.running
+fi

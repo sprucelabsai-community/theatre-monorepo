@@ -26,12 +26,20 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# is heartwood even installed
+heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill"
+
+if [ ! -d "$heartwood_skill_dir" ]; then
+    echo "Heartwood not installed. Skipping serve..."
+    exit 0
+fi
+
 # Define the path to the heartwood-skill directory
-heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill/dist"
+heartwood_dist_dir="$heartwood_skill_dir/dist"
 
 # Check if the heartwood-skill directory exists
-if [ ! -d "$heartwood_skill_dir" ]; then
-    echo "Error: The $heartwood_skill_dir directory does not exist. You may need to run 'yarn bundle.heartwood'."
+if [ ! -d "$heartwood_dist_dir" ]; then
+    echo "Error: The $heartwood_dist_dir directory does not exist. You need to run 'yarn bundle.heartwood'."
     exit 0
 fi
 
@@ -39,8 +47,8 @@ web_server_port=8080
 
 # look inside packages/spruce-heartwood-skill/.env
 # if it exists, source it
-if [ -f "$heartwood_skill_dir/../.env" ]; then
-    source "$heartwood_skill_dir/../.env"
+if [ -f "$heartwood_dist_dir/../.env" ]; then
+    source "$heartwood_dist_dir/../.env"
     # if WEB_SERVER_PORT is set, use it
     web_server_port=${WEB_SERVER_PORT:-8080}
 fi
@@ -49,7 +57,7 @@ fi
 if [ "$shouldCreateCaddyfile" = true ]; then
     echo ":$web_server_port {
     bind 0.0.0.0
-    root * $heartwood_skill_dir
+    root * $heartwood_dist_dir
     file_server
 }" >Caddyfile
     echo "Caddyfile created."

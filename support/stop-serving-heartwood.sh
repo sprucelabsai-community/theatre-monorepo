@@ -4,7 +4,7 @@ source ./support/hero.sh
 
 # does packages/spruce-heartwood-skill exist?
 if [ ! -d packages/spruce-heartwood-skill ]; then
-    echo "Heartwood not found, skipping...."
+    echo "Heartwood not found. Skipping stop serve...."
     exit 0
 fi
 

@@ -1,72 +1,133 @@
 #!/bin/bash
 
-set -e
+source ./support/hero.sh
 
-# if any arguments are passed, we'll use update-skill.sh
+shouldOpenVsCodeAfterUpdate=false
+shouldOpenVsCodeOnPendingChanges=false
+shouldCheckForPendingChanges=true
+shouldShowHelp=false
+startWith=""
+
+for arg in "$@"; do
+    case $arg in
+    --shouldOpenVsCodeAfterUpdate=*)
+        shouldOpenVsCodeAfterUpdate="${arg#*=}"
+        shift
+        ;;
+    --shouldOpenVsCodeOnPendingChanges=*)
+        shouldOpenVsCodeOnPendingChanges="${arg#*=}"
+        shift
+        ;;
+    --shouldCheckForPendingChanges=*)
+        shouldCheckForPendingChanges="${arg#*=}"
+        shift
+        ;;
+    --startWith=*)
+        startWith="${arg#*=}"
+        shift
+        ;;
+    --help)
+        shouldShowHelp=true
+        shift
+        ;;
+    esac
+done
+
+if [ "$shouldShowHelp" = true ]; then
+    echo "Usage: ./support/update.sh [options]"
+    echo ""
+    echo "Options:"
+    echo "  --shouldOpenVsCodeAfterUpdate: Open VS Code after upgrading each skill. Default is false."
+    echo "  --shouldOpenVsCodeOnPendingChanges: Open VS Code if there are pending changes in a skill. Default is false."
+    echo "  --shouldCheckForPendingChanges: Check for pending changes in skills before upgrading. Default is true."
+    echo "  --startWith: Start the upgrade process with the specified skill directory."
+    echo "  --help: Show this help message."
+    exit 0
+fi
+
+hero "Updating skills..."
+
 if [ $# -ge 1 ]; then
     ./support/update-skill.sh "$@"
     exit 0
 fi
 
-source ./support/hero.sh
+if [ "$startWith" ]; then
+    startWith=$(./support/resolve-skill-dir.sh "$startWith")
+fi
 
-cd ./packages
-# if any dir has local changes, blow up
-for dir in */; do
-    if [ -d "$dir" ]; then
-        if ! git -C "$dir" diff --quiet; then
-            echo "There are local changes in $dir. Please commit or stash them before updating."
-            exit 1
+foundStart=false
+
+if [ "$shouldCheckForPendingChanges" = true ]; then
+    for dir in packages/*/; do
+        if [ -d "$dir" ]; then
+            dir="${dir%/}"               # Remove trailing slash
+            dirName="$(basename "$dir")" # Get directory name without path
+
+            # If startWith is set, skip until we reach the startWith directory
+            if [ -n "$startWith" ]; then
+                if [ "$foundStart" = false ]; then
+                    if [ "$dirName" = "$startWith" ]; then
+                        foundStart=true
+                    else
+                        continue
+                    fi
+                fi
+            fi
+            if ! git -C "$dir" diff --quiet; then
+                echo "There are local changes in $dir. Please commit or stash them before updating."
+                if [ "$shouldOpenVsCodeOnPendingChanges" = true ]; then
+                    code "$dir"
+                fi
+                exit 1
+            fi
         fi
+    done
+fi
+
+foundStart=false
+
+for dir in packages/*-skill/; do
+    if [[ -d $dir ]]; then
+        dir="${dir%/}"               # Remove trailing slash
+        dirName="$(basename "$dir")" # Get directory name without path
+
+        # If startWith is set, skip until we reach the startWith directory
+        if [ -n "$startWith" ]; then
+            if [ "$foundStart" = false ]; then
+                if [ "$dirName" = "$startWith" ]; then
+                    foundStart=true
+                else
+                    continue
+                fi
+            fi
+        fi
+
+        (
+            cd "$dir"
+            git checkout .
+            git pull
+
+            # Open VS Code if flag is set
+            if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
+                code "$dir"
+            fi
+        ) &
     fi
 done
 
-cd ..
-
-if [ "$SHOULD_THEATRE_UPGRADE_SPRUCE_CLI" != "false" ]; then
-    hero "Updating the Spruce CLI"
-    yarn global add @sprucelabs/spruce-cli
-fi
-
-hero "Updating the Theatre"
-
-git pull
-
-cd packages || {
-    echo "Failed to change directory to 'packages'"
-    exit 1
-}
-
-hero "Checking for local changes"
-
-hero "Pulling latest"
-
-for dir in */; do
-    echo "Pulling latest from $dir"
-
-    (
-        cd "$dir" || {
-            echo "Failed to change directory to '$dir'"
-            exit 1
-        }
-        git checkout .
-        if ! git pull; then
-            echo "Failed to pull latest for $dir"
-            exit 1
-        fi
-    ) &
-done
-
-#wait for all to finish
 wait
 
-echo "Done pulling latest..."
-
-cd ..
-
-hero "Starting rebuild..."
+# If packages/spruce-mercury-api exists, do the same thing but run "yarn upgrade.packages.all" instead of "spruce upgrade"
+if [[ -d "packages/spruce-mercury-api" ]]; then
+    cd "packages/spruce-mercury-api"
+    git checkout .
+    git pull
+    # Open VS Code if flag is set
+    if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
+        code .
+    fi
+    cd ../../
+fi
 
 yarn rebuild
-
-echo "Rebuild done."
-echo "Please restart the Theatre (yarn reboot) to apply changes."

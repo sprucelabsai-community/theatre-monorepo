@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source ./support/hero.sh
+
 boot_command="$(pwd)/support/boot-skill.sh"
 
 # if there are arguments, call boot-skill.sh and pass everything through
@@ -7,6 +9,8 @@ if [ "$#" -gt 0 ]; then
     bash "$boot_command" "$@"
     exit 0
 fi
+
+hero "Booting theatre..."
 
 # Function to boot a skill
 boot_skill() {
@@ -24,7 +28,7 @@ if [[ -d $(pwd)/packages/spruce-mercury-api ]]; then
     sleep 5
     echo "Mercury API booted."
 else
-    echo "Mercury API not found. Skipping..."
+    echo "Mercury API not found. Skipping boot..."
 fi
 
 # Boot Heartwood Skill if it exists
@@ -34,17 +38,16 @@ if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
     sleep 5
     echo "Heartwood Skill booted."
 else
-    echo "Heartwood Skill not found. Skipping..."
+    echo "Heartwood Skill not found. Skipping boot..."
 fi
 
 # Boot theatre skill if it exists
 if [[ -d $(pwd)/packages/spruce-theatre-skill ]]; then
     echo "Booting Theatre Skill..."
     boot_skill "theatre" >/dev/null
-    sleep 5
     echo "Theatre Skill booted."
 else
-    echo "Theatre Skill not found. Skipping..."
+    echo "Theatre Skill not found. Skipping boot..."
 fi
 
 # Boot remaining skills
