@@ -4,7 +4,7 @@ source ./support/hero.sh
 
 # Function to print usage and exit
 usage() {
-    echo "Usage: yarn setup.theatre <blueprint.yml> [--shouldRunUntil=<step>] [--shouldServeHeartwood=<true|false>]"
+    echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>] [--shouldServeHeartwood=<true|false>]"
     echo "Steps: build"
     exit 1
 }
@@ -15,14 +15,14 @@ if [ $# -lt 1 ]; then
 fi
 
 blueprint=$1
-shouldRunUntil=""
+runUntil=""
 shouldServeHeartwood=true
 
 # Parse arguments
 for arg in "$@"; do
     case $arg in
-    --shouldRunUntil=*)
-        shouldRunUntil="${arg#*=}"
+    --runUntil=*)
+        runUntil="${arg#*=}"
         shift
         ;;
     --shouldServeHeartwood=*)
@@ -64,7 +64,7 @@ hero "Syncing skills with blueprint..."
 ./support/sync-skills-with-blueprint.sh $blueprint
 
 # Check if we should end the script after the build step
-if [ "$shouldRunUntil" == "syncSkills" ]; then
+if [ "$runUntil" == "syncSkills" ]; then
     hero "Reached 'syncSkills' step. Exiting as requested."
     exit 0
 fi
@@ -74,7 +74,7 @@ hero "Pulling skill dependencies..."
 yarn
 
 # Check if we should end the script after the build step
-if [ "$shouldRunUntil" == "skillDependencies" ]; then
+if [ "$runUntil" == "skillDependencies" ]; then
     hero "Reached 'skillDependencies' step. Exiting as requested."
     exit 0
 fi

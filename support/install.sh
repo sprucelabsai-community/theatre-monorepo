@@ -25,7 +25,7 @@ echo "
 
 echo "Version: 3.5.10"
 
-shouldSetupTheatreUntil=""
+setupTheatreUntil=""
 setupMode=""
 blueprint=""
 theatreDestination=""
@@ -35,8 +35,8 @@ should_install_node=false
 
 for arg in "$@"; do
     case $arg in
-    --shouldSetupTheatreUntil=*)
-        shouldSetupTheatreUntil="${arg#*=}"
+    --setupTheatreUntil=*)
+        setupTheatreUntil="${arg#*=}"
         shift
         ;;
     --setupMode=*)
@@ -585,7 +585,7 @@ else
     git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
     cp $blueprint_path ./blueprint.yml
 
-    yarn setup.theatre blueprint.yml --shouldRunUntil="$shouldSetupTheatreUntil"
+    yarn setup.theatre blueprint.yml --runUntil="$setupTheatreUntil"
 
     echo "You're all set up! 🚀"
     echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
