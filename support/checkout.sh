@@ -64,12 +64,15 @@ done
 # Wait for all background processes to finish
 wait
 
-if [ "$should_update_dependencies" == "true" ]; then
-    yarn
-fi
-
-if [ "$should_build" == "true" ]; then
-    yarn build
+if [ "$should_update_dependencies" == "true" ] && [ "$should_build" == "true" ]; then
+    yarn rebuild
+else
+    if [ "$should_update_dependencies" == "true" ]; then
+        yarn
+    fi
+    if [ "$should_build" == "true" ]; then
+        yarn build
+    fi
 fi
 
 if [ -n "$branch_name" ]; then
