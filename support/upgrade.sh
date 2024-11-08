@@ -127,4 +127,5 @@ if [[ -d "packages/spruce-mercury-api" ]]; then
 fi
 
 yarn
+yarn sync.events
 yarn build

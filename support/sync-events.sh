@@ -12,5 +12,3 @@ done
 hero "Syncing events, this may take a few minutes..."
 
 wait
-
-yarn build
