@@ -61,10 +61,9 @@ foundStart=false
 if [ "$shouldCheckForPendingChanges" = true ]; then
     for dir in packages/*/; do
         if [ -d "$dir" ]; then
-            dir="${dir%/}"               # Remove trailing slash
-            dirName="$(basename "$dir")" # Get directory name without path
+            dir="${dir%/}"
+            dirName="$(basename "$dir")"
 
-            # If startWith is set, skip until we reach the startWith directory
             if [ -n "$startWith" ]; then
                 if [ "$foundStart" = false ]; then
                     if [ "$dirName" = "$startWith" ]; then
@@ -89,10 +88,9 @@ foundStart=false
 
 for dir in packages/*-skill/; do
     if [[ -d $dir ]]; then
-        dir="${dir%/}"               # Remove trailing slash
-        dirName="$(basename "$dir")" # Get directory name without path
+        dir="${dir%/}"
+        dirName="$(basename "$dir")"
 
-        # If startWith is set, skip until we reach the startWith directory
         if [ -n "$startWith" ]; then
             if [ "$foundStart" = false ]; then
                 if [ "$dirName" = "$startWith" ]; then
@@ -108,7 +106,6 @@ for dir in packages/*-skill/; do
             git checkout .
             git pull
 
-            # Open VS Code if flag is set
             if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
                 code "$dir"
             fi
@@ -118,12 +115,11 @@ done
 
 wait
 
-# If packages/spruce-mercury-api exists, do the same thing but run "yarn upgrade.packages.all" instead of "spruce upgrade"
 if [[ -d "packages/spruce-mercury-api" ]]; then
     cd "packages/spruce-mercury-api"
     git checkout .
     git pull
-    # Open VS Code if flag is set
+
     if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
         code .
     fi

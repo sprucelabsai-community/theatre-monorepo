@@ -60,10 +60,9 @@ foundStart=false
 if [ "$shouldCheckForPendingChanges" = true ]; then
     for dir in packages/*/; do
         if [ -d "$dir" ]; then
-            dir="${dir%/}"               # Remove trailing slash
-            dirName="$(basename "$dir")" # Get directory name without path
+            dir="${dir%/}"
+            dirName="$(basename "$dir")"
 
-            # If startWith is set, skip until we reach the startWith directory
             if [ -n "$startWith" ]; then
                 if [ "$foundStart" = false ]; then
                     if [ "$dirName" = "$startWith" ]; then
@@ -88,10 +87,9 @@ foundStart=false
 
 for dir in packages/*-skill/; do
     if [[ -d $dir ]]; then
-        dir="${dir%/}"               # Remove trailing slash
-        dirName="$(basename "$dir")" # Get directory name without path
+        dir="${dir%/}"
+        dirName="$(basename "$dir")"
 
-        # If startWith is set, skip until we reach the startWith directory
         if [ -n "$startWith" ]; then
             if [ "$foundStart" = false ]; then
                 if [ "$dirName" = "$startWith" ]; then
@@ -104,7 +102,6 @@ for dir in packages/*-skill/; do
 
         ./support/upgrade-skill.sh "$dirName"
 
-        # Open VS Code if flag is set
         if [ "$shouldOpenVsCodeAfterUpgrade" = true ]; then
             code "$dir"
             echo "Opened VS Code for $dirName"
@@ -114,12 +111,11 @@ for dir in packages/*-skill/; do
     fi
 done
 
-# If packages/spruce-mercury-api exists, do the same thing but run "yarn upgrade.packages.all" instead of "spruce upgrade"
 if [[ -d "packages/spruce-mercury-api" ]]; then
     cd "packages/spruce-mercury-api"
     git pull
     yarn upgrade.packages.all
-    # Open VS Code if flag is set
+
     if [ "$shouldOpenVsCodeAfterUpgrade" = true ]; then
         code .
     fi
