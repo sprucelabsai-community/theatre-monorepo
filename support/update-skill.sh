@@ -43,4 +43,8 @@ rm package-lock.json
 yarn
 yarn build.dev
 
+if [ "$namespace" == "heartwood" ]; then
+    yarn build.cdn
+fi
+
 hero "$namespace has been updated"

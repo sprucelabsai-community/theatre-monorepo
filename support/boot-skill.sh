@@ -20,6 +20,8 @@ else
     vendor="${vendor:-spruce}"
 fi
 
+export PATH="$HOME/.yarn/bin:$PATH"
+
 packages_dir="$(pwd)/packages"
 processes_dir="$(pwd)/.processes"
 logs_dir="${processes_dir}/logs"
@@ -88,20 +90,21 @@ fi
 
 max_restarts=10
 restart_delay=5000 # Delay between restarts in milliseconds
+yarn_path=$(which yarn)
 
 # Construct the JSON configuration
 json_config=$(
     cat <<EOF
 {
     "name": "$app_name",
-    "script": "yarn",
+    "script": "$yarn_path",
     "args": "boot",
     "cwd": "$skill_dir",
     "interpreter": "bash",
     "max_restarts": $max_restarts,
     "restart_delay": $restart_delay,
     "out_file": "${logs_dir}/${app_name}-out.log",
-    "error_file": "${logs_dir}/${app_name}-error.log",
+    "error_file": "${logs_dir}/${app_name}-error.log"
 }
 EOF
 )
@@ -116,14 +119,3 @@ echo "Booting ${vendor}-${namespace}-${suffix}..."
     ./support/pm2.sh startOrRestart "$config_file"
     ./support/pm2.sh save
 } &
-
-# Wait after boot if necessary
-# if [ "$should_register_views" = true ]; then
-# echo "Waiting 5 seconds for view compiling..."
-# sleep 5
-# fi
-
-# Store the current version for next run
-# if [ -n "$current_version" ]; then
-#     echo "$current_version" >"$version_file"
-# fi

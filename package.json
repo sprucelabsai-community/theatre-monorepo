@@ -34,6 +34,7 @@
     "update": "./support/update.sh",
     "upgrade": "./support/upgrade.sh",
     "postinstall": "./support/cleanup-dependencies.sh",
+    "sync.events": "./support/sync-events.sh",
     "build.docker.ubuntu.x86": "./support/docker-build.sh --arch=ubuntu-x86",
     "run.docker.ubuntu.x86": "docker run -d -p 2222:22 --name theatre-ubuntu-x86 theatre-ubuntu-x86"
   },

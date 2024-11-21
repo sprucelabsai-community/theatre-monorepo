@@ -24,3 +24,5 @@ git pull
 rm yarn.lock
 rm package-lock.json
 spruce upgrade
+cd ../../
+yarn
