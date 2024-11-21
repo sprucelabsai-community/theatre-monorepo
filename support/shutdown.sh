@@ -90,3 +90,6 @@ fi
 if [ "$shouldListRunning" = true ]; then
     yarn list.running
 fi
+
+# kill pm2
+./support/pm2.sh kill
