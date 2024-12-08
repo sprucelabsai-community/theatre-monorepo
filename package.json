@@ -7,6 +7,7 @@
     "bundle.heartwood": "./support/bundle-heartwood.sh",
     "bundle.serve.heartwood": "yarn bundle.heartwood && yarn serve.heartwood",
     "build": "lerna run build.dev && yarn bundle.heartwood",
+    "build.ci": "lerna run build.ci",
     "checkout": "./support/checkout.sh",
     "clean": "lerna run clean",
     "commit.push.skills": "./support/commit-push-skills.sh",
