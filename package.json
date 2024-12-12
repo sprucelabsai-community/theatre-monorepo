@@ -19,6 +19,8 @@
     "list.running": "./support/pm2.sh save && ./support/pm2.sh list",
     "logs": "./support/logs.sh",
     "monitor": "./support/pm2.sh monit",
+    "generate.hash": "./support/generate-hash.sh",
+    "verify.hash": "./support/verify-hash.sh",
     "pull.latest.from": "./support/pull-latest-from.sh",
     "push.latest.to": "./support/push-latest-to.sh",
     "push.to": "./support/push-to.sh",
