@@ -57,6 +57,15 @@ git pull
 
 hero "Setting up theatre dependencies..."
 
+#if there is a dependencies.lock file in the blueprint, dowload it before installing
+DEPENDENCIES=$(node support/blueprint.js $blueprint dependencies)
+LOCK=$(echo "$DEPENDENCIES" | jq -r '.lock' 2>/dev/null)
+
+if [ -n "$LOCK" ]; then
+    echo "Downloading lock file..."
+    curl -O $LOCK
+fi
+
 yarn
 
 hero "Syncing skills with blueprint..."
