@@ -12,6 +12,11 @@ get_combined_checksum() {
         md5sum "$file" >>"$temp_file"
     done
 
+    # Include the yarn.lock file if it exists
+    if [ -f "./yarn.lock" ]; then
+        md5sum "./yarn.lock" >>"$temp_file"
+    fi
+
     # Sort hashes for consistent order, then hash all hashes together
     combined_hash=$(sort "$temp_file" | md5sum | awk '{print $1}')
     rm -f "$temp_file" # Clean up temp file
