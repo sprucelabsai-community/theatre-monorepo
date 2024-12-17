@@ -10,6 +10,14 @@ if [ "$#" -gt 0 ]; then
     exit 0
 fi
 
+boot_strategy="parallel"
+
+THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
+BOOT_STRATEGY=$(echo "$THEATRE" | jq -r '.BOOT_STRATEGY' 2>/dev/null)
+if [ "$BOOT_STRATEGY" != null ]; then
+    boot_strategy=$BOOT_STRATEGY
+fi
+
 hero "Booting theatre..."
 
 # Function to boot a skill
@@ -51,7 +59,14 @@ else
 fi
 
 # Boot remaining skills
-echo "Booting remaining skills..."
+
+if [ "$boot_strategy" == "serial" ]; then
+    echo "Booting skills one at a time..."
+    echo "This may take a few minutes..."
+else
+    echo "Booting remaining skills..."
+fi
+
 for skill_dir in $(pwd)/packages/*-skill; do
     # Extract vendor and namespace from directory name
     skill_name=$(basename "$skill_dir" -skill)
@@ -61,6 +76,10 @@ for skill_dir in $(pwd)/packages/*-skill; do
     if [[ "$namespace" != "heartwood" && "$namespace" != "mercury" && "$namespace" != "theatre" ]]; then
         echo "Booting ${namespace}..."
         boot_skill "$namespace" "$vendor" >/dev/null
+
+        if [ "$boot_strategy" == "serial" ]; then
+            sleep 5
+        fi
     fi
 done
 

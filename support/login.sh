@@ -12,7 +12,7 @@ cd support
 ADMIN_SECTION=$(node ./blueprint.js $1 admin)
 
 # Extract the phone number using jq
-PHONE=$(echo "$ADMIN_SECTION" | jq -r '.phone')
+PHONE=$(echo "$ADMIN_SECTION" | jq -r '.PHONE')
 
 # Check if phone number is extracted
 if [ -z "$PHONE" ]; then
