@@ -65,14 +65,8 @@ git pull
 
 hero "Setting up theatre dependencies..."
 
-#if there is a theatre.lock file in the blueprint, dowload it before installing
-THEATRE=$(node support/blueprint.js $blueprint theatre)
-LOCK=$(echo "$THEATRE" | jq -r '.LOCK' 2>/dev/null)
-
-if [ "$LOCK" != null ]; then
-    echo "Downloading lock file..."
-    curl -O $LOCK
-fi
+# Handle the lock file by executing the script
+./support/handle-lock-file.sh "$blueprint"
 
 #if there is a theatre.should_serve_heartwood in the blueprint, use it
 SHOULD_SERVE_HEARTWOOD=$(echo "$THEATRE" | jq -r '.SHOULD_SERVE_HEARTWOOD' 2>/dev/null)

@@ -17,9 +17,11 @@ source ./support/hero.sh
 hero "Cleaning old build files..."
 yarn clean
 
+# Handle the lock file by executing the script
+./support/handle-lock-file.sh "blueprint.yml"
+
 hero "Starting to update dependencies..."
 rm -rf node_modules
-rm yarn.lock
 
 yarn
 
