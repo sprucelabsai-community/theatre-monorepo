@@ -16,9 +16,22 @@ const file = fs.readFileSync(resolvedPath, 'utf8');
 const data = yaml.load(file);
 
 if (Array.isArray(data[section])) {
+    const asObject = {};
+    let shouldOutputAsObject = true;
     data[section].forEach(item => {
-        console.log(JSON.stringify(item));
+        if (typeof item !== 'object') {
+            shouldOutputAsObject = false;
+            console.log(JSON.stringify(item));
+        } else {
+
+            for (const key in item) {
+                asObject[key] = item[key];
+            }
+        }
     });
+    if (shouldOutputAsObject) {
+        console.log(JSON.stringify(asObject));
+    }
 } else if (typeof data[section] === 'object') {
     console.log(JSON.stringify(data[section]));
 } else {

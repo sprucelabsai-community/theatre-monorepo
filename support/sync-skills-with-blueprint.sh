@@ -44,12 +44,9 @@ ADDITIONAL_ARGS="${@:2} --configStrategy=replace"
 
 # Prompt the user for each skill to remove
 for SKILL in $INSTALLED_SKILLS; do
-  echo $SKILL
   SKILL_FOUND=false
   for REPO in $REPOS; do
-    echo $REPO
     REPO_NAME=$(basename "$REPO" .git\")
-    echo $REPO_NAME
     if [[ "$REPO_NAME" == "$SKILL" ]]; then
       SKILL_FOUND=true
       break
@@ -57,7 +54,7 @@ for SKILL in $INSTALLED_SKILLS; do
   done
 
   if [ "$SKILL_FOUND" = false ]; then
-    read -p "Do you want to remove the skill '$SKILL' from the PM2 setup? (y/n): " REMOVE_SKILL
+    read -p "Do you want to remove the skill '$SKILL' (y/N): " REMOVE_SKILL
     if [[ $REMOVE_SKILL =~ ^[Yy]$ ]]; then
       # Remove the skill from the PM2 setup
       ./pm2.sh delete $SKILL

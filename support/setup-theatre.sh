@@ -44,6 +44,14 @@ if [ ! -f "$blueprint" ]; then
     exit 1
 fi
 
+# check for required options in the blueprint (admin.PHONE), if missing, exit 1
+ADMIN_SECTION=$(node support/blueprint.js $blueprint admin)
+PHONE=$(echo "$ADMIN_SECTION" | jq -r '.PHONE')
+if [ -z "$PHONE" ]; then
+    echo "ERROR: The admin phone number is missing in your blueprint.yml. Add\n\nadmin:\n  PHONE: <phone number>"
+    exit 1
+fi
+
 #if there is a mercury block in the bluprint, use it's port
 ENV=$(node support/blueprint.js $blueprint env)
 MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
@@ -56,6 +64,21 @@ hero "Updating Theatre..."
 git pull
 
 hero "Setting up theatre dependencies..."
+
+#if there is a theatre.lock file in the blueprint, dowload it before installing
+THEATRE=$(node support/blueprint.js $blueprint theatre)
+LOCK=$(echo "$THEATRE" | jq -r '.LOCK' 2>/dev/null)
+
+if [ "$LOCK" != null ]; then
+    echo "Downloading lock file..."
+    curl -O $LOCK
+fi
+
+#if there is a theatre.should_serve_heartwood in the blueprint, use it
+SHOULD_SERVE_HEARTWOOD=$(echo "$THEATRE" | jq -r '.SHOULD_SERVE_HEARTWOOD' 2>/dev/null)
+if [ "$SHOULD_SERVE_HEARTWOOD" == "false" ]; then
+    shouldServeHeartwood=false
+fi
 
 yarn
 

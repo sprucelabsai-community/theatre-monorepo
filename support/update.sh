@@ -6,6 +6,7 @@ shouldOpenVsCodeAfterUpdate=false
 shouldOpenVsCodeOnPendingChanges=false
 shouldCheckForPendingChanges=true
 shouldShowHelp=false
+shouldOpenVsCodeOnFail=false
 startWith=""
 
 for arg in "$@"; do
@@ -24,6 +25,10 @@ for arg in "$@"; do
         ;;
     --startWith=*)
         startWith="${arg#*=}"
+        shift
+        ;;
+    --shouldOpenVsCodeOnFail=*)
+        shouldOpenVsCodeOnFail="${arg#*=}"
         shift
         ;;
     --help)
@@ -126,4 +131,4 @@ if [[ -d "packages/spruce-mercury-api" ]]; then
     cd ../../
 fi
 
-yarn rebuild
+yarn rebuild --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"
