@@ -44,6 +44,13 @@ if [ ! -f "$blueprint" ]; then
     exit 1
 fi
 
+hero "Updating Theatre..."
+git pull
+
+hero "Setting up theatre dependencies..."
+
+yarn
+
 # check for required options in the blueprint (admin.PHONE), if missing, exit 1
 ADMIN_SECTION=$(node support/blueprint.js $blueprint admin)
 PHONE=$(echo "$ADMIN_SECTION" | jq -r '.PHONE')
@@ -60,21 +67,11 @@ echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
 #if there is a env.universal.DB_CONNECTION_STRING in the bluprint, use it
 DB_CONNECTION_STRING=$(echo "$ENV" | jq -r '.universal[] | select(has("DB_CONNECTION_STRING")) | .DB_CONNECTION_STRING' 2>/dev/null)
 
-hero "Updating Theatre..."
-git pull
-
-hero "Setting up theatre dependencies..."
-
-# Handle the lock file by executing the script
-./support/handle-lock-file.sh "$blueprint"
-
 #if there is a theatre.should_serve_heartwood in the blueprint, use it
 SHOULD_SERVE_HEARTWOOD=$(echo "$THEATRE" | jq -r '.SHOULD_SERVE_HEARTWOOD' 2>/dev/null)
 if [ "$SHOULD_SERVE_HEARTWOOD" == "false" ]; then
     shouldServeHeartwood=false
 fi
-
-yarn
 
 hero "Syncing skills with blueprint..."
 
@@ -85,6 +82,9 @@ if [ "$runUntil" == "syncSkills" ]; then
     hero "Reached 'syncSkills' step. Exiting as requested."
     exit 0
 fi
+
+# Handle the lock file by executing the script
+./support/handle-lock-file.sh "$blueprint"
 
 hero "Pulling skill dependencies..."
 
