@@ -68,7 +68,6 @@ else
     #if there is a mercury block in the bluprint, use it's port
     MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
     echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
-
 fi
 
 #if there is a env.universal.DB_CONNECTION_STRING in the bluprint, use it
