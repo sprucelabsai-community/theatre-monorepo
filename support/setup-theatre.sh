@@ -59,10 +59,17 @@ if [ -z "$PHONE" ]; then
     exit 1
 fi
 
-#if there is a mercury block in the bluprint, use it's port
-ENV=$(node support/blueprint.js $blueprint env)
-MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
-echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
+#if there is a host in universal, us it for host
+HOST=$(echo "$ENV" | jq -r '.universal[] | select(has("HOST")) | .HOST' 2>/dev/null)
+if [ -n "$HOST" ]; then
+    echo "HOST=\"$HOST\"" >.env
+else
+    #if there is a mercury block in the bluprint, use it's port
+    ENV=$(node support/blueprint.js $blueprint env)
+    MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
+    echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
+
+fi
 
 #if there is a env.universal.DB_CONNECTION_STRING in the bluprint, use it
 DB_CONNECTION_STRING=$(echo "$ENV" | jq -r '.universal[] | select(has("DB_CONNECTION_STRING")) | .DB_CONNECTION_STRING' 2>/dev/null)
