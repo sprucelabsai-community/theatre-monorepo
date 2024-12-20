@@ -75,6 +75,7 @@ fi
 DB_CONNECTION_STRING=$(echo "$ENV" | jq -r '.universal[] | select(has("DB_CONNECTION_STRING")) | .DB_CONNECTION_STRING' 2>/dev/null)
 
 #if there is a theatre.should_serve_heartwood in the blueprint, use it
+THEATRE=$(node support/blueprint.js "$blueprint" theatre)
 SHOULD_SERVE_HEARTWOOD=$(echo "$THEATRE" | jq -r '.SHOULD_SERVE_HEARTWOOD' 2>/dev/null)
 if [ "$SHOULD_SERVE_HEARTWOOD" == "false" ]; then
     shouldServeHeartwood=false
