@@ -44,6 +44,13 @@ if [ ! -f "$blueprint" ]; then
     exit 1
 fi
 
+hero "Updating Theatre..."
+git pull
+
+hero "Setting up theatre dependencies..."
+
+yarn
+
 # check for required options in the blueprint (admin.PHONE), if missing, exit 1
 ADMIN_SECTION=$(node support/blueprint.js $blueprint admin)
 PHONE=$(echo "$ADMIN_SECTION" | jq -r '.PHONE')
@@ -52,35 +59,27 @@ if [ -z "$PHONE" ]; then
     exit 1
 fi
 
-#if there is a mercury block in the bluprint, use it's port
+#if there is a host in universal, us it for host
 ENV=$(node support/blueprint.js $blueprint env)
-MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
-echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
+HOST=$(echo "$ENV" | jq -r '.universal[] | select(has("HOST")) | .HOST' 2>/dev/null)
+if [ -n "$HOST" ]; then
+    echo "HOST=\"$HOST\"" >.env
+else
+    #if there is a mercury block in the bluprint, use it's port
+    MERCURY_PORT=$(echo "$ENV" | jq -r '.mercury[] | select(has("PORT")) | .PORT' 2>/dev/null)
+    echo "HOST=\"http://127.0.0.1:${MERCURY_PORT:-8081}\"" >.env
+
+fi
 
 #if there is a env.universal.DB_CONNECTION_STRING in the bluprint, use it
 DB_CONNECTION_STRING=$(echo "$ENV" | jq -r '.universal[] | select(has("DB_CONNECTION_STRING")) | .DB_CONNECTION_STRING' 2>/dev/null)
 
-hero "Updating Theatre..."
-git pull
-
-hero "Setting up theatre dependencies..."
-
-#if there is a theatre.lock file in the blueprint, dowload it before installing
-THEATRE=$(node support/blueprint.js $blueprint theatre)
-LOCK=$(echo "$THEATRE" | jq -r '.LOCK' 2>/dev/null)
-
-if [ "$LOCK" != null ]; then
-    echo "Downloading lock file..."
-    curl -O $LOCK
-fi
-
 #if there is a theatre.should_serve_heartwood in the blueprint, use it
+THEATRE=$(node support/blueprint.js "$blueprint" theatre)
 SHOULD_SERVE_HEARTWOOD=$(echo "$THEATRE" | jq -r '.SHOULD_SERVE_HEARTWOOD' 2>/dev/null)
 if [ "$SHOULD_SERVE_HEARTWOOD" == "false" ]; then
     shouldServeHeartwood=false
 fi
-
-yarn
 
 hero "Syncing skills with blueprint..."
 
@@ -91,6 +90,9 @@ if [ "$runUntil" == "syncSkills" ]; then
     hero "Reached 'syncSkills' step. Exiting as requested."
     exit 0
 fi
+
+# Handle the lock file by executing the script
+./support/handle-lock-file.sh "$blueprint"
 
 hero "Pulling skill dependencies..."
 
