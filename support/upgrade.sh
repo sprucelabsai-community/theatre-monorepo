@@ -2,6 +2,7 @@
 
 source ./support/hero.sh
 
+shouldOpenVsCodeOnFail=false
 shouldOpenVsCodeAfterUpgrade=false
 shouldOpenVsCodeOnPendingChanges=false
 shouldCheckForPendingChanges=true
@@ -24,6 +25,10 @@ for arg in "$@"; do
         ;;
     --startWith=*)
         startWith="${arg#*=}"
+        shift
+        ;;
+    --shouldOpenVsCodeOnFail=*)
+        shouldOpenVsCodeOnFail="${arg#*=}"
         shift
         ;;
     --help)
@@ -125,4 +130,4 @@ fi
 yarn clean
 yarn
 yarn sync.events
-yarn build
+yarn rebuild --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"
