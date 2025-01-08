@@ -18,6 +18,18 @@ if [ "$BOOT_STRATEGY" != null ]; then
     boot_strategy=$BOOT_STRATEGY
 fi
 
+hero "Checking for Heartwoood..."
+
+if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
+    echo "Heartwood found. Checking blueprint if should serve."
+    SHOULD_SERVE=$(echo "$THEATRE" | jq -r '.SHOULD_SERVE_HEARTWOOD' 2>/dev/null)
+    if [ "$SHOULD_SERVE" != false ]; then
+        yarn serve.heartwood
+    else
+        echo "Not serving Heartwood."
+    fi
+fi
+
 hero "Booting theatre..."
 
 # Function to boot a skill
