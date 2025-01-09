@@ -21,6 +21,6 @@ if [ "$LOCK" != null ] && [ -n "$LOCK" ]; then
     echo "Downloading lock file..."
     curl -O "$LOCK"
 else
-    echo "No lock file defined in blueprint. Removing yarn.log..."
+    echo "No lock file defined in blueprint. Removing yarn.lock..."
     rm -f yarn.lock
 fi
