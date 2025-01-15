@@ -8,6 +8,7 @@ shouldCheckForPendingChanges=true
 shouldShowHelp=false
 shouldOpenVsCodeOnFail=false
 startWith=""
+nonDashDashArgExists=false
 
 for arg in "$@"; do
     case $arg in
@@ -35,6 +36,9 @@ for arg in "$@"; do
         shouldShowHelp=true
         shift
         ;;
+    *)
+        nonDashDashArgExists=true
+        ;;
     esac
 done
 
@@ -52,7 +56,7 @@ fi
 
 hero "Updating skills..."
 
-if [ $# -ge 1 ]; then
+if [ "$nonDashDashArgExists" = true ]; then
     ./support/update-skill.sh "$@"
     exit 0
 fi
