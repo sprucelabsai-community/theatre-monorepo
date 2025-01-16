@@ -11,11 +11,20 @@ if [ "$#" -gt 0 ]; then
 fi
 
 boot_strategy="parallel"
+should_boot_message_receiver=false
 
 THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
 BOOT_STRATEGY=$(echo "$THEATRE" | jq -r '.BOOT_STRATEGY' 2>/dev/null)
 if [ "$BOOT_STRATEGY" != null ]; then
     boot_strategy=$BOOT_STRATEGY
+fi
+
+MERCURY=$(node ./support/blueprint.js blueprint.yml mercury)
+SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER=$(echo "$MERCURY" | jq -r '.SHOULD_BOOT_MESSAGE_RECEIVER' 2>/dev/null)
+if [ "$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER" != null ]; then
+    echo "Found message receiver configuration in blueprint.yml"
+    echo "Should boot message receiver = $SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER"
+    should_boot_message_receiver=$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER
 fi
 
 hero "Checking for Heartwoood..."
@@ -94,5 +103,14 @@ for skill_dir in $(pwd)/packages/*-skill; do
         fi
     fi
 done
+
+if [ "$should_boot_message_receiver" = true ]; then
+    echo "Booting message receiver..."
+    (
+        cd packages/spruce-mercury-api
+        yarn boot.message.receiver
+    ) &
+    echo $! >.processes/message-receiver
+fi
 
 yarn list.running

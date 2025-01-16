@@ -116,7 +116,7 @@ for dir in packages/*-skill/; do
             git pull
 
             if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
-                code "$dir"
+                code .
             fi
         ) &
     fi
