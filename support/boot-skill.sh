@@ -10,6 +10,11 @@ if [ -z "$namespace" ]; then
     exit 1
 fi
 
+if [ "$namespace" = "message-receiver" ]; then
+    ./support/boot-message-receiver.sh
+    exit 1
+fi
+
 # Determine vendor
 if [ $# -ge 2 ]; then
     vendor="$2"

@@ -22,7 +22,6 @@ else
 fi
 
 # Construct the PM2 application name
-# Append '-api' if namespace is 'mercury', otherwise '-skill'
 if [ "$namespace" = "message-receiver" ]; then
     app_name="message-receiver"
 elif [ "$namespace" = "mercury" ]; then
