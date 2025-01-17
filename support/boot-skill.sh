@@ -12,7 +12,7 @@ fi
 
 if [ "$namespace" = "message-receiver" ]; then
     ./support/boot-message-receiver.sh
-    exit 1
+    exit 0
 fi
 
 # Determine vendor

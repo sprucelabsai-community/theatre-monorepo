@@ -66,6 +66,8 @@ echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
         # If app_name has three segments: vendor-name1-name2-skill
         vendor="${ADDR[0]}"
         namespace="${ADDR[1]}-${ADDR[2]}"
+    elif [ "$app_name" == "message-receiver" ]; then
+        continue
     else
         echo "Invalid app name format: $app_name"
         continue
