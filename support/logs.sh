@@ -34,8 +34,9 @@ if [ -z "$vendor" ]; then
 fi
 
 # Construct the application name
-# Append '-api' if namespace is 'mercury', otherwise '-skill'
-if [ "$namespace" = "mercury" ]; then
+if [ "$namespace" = "message-receiver" ]; then
+    app_name="message-receiver"
+elif [ "$namespace" = "mercury" ]; then
     app_name="${vendor}-${namespace}-api"
 else
     app_name="${vendor}-${namespace}-skill"

@@ -87,10 +87,8 @@ else
 fi
 
 if [ -f .processes/message-receiver ]; then
-    echo "Shutting down message receiver..."
-    pid=$(cat .processes/message-receiver)
-    kill -9 $pid
-    rm .processes/message-receiver
+    hero "Shutting down message receiver..."
+    ./support/pm2.sh stop "message-receiver"
 fi
 
 # Check if shouldListRunning is true before running yarn list.running

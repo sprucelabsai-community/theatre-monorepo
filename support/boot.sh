@@ -19,9 +19,9 @@ if [ "$BOOT_STRATEGY" != null ]; then
     boot_strategy=$BOOT_STRATEGY
 fi
 
-MERCURY=$(node ./support/blueprint.js blueprint.yml mercury)
-SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER=$(echo "$MERCURY" | jq -r '.SHOULD_BOOT_MESSAGE_RECEIVER' 2>/dev/null)
-if [ "$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER" != null ]; then
+ENV=$(node support/blueprint.js blueprint.yml env)
+SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER=$(echo "$ENV" | jq -r '.mercury[] | select(has("SHOULD_BOOT_MESSAGE_RECEIVER")) | .SHOULD_BOOT_MESSAGE_RECEIVER' 2>/dev/null)
+if [ -n "$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER" ]; then
     echo "Found message receiver configuration in blueprint.yml"
     echo "Should boot message receiver = $SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER"
     should_boot_message_receiver=$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER
@@ -33,6 +33,7 @@ if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
     echo "Heartwood found. Checking blueprint if should serve."
     SHOULD_SERVE=$(echo "$THEATRE" | jq -r '.SHOULD_SERVE_HEARTWOOD' 2>/dev/null)
     if [ "$SHOULD_SERVE" != false ]; then
+        echo "Serving Heartwood..."
         yarn serve.heartwood
     else
         echo "Not serving Heartwood."
@@ -105,12 +106,7 @@ for skill_dir in $(pwd)/packages/*-skill; do
 done
 
 if [ "$should_boot_message_receiver" = true ]; then
-    echo "Booting message receiver..."
-    (
-        cd packages/spruce-mercury-api
-        yarn boot.message.receiver
-    ) &
-    echo $! >.processes/message-receiver
+    ./support/boot-message-receiver.sh
 fi
 
 yarn list.running
