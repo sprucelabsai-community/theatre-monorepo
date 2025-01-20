@@ -23,3 +23,5 @@ else
     echo "Building skills in series..."
     yarn run build.serial
 fi
+
+yarn bundle.heartwood
