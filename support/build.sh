@@ -16,12 +16,12 @@ if [ "$BUILD_STRATEGY" != null ]; then
     build_strategy=$BUILD_STRATEGY
 fi
 
-if [ "$build_strategy" = "parallel" ]; then
-    echo "Building skills in parallel..."
-    yarn run build.parallel
-else
+if [ "$build_strategy" = "series" ]; then
     echo "Building skills in series..."
     yarn run build.serial
+else
+    echo "Building skills in parallel..."
+    yarn run build.parallel
 fi
 
 yarn bundle.heartwood
