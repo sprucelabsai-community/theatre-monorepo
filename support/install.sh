@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.6.1"
+echo "Version: 3.6.2"
 
 setupTheatreUntil=""
 setupMode=""
@@ -317,10 +317,10 @@ install_caddy() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew install caddy
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
-        sudo apt-get update
         sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
         curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-archive-keyring.gpg
         echo "deb [signed-by=/usr/share/keyrings/caddy-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+        sudo apt-get update
         sudo apt-get install -y caddy
     else
         echo "Unsupported package manager. Please install Caddy manually."
@@ -406,6 +406,12 @@ install_spruce_cli() {
 }
 
 optionally_install_and_boot_mongo() {
+
+    if [ "$should_install_mongo" = false ]; then
+        echo "Skipping MongoDB installation..."
+        return
+    fi
+
     if ! [ -x "$(command -v mongod)" ]; then
         if ask_to_install "MongoDB"; then
             install_mongo
