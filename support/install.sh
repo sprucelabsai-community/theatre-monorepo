@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.15"
+echo "Version: 3.5.16"
 
 setupTheatreUntil=""
 setupMode=""
@@ -257,17 +257,20 @@ install_mongo() {
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get install -y gnupg curl
         # Define MongoDB version and repo URL
+        # Define MongoDB version and repo URL
         MONGO_VERSION="6.0"
         MONGO_REPO_URL="https://repo.mongodb.org/apt/ubuntu"
 
-        # Add MongoDB's GPG Key (New Method)
-        wget -qO /usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg https://www.mongodb.org/static/pgp/server-${MONGO_VERSION}.asc
+        # Add MongoDB’s GPG key (New Method)
+        wget -qO /usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg https://pgp.mongodb.com/server-${MONGO_VERSION}.asc
 
-        # Add MongoDB repository to sources.list.d
+        # Add MongoDB repository
         echo "deb [signed-by=/usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg] ${MONGO_REPO_URL} focal/mongodb-org/${MONGO_VERSION} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list
 
-        # Update package list and install MongoDB
+        # Update package lists
         apt-get update
+
+        # Install MongoDB
         apt-get install -y mongodb-org
 
         # Create MongoDB data directory if not exists
