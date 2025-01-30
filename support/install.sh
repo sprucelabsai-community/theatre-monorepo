@@ -145,7 +145,7 @@ update_package_manager() {
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get update
         # canvas requirements (heartwood)
-        sudo apt-get install fuse libfuse2 pkg-config libpixman-1-dev build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+        sudo apt-get install -y fuse libfuse2 pkg-config libpixman-1-dev build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
     else
         echo "Unsupported package manager. Please update your system manually."
@@ -256,7 +256,7 @@ install_mongo() {
         brew tap mongodb/brew
         brew install mongodb-community
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
-        sudo apt-get install gnupg curl
+        sudo apt-get install -y gnupg curl
         curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
         echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
         sudo apt-get update
