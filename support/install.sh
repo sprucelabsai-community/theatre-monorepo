@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.6.0"
+echo "Version: 3.6.1"
 
 setupTheatreUntil=""
 setupMode=""
@@ -295,6 +295,12 @@ install_mongo() {
 }
 
 start_mongo() {
+
+    if [ "$should_install_mongo" = false ]; then
+        echo "Skipping MongoDB startup settings..."
+        return
+    fi
+
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew services start mongodb-community
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
