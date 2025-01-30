@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.6.2"
+echo "Version: 3.6.3"
 
 setupTheatreUntil=""
 setupMode=""
@@ -621,7 +621,7 @@ else
     cd $path
 
     # Clone theatre mono repo
-    git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
+    git clone https://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@github.com/sprucelabsai-community/theatre-monorepo.git .
     cp $blueprint_path ./blueprint.yml
 
     yarn setup.theatre blueprint.yml --runUntil="$setupTheatreUntil"
