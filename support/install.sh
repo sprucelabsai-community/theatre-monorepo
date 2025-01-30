@@ -283,8 +283,8 @@ start_mongo() {
         brew services start mongodb-community
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo systemctl daemon-reload
-        sudo systemctl start mongod
         sudo systemctl enable mongod
+        sudo systemctl start mongod
     else
         echo "Unsupported package manager. Please start MongoDB manually."
         exit 1
