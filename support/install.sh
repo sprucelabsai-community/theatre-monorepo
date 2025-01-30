@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.17"
+echo "Version: 3.6.0"
 
 setupTheatreUntil=""
 setupMode=""
@@ -32,6 +32,7 @@ theatreDestination=""
 already_installed=false
 min_node_version="20.0.0"
 should_install_node=false
+should_install_mongo=true
 
 for arg in "$@"; do
     case $arg in
@@ -49,6 +50,10 @@ for arg in "$@"; do
         ;;
     --theatreDestination=*)
         theatreDestination="${arg#*=}"
+        shift
+        ;;
+    --shouldInstallMongo=*)
+        should_install_mongo="${arg#*=}"
         shift
         ;;
     *)
@@ -251,6 +256,12 @@ install_yarn() {
 }
 
 install_mongo() {
+
+    if [ "$should_install_mongo" = false ]; then
+        echo "Skipping MongoDB installation..."
+        return
+    fi
+
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew tap mongodb/brew
         brew install mongodb-community
