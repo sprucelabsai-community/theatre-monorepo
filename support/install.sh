@@ -33,6 +33,7 @@ already_installed=false
 min_node_version="20.0.0"
 should_install_node=false
 should_install_mongo=true
+personal_access_token=""
 
 for arg in "$@"; do
     case $arg in
@@ -54,6 +55,10 @@ for arg in "$@"; do
         ;;
     --shouldInstallMongo=*)
         should_install_mongo="${arg#*=}"
+        shift
+        ;;
+    --personalAccessToken=*)
+        personal_access_token="${arg#*=}"
         shift
         ;;
     *)
@@ -621,7 +626,12 @@ else
     cd $path
 
     # Clone theatre mono repo
-    git clone https://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@github.com/sprucelabsai-community/theatre-monorepo.git .
+    if [ -n "$personal_access_token" ]; then
+        git clone https://"$personal_access_token"@github.com/sprucelabsai-community/theatre-monorepo.git .
+    else
+        git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
+    fi
+
     cp $blueprint_path ./blueprint.yml
 
     yarn setup.theatre blueprint.yml --runUntil="$setupTheatreUntil"
