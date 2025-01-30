@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.13"
+echo "Version: 3.5.14"
 
 setupTheatreUntil=""
 setupMode=""
@@ -256,9 +256,22 @@ install_mongo() {
         brew install mongodb-community
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get install -y gnupg curl
-        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
-        echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-        sudo apt-get install -y mongodb-org-server mongodb-org-mongos mongodb-org-database mongodb-org
+        # Define MongoDB version and repo URL
+        MONGO_VERSION="6.0"
+        MONGO_REPO_URL="https://repo.mongodb.org/apt/ubuntu"
+
+        # Add MongoDB's GPG Key (New Method)
+        wget -qO /usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg https://www.mongodb.org/static/pgp/server-${MONGO_VERSION}.asc
+
+        # Add MongoDB repository to sources.list.d
+        echo "deb [signed-by=/usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg] ${MONGO_REPO_URL} focal/mongodb-org/${MONGO_VERSION} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list
+
+        # Update package list and install MongoDB
+        apt-get update
+        apt-get install -y mongodb-org
+
+        # Create MongoDB data directory if not exists
+        mkdir -p /data/db
     else
         echo "Unsupported package manager. Please install MongoDB manually."
         exit 1
@@ -282,6 +295,7 @@ install_caddy() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew install caddy
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+        sudo apt-get update
         sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
         curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-archive-keyring.gpg
         echo "deb [signed-by=/usr/share/keyrings/caddy-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
