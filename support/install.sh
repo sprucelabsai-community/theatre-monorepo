@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.5.16"
+echo "Version: 3.5.17"
 
 setupTheatreUntil=""
 setupMode=""
@@ -255,25 +255,27 @@ install_mongo() {
         brew tap mongodb/brew
         brew install mongodb-community
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
-        sudo apt-get install -y gnupg curl
-        # Define MongoDB version and repo URL
-        # Define MongoDB version and repo URL
-        MONGO_VERSION="6.0"
-        MONGO_REPO_URL="https://repo.mongodb.org/apt/ubuntu"
+        apt-get update
+        apt-get install -y gnupg curl
 
-        # Add MongoDB’s GPG key (New Method)
-        wget -qO /usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg https://pgp.mongodb.com/server-${MONGO_VERSION}.asc
+        # Remove old GPG key if it exists
+        rm -f /usr/share/keyrings/mongodb-server-6.0.gpg
 
-        # Add MongoDB repository
-        echo "deb [signed-by=/usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg] ${MONGO_REPO_URL} focal/mongodb-org/${MONGO_VERSION} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list
+        # Import the MongoDB public GPG key
+        curl -fsSL https://pgp.mongodb.com/server-6.0.asc |
+            gpg --dearmor -o /usr/share/keyrings/mongodb-server-6.0.gpg
 
-        # Update package lists
+        # Create the list file for MongoDB
+        echo "deb [signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" |
+            tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+
+        # Reload local package database
         apt-get update
 
         # Install MongoDB
         apt-get install -y mongodb-org
 
-        # Create MongoDB data directory if not exists
+        # Create the data directory
         mkdir -p /data/db
     else
         echo "Unsupported package manager. Please install MongoDB manually."
