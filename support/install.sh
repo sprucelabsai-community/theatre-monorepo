@@ -123,7 +123,6 @@ install_git() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew install git
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
-        sudo apt-get update
         sudo apt-get install -y git
     elif [ "$PACKAGE_MANAGER" == "yum" ]; then
         sudo yum update
@@ -259,7 +258,6 @@ install_mongo() {
         sudo apt-get install -y gnupg curl
         curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
         echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-        sudo apt-get update
         sudo apt-get install -y mongodb-org-server mongodb-org-mongos mongodb-org-database mongodb-org
     else
         echo "Unsupported package manager. Please install MongoDB manually."
@@ -287,7 +285,6 @@ install_caddy() {
         sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
         curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-archive-keyring.gpg
         echo "deb [signed-by=/usr/share/keyrings/caddy-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-        sudo apt-get update
         sudo apt-get install -y caddy
     else
         echo "Unsupported package manager. Please install Caddy manually."
