@@ -44,7 +44,12 @@ if [ ! -f "$blueprint" ]; then
     exit 1
 fi
 
+if [ "$runUntil" != "" ]; then
+    echo "Running until: $runUntil"
+fi
+
 hero "Updating Theatre..."
+
 git pull
 
 hero "Setting up theatre dependencies..."
