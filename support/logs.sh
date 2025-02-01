@@ -3,13 +3,6 @@
 # Default number of lines
 lines=15 # Default value, change if you want a different default
 
-# Check for at least one argument
-if [ $# -lt 1 ]; then
-    echo "Usage: yarn logs <namespace> [vendor] [--lines=<number>]"
-    echo "Example: yarn logs heartwood spruce --lines=100"
-    exit 1
-fi
-
 # Parse arguments
 namespace=""
 for arg in "$@"; do
@@ -21,6 +14,12 @@ for arg in "$@"; do
         vendor="$arg"
     fi
 done
+
+# Check for at least one argument
+if [ $# -lt 1 ]; then
+    ./support/pm2.sh logs --lines "$lines"
+    exit 0
+fi
 
 # Validate namespace
 if [ -z "$namespace" ]; then
