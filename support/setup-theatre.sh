@@ -113,7 +113,7 @@ hero "Building skills..."
 yarn build
 
 # Check if we should end the script after the build step
-if [ "$shouldRunUntil" == "build" ]; then
+if [ "$runUntil" == "build" ]; then
     hero "Reached 'build' step. Exiting as requested."
     exit 0
 fi
