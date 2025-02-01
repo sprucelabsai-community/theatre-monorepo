@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.7.0"
+echo "Version: 3.7.1"
 
 setupTheatreUntil=""
 setupMode=""
@@ -626,10 +626,10 @@ else
     cd $path
 
     # Clone theatre mono repo
-    if [ -n "$personal_access_token" ]; then
-        git clone https://"$personal_access_token"@github.com/sprucelabsai-community/theatre-monorepo.git .
-    else
+    if [ -z "$personal_access_token" ]; then
         git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
+    else
+        git clone https://"$personal_access_token"@github.com/sprucelabsai-community/theatre-monorepo.git .
     fi
 
     cp $blueprint_path ./blueprint.yml
