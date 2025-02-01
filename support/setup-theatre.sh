@@ -4,9 +4,30 @@ source ./support/hero.sh
 
 # Function to print usage and exit
 usage() {
-    echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>] [--shouldServeHeartwood=<true|false>]"
+    echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>]"
     echo "Steps: build"
     exit 1
+}
+
+run_remaining_steps=false
+
+should_run_step() {
+    local step="$1"
+    # If startFrom is empty, run all steps
+    if [ -z "$startFrom" ]; then
+        return 0
+    fi
+    # If we've already reached the starting step, continue running
+    if [ "$run_remaining_steps" = true ]; then
+        return 0
+    fi
+    # If the current step matches startFrom, mark flag and run this step
+    if [ "$startFrom" = "$step" ]; then
+        run_remaining_steps=true
+        return 0
+    fi
+    # Otherwise, skip this step
+    return 1
 }
 
 # Check if the correct number of arguments is provided
@@ -16,7 +37,7 @@ fi
 
 blueprint=$1
 runUntil=""
-shouldServeHeartwood=true
+startFrom=""
 
 # Parse arguments
 for arg in "$@"; do
@@ -25,8 +46,8 @@ for arg in "$@"; do
         runUntil="${arg#*=}"
         shift
         ;;
-    --shouldServeHeartwood=*)
-        shouldServeHeartwood="${arg#*=}"
+    --startFrom=*)
+        startFrom="${arg#*=}"
         shift
         ;;
     *.yml)
@@ -48,13 +69,13 @@ if [ "$runUntil" != "" ]; then
     echo "Running until: $runUntil"
 fi
 
-hero "Updating Theatre..."
+if should_run_step "update"; then
+    hero "Updating Theatre..."
+    git pull
 
-git pull
-
-hero "Setting up theatre dependencies..."
-
-yarn
+    hero "Setting up theatre dependencies..."
+    yarn
+fi
 
 # check for required options in the blueprint (admin.PHONE), if missing, exit 1
 ADMIN_SECTION=$(node support/blueprint.js $blueprint admin)
@@ -78,16 +99,10 @@ fi
 #if there is a env.universal.DB_CONNECTION_STRING in the bluprint, use it
 DB_CONNECTION_STRING=$(echo "$ENV" | jq -r '.universal[] | select(has("DB_CONNECTION_STRING")) | .DB_CONNECTION_STRING' 2>/dev/null)
 
-#if there is a theatre.should_serve_heartwood in the blueprint, use it
-THEATRE=$(node support/blueprint.js "$blueprint" theatre)
-SHOULD_SERVE_HEARTWOOD=$(echo "$THEATRE" | jq -r '.SHOULD_SERVE_HEARTWOOD' 2>/dev/null)
-if [ "$SHOULD_SERVE_HEARTWOOD" == "false" ]; then
-    shouldServeHeartwood=false
+if should_run_step "syncSkills"; then
+    hero "Syncing skills with blueprint..."
+    ./support/sync-skills-with-blueprint.sh $blueprint
 fi
-
-hero "Syncing skills with blueprint..."
-
-./support/sync-skills-with-blueprint.sh $blueprint
 
 # Check if we should end the script after the build step
 if [ "$runUntil" == "syncSkills" ]; then
@@ -95,12 +110,14 @@ if [ "$runUntil" == "syncSkills" ]; then
     exit 0
 fi
 
-# Handle the lock file by executing the script
-./support/handle-lock-file.sh "$blueprint"
+if should_run_step "skillDependencies"; then
+    # Handle the lock file by executing the script
+    ./support/handle-lock-file.sh "$blueprint"
 
-hero "Pulling skill dependencies..."
+    hero "Pulling skill dependencies..."
 
-yarn
+    yarn
+fi
 
 # Check if we should end the script after the build step
 if [ "$runUntil" == "skillDependencies" ]; then
@@ -108,9 +125,10 @@ if [ "$runUntil" == "skillDependencies" ]; then
     exit 0
 fi
 
-hero "Building skills..."
-
-yarn build
+if should_run_step "build"; then
+    hero "Building skills..."
+    yarn build
+fi
 
 # Check if we should end the script after the build step
 if [ "$runUntil" == "build" ]; then
@@ -147,11 +165,7 @@ hero "Publishing core skills..."
 
 hero "Booting..."
 
-if [ "$shouldServeHeartwood" = true ]; then
-    yarn boot.serve
-else
-    yarn boot
-fi
+yarn boot
 
 wait
 
