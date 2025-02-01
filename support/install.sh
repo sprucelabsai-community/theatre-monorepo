@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.7.3"
+echo "Version: 3.7.4"
 
 setupTheatreUntil=""
 setupMode=""
@@ -638,6 +638,6 @@ else
 
     echo "You're all set up! 🚀"
     echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
-    echo "When you're ready to build your first skill, run \"mkdir [skill-name] && spruce onboard\""
+    echo "When you're ready to build your first skill, run \"spruce create.skill [skill-name]\""
     echo "Go team! 🌲🤖"
 fi
