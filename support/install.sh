@@ -23,16 +23,16 @@ echo "
                                                                          
 "
 
-echo "Version: 3.7.1"
+echo "Version: 3.7.2"
 
 setupTheatreUntil=""
 setupMode=""
 blueprint=""
 theatreDestination=""
-already_installed=false
-min_node_version="20.0.0"
-should_install_node=false
-should_install_mongo=true
+isAlreadyInstalled=false
+minNodeVersion="20.0.0"
+shouldInstallNode=false
+shouldInstallMongo=true
 personal_access_token=""
 
 for arg in "$@"; do
@@ -54,7 +54,7 @@ for arg in "$@"; do
         shift
         ;;
     --shouldInstallMongo=*)
-        should_install_mongo="${arg#*=}"
+        shouldInstallMongo="${arg#*=}"
         shift
         ;;
     --personalAccessToken=*)
@@ -84,10 +84,10 @@ get_package_manager() {
 
 PACKAGE_MANAGER=$(get_package_manager)
 
-check_already_installed() {
+check_isAlreadyInstalled() {
     # check if spruce cli is installed
     if command -v spruce &>/dev/null; then
-        already_installed=true
+        isAlreadyInstalled=true
     fi
 }
 
@@ -184,7 +184,7 @@ get_installed_node_version() {
 is_node_outdated() {
     if is_node_installed; then
         local installed_version=$(get_installed_node_version)
-        if [[ "$(printf '%s\n' "$min_node_version" "$installed_version" | sort -V | head -n1)" == "$min_node_version" ]]; then
+        if [[ "$(printf '%s\n' "$minNodeVersion" "$installed_version" | sort -V | head -n1)" == "$minNodeVersion" ]]; then
             return 1 # Node is not outdated
         else
             return 0 # Node is outdated
@@ -262,7 +262,7 @@ install_yarn() {
 
 install_mongo() {
 
-    if [ "$should_install_mongo" = false ]; then
+    if [ "$shouldInstallMongo" = false ]; then
         echo "Skipping MongoDB installation..."
         return
     fi
@@ -301,7 +301,7 @@ install_mongo() {
 
 start_mongo() {
 
-    if [ "$should_install_mongo" = false ]; then
+    if [ "$shouldInstallMongo" = false ]; then
         echo "Skipping MongoDB startup settings..."
         return
     fi
@@ -338,16 +338,16 @@ optionally_install_node() {
         echo "Node is installed..."
         if is_node_outdated; then
             echo "Node is outdated..."
-            should_install_node=true
+            shouldInstallNode=true
         else
             echo "Node is up to date..."
         fi
     else
         echo "Node is not installed..."
-        should_install_node=true
+        shouldInstallNode=true
     fi
 
-    if [ "$should_install_node" = true ]; then
+    if [ "$shouldInstallNode" = true ]; then
         if ask_to_install "Node"; then
             install_node
             source $(get_profile)
@@ -359,7 +359,7 @@ optionally_install_node() {
 }
 
 introduction_message() {
-    if [ "$setupMode" != "production" ] && [ "$already_installed" = false ]; then
+    if [ "$setupMode" != "production" ] && [ "$isAlreadyInstalled" = false ]; then
         sleep 1
         echo "Hey there! 👋"
         sleep 1
@@ -412,7 +412,7 @@ install_spruce_cli() {
 
 optionally_install_and_boot_mongo() {
 
-    if [ "$should_install_mongo" = false ]; then
+    if [ "$shouldInstallMongo" = false ]; then
         echo "Skipping MongoDB installation..."
         return
     fi
@@ -584,7 +584,7 @@ install_executable() {
     esac
 }
 
-check_already_installed
+check_isAlreadyInstalled
 introduction_message
 
 touch $(get_profile)

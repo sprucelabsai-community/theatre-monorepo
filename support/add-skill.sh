@@ -17,6 +17,7 @@ if [ ! -d "$REPO_NAME" ]; then
     if [ -f "$SSH_KEY_PATH" ]; then
         GIT_SSH_COMMAND="ssh -i $SSH_KEY_PATH" git clone $1
     else
+        echo "Running: git clone $1"
         git clone $1
     fi
 
