@@ -84,7 +84,7 @@ get_package_manager() {
 
 PACKAGE_MANAGER=$(get_package_manager)
 
-check_isAlreadyInstalled() {
+check_is_already_installed() {
     # check if spruce cli is installed
     if command -v spruce &>/dev/null; then
         isAlreadyInstalled=true
@@ -584,7 +584,7 @@ install_executable() {
     esac
 }
 
-check_isAlreadyInstalled
+check_is_already_installed
 introduction_message
 
 touch $(get_profile)
