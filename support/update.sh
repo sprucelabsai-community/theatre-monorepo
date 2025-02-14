@@ -9,6 +9,7 @@ shouldShowHelp=false
 shouldOpenVsCodeOnFail=false
 startWith=""
 nonDashDashArgExists=false
+shouldRebuild=true
 
 for arg in "$@"; do
     case $arg in
@@ -30,6 +31,10 @@ for arg in "$@"; do
         ;;
     --shouldOpenVsCodeOnFail=*)
         shouldOpenVsCodeOnFail="${arg#*=}"
+        shift
+        ;;
+    --shouldRebuild=*)
+        shouldRebuild="${arg#*=}"
         shift
         ;;
     --help)
@@ -135,4 +140,6 @@ if [[ -d "packages/spruce-mercury-api" ]]; then
     cd ../../
 fi
 
-yarn rebuild --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"
+if [ "$shouldRebuild" = true ]; then
+    yarn rebuild --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"
+fi

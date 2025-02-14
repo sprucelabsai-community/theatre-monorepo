@@ -62,6 +62,9 @@ fi
 
 foundStart=false
 
+# intentional mapping of shouldOpenVsCodeOnPendingChanges to shouldOpenVsCodeOnFail since a pending change would count as a fail
+yarn update --shouldRebuild=false --shouldOpenVsCodeOnPendingChanges="$shouldOpenVsCodeOnFail" --shouldCheckForPendingChanges="$shouldCheckForPendingChanges"
+
 if [ "$shouldCheckForPendingChanges" = true ]; then
     for dir in packages/*/; do
         if [ -d "$dir" ]; then
