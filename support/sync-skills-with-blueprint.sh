@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Alert if path is missing
 if [ -z "$1" ]; then
   echo "ERROR: Missing path to blueprint.yml. Try 'yarn sync ./path/to/blueprint.yml'"
