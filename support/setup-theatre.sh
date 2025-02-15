@@ -2,6 +2,8 @@
 
 source ./support/hero.sh
 
+set -e
+
 # Function to print usage and exit
 usage() {
     echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>]"
@@ -115,8 +117,9 @@ if should_run_step "skillDependencies"; then
     ./support/handle-lock-file.sh "$blueprint"
 
     hero "Pulling skill dependencies..."
-
+    set +e
     yarn
+    set -e
 fi
 
 # Check if we should end the script after the build step
@@ -126,8 +129,10 @@ if [ "$runUntil" == "skillDependencies" ]; then
 fi
 
 if should_run_step "build"; then
+    set +e
     hero "Building skills..."
     yarn build
+    set -e
 fi
 
 # Check if we should end the script after the build step
