@@ -46,6 +46,7 @@ if [ "$shouldShowHelp" = true ]; then
     echo "  --shouldOpenVsCodeOnPendingChanges: Open VS Code if there are pending changes in a skill. Default is false."
     echo "  --shouldCheckForPendingChanges: Check for pending changes in skills before upgrading. Default is true."
     echo "  --startWith: Start the upgrade process with the specified skill directory."
+    echo "  --shouldOpenVsCodeOnFail: Open VS Code if the upgrade process fails. Default is false."
     echo "  --help: Show this help message."
     exit 0
 fi
