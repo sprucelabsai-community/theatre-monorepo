@@ -37,7 +37,7 @@
     "shutdown": "./support/shutdown.sh",
     "stop.serving.heartwood": "./support/stop-serving-heartwood.sh",
     "sync.events": "./support/sync-events.sh",
-    "test": "lerna run test --concurrency 1",
+    "test": "lerna run test --concurrency=3",
     "update": "./support/update.sh",
     "upgrade": "./support/upgrade.sh",
     "verify.hash": "./support/verify-hash.sh"
