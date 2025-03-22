@@ -12,6 +12,7 @@
     "bundle.serve.heartwood": "yarn bundle.heartwood && yarn serve.heartwood",
     "checkout": "./support/checkout.sh",
     "clean": "lerna run clean",
+    "circle.status": "./support/circle-status.sh",
     "commit.push.skills": "./support/commit-push-skills.sh",
     "dump.core.database": "./support/dump-core-db.sh",
     "export.theatre.zip": "./support/export-theatre.sh",
