@@ -117,6 +117,7 @@ for dir in packages/*-skill/; do
 
         (
             cd "$dir"
+
             git checkout .
             git pull
 

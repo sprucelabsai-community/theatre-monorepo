@@ -3,6 +3,8 @@
 # Default vendor
 vendor="spruce"
 
+source ./support/hero.sh
+
 # Check for at least one argument
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <namespaceOrDirName> [vendor]"
@@ -17,7 +19,7 @@ skill_dir_name=$(./support/resolve-skill-dir.sh "$namespace" "$vendor")
 
 cd packages/$skill_dir_name
 
-echo "Upgrading $skill_dir_name..."
+hero "Upgrading $skill_dir_name..."
 
 git checkout .
 git pull
