@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Usage: ./get-circleci-status-for-skill.sh --pathToSkill=<path> --circleToken=<token>
-# Example: ./get-circleci-status-for-skill.sh --pathToSkill=/path/to/repo --circleToken=abc123
+# Usage: ./get-circleci-status-for-skill.sh --pathToSkill=<path> --circleToken=<token> --shouldOpenVsCodeOnFail=<true|false>
+# Example: ./get-circleci-status-for-skill.sh --pathToSkill=/path/to/repo --circleToken=abc123 --shouldOpenVsCodeOnFail=<true|false>
 
 # Parse arguments
 for i in "$@"; do
@@ -12,6 +12,10 @@ for i in "$@"; do
         ;;
     --circleToken=*)
         CIRCLECI_TOKEN="${i#*=}"
+        shift
+        ;;
+    --shouldOpenVsCodeOnFail=*)
+        shouldOpenVsCodeOnFail="${i#*=}"
         shift
         ;;
     *) ;;
@@ -59,6 +63,13 @@ for ID in "${PIPELINE_IDS[@]}"; do
     if [ "$COUNT" -gt 0 ]; then
         WORKFLOW_STATUS="$(echo "$WORKFLOW_RESPONSE" | jq -r '.items[0].status')"
         echo "Status: $WORKFLOW_STATUS"
+
+        # Check if the workflow status is "failed" and open VS Code if needed
+        if [ "$WORKFLOW_STATUS" == "failed" ] && [ "$shouldOpenVsCodeOnFail" = true ]; then
+            echo "Opening VS Code for failed workflow..."
+            code .
+        fi
+
         exit 0
     fi
 done

@@ -1,4 +1,17 @@
 #!/bin/bash
+#
+# Usage: ./circle-status.sh --shouldOpenVsCodeOnFail=<true|false>
+# Example: ./circle-status.sh --shouldOpenVsCodeOnFail=<true|false>
+
+for i in "$@"; do
+    case $i in
+    --shouldOpenVsCodeOnFail=*)
+        shouldOpenVsCodeOnFail="${i#*=}"
+        shift
+        ;;
+    *) ;;
+    esac
+done
 
 source support/hero.sh
 
@@ -18,7 +31,7 @@ for dir in packages/*-skill/ packages/*-api/; do
         dirName="$(basename "$dir")"
         hero "Checking CircleCI status for $dirName..."
 
-        ./support/print-circleci-status-for-skill.sh --pathToSkill="$dir" --circleToken="$CIRCLECI_TOKEN"
+        ./support/print-circleci-status-for-skill.sh --pathToSkill="$dir" --circleToken="$CIRCLECI_TOKEN" --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"
 
     fi
 done
