@@ -9,6 +9,7 @@ for arg in "$@"; do
 done
 
 REPO_PATH=$1
+DIR_NAME=$(basename "$REPO_PATH")
 
 # Pull env
 ENV=$(node support/blueprint.js $2 env)
@@ -16,12 +17,12 @@ ENV=$(node support/blueprint.js $2 env)
 # Skip if .env if exists
 case $ENV_STRATEGY in
 skip)
-    echo "Skipping due to 'skip' strategy."
+    echo "Skipping due to 'skip' strategy in $DIR_NAME."
     exit 0
     ;;
 replace)
     if [ -f "$REPO_PATH/.env" ]; then
-        echo "Deleting .env due to 'replace' strategy."
+        echo "Deleting .env due to 'replace' strategy in $DIR_NAME."
         rm "$REPO_PATH/.env"
     else
         echo ".env file not found, nothing to delete."
