@@ -59,12 +59,12 @@ if [ "$shouldShowHelp" = true ]; then
     exit 0
 fi
 
-hero "Updating skills..."
-
 if [ "$nonDashDashArgExists" = true ]; then
     ./support/update-skill.sh "$@"
     exit 0
 fi
+
+hero "Updating skills..."
 
 if [ "$startWith" ]; then
     startWith=$(./support/resolve-skill-dir.sh "$startWith")

@@ -26,7 +26,10 @@ if [ -z "$INSTALLED_SKILLS" ]; then
   echo "No installed skills found."
 else
   echo "Installed skills:"
-  echo $INSTALLED_SKILLS
+  # Loop through the installed skills and print them
+  for SKILL in $INSTALLED_SKILLS; do
+    echo " - $SKILL"
+  done
 fi
 
 # Navigate to the correct directory

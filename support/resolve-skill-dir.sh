@@ -10,7 +10,7 @@ fi
 namespace="$1"
 
 # Use the vendor provided as an argument if available; otherwise, use resolve-vendor.sh
-if [ $# -eq 2 ]; then
+if [ $# -ge 2 ] && [ -n "$2" ]; then
     vendor="$2"
 else
     vendor=$(./support/resolve-vendor.sh "$namespace")

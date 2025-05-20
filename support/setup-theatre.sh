@@ -106,6 +106,9 @@ if should_run_step "syncSkills"; then
     ./support/sync-skills-with-blueprint.sh $blueprint
 fi
 
+# Validate skill dependencies
+./support/validate-skill-to-skill-dependencies.sh
+
 # Check if we should end the script after the build step
 if [ "$runUntil" == "syncSkills" ]; then
     hero "Reached 'syncSkills' step. Exiting as requested."
