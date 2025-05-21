@@ -24,7 +24,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.7"
+echo "Version: 4.0.8"
 
 setupTheatreUntil=""
 setupMode=""
@@ -89,6 +89,15 @@ get_package_manager() {
 }
 
 PACKAGE_MANAGER=$(get_package_manager)
+
+safe_source() {
+    local file="$1"
+    if [ -f "$file" ]; then
+        set +u # allow undefined vars while sourcing
+        . "$file"
+        set -u
+    fi
+}
 
 check_is_already_installed() {
     # check if spruce cli is installed
@@ -174,7 +183,7 @@ update_package_manager() {
         exit 1
     fi
 
-    source $(get_profile)
+    safe_source "$(get_profile)"
 }
 
 is_node_installed() {
@@ -243,7 +252,7 @@ install_node() {
         echo "export CPPFLAGS=\"-I$BREW_PREFIX/opt/node@20/include\"" >>$(get_profile)
 
         # Source the profile
-        source $(get_profile)
+        safe_source "$(get_profile)"
 
         brew link --force --overwrite node@20
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
@@ -393,7 +402,7 @@ optionally_install_node() {
     if [ "$shouldInstallNode" = true ]; then
         if ask_to_install "Node"; then
             install_node
-            source $(get_profile)
+            safe_source "$(get_profile)"
         else
             echo "Please install Node manually from https://nodejs.org/."
             exit 1
@@ -450,7 +459,7 @@ optionally_install_git() {
 
 install_spruce_cli() {
     yarn global add @sprucelabs/spruce-cli
-    source $(get_profile)
+    safe_source "$(get_profile)"
 }
 
 optionally_install_and_boot_mongo() {
