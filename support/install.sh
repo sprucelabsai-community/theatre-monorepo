@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
-trap 'echo "❌  Error on line $LINENO: $BASH_COMMAND (exit $?)" >&2' ERR
-
 echo "
    _____                          
   / ___/____  _______  __________ 
@@ -24,7 +21,27 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.11"
+echo "Version: 4.2.0"
+
+# default flags
+debug=false
+
+print_help() {
+    cat <<'EOF'
+Usage: install.sh [options]
+
+Options:
+  --setupTheatreUntil=<date>   Datetime up to which step to setup the theatre. Possible values are syncSkills, skillDependencies, build.  (optional)
+  --setupMode=<mode>           Mode: development (default) or production
+  --blueprint=<path>           Path to blueprint.yml
+  --theatreDestination=<dir>   Destination directory for Theatre clone
+  --shouldInstallMongo=<bool>  true (default) or false
+  --shouldInstallCaddy=<bool>  true (default) or false
+  --personalAccessToken=<tok>  GitHub personal access token for private repo
+  --debug                      Enable verbose execution trace and error trapping
+  --help                       Show this help message and exit
+EOF
+}
 
 setupTheatreUntil=""
 setupMode=""
@@ -67,12 +84,26 @@ for arg in "$@"; do
         personal_access_token="${arg#*=}"
         shift
         ;;
+    --debug)
+        debug=true
+        shift
+        ;;
+    --help)
+        print_help
+        exit 0
+        ;;
     *)
         echo "Unknown option: $arg"
         exit 1
         ;;
     esac
 done
+
+# Activate tracing and error trap if debug is set
+if [ "$debug" = true ]; then
+    set -Eeuo pipefail
+    trap 'echo "❌  Error on line $LINENO: $BASH_COMMAND (exit $?)" >&2' ERR
+fi
 
 get_package_manager() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -92,6 +123,12 @@ PACKAGE_MANAGER=$(get_package_manager)
 
 safe_source() {
     local file="$1"
+
+    if [ "$debug" != true ]; then
+        source "$file"
+        return 0
+    fi
+
     if [ -f "$file" ]; then
         # Temporarily relax strict mode so system profiles that use cat/grep
         # with non‑existent files or unbound vars don't abort the installer.
