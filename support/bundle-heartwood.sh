@@ -9,6 +9,9 @@ PUBLIC_ASSETS_DIR=$(echo "$ENV" | jq -r '.heartwood[] | select(has("PUBLIC_ASSET
 THEATRE=$(node support/blueprint.js "$blueprint" theatre)
 POST_BUNDLE_SCRIPT=$(echo "$THEATRE" | jq -r '.POST_BUNDLE_SCRIPT' 2>/dev/null)
 
+echo "PUBLIC_ASSETS_DIR: $PUBLIC_ASSETS_DIR"
+echo "POST_BUNDLE_SCRIPT: $POST_BUNDLE_SCRIPT"
+
 heartwood_dir="packages/spruce-heartwood-skill"
 
 if [ ! -d "$heartwood_dir" ]; then
