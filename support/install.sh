@@ -24,7 +24,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.9"
+echo "Version: 4.0.10"
 
 setupTheatreUntil=""
 setupMode=""
@@ -100,6 +100,8 @@ safe_source() {
         # Restore strict mode
         set -Eeuo pipefail
     fi
+
+    return 0
 }
 
 check_is_already_installed() {
