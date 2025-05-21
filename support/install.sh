@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.0"
+echo "Version: 4.0.1"
 
 setupTheatreUntil=""
 setupMode=""
@@ -502,7 +502,7 @@ optionally_install_jq() {
 
 ask_for_blueprint() {
     if [ -z "$blueprint" ]; then
-        echo -n "Path to blueprint.yml (optional):"
+        echo -n "Path to blueprint.yml (leave blank if starting fresh):"
         read -r blueprint_path
     else
         blueprint_path=$blueprint
@@ -644,7 +644,7 @@ update_package_manager
 echo "Checking for Git..."
 optionally_install_git
 
-echo "Checking for Node..."
+echo "Checking for Node if not installed..."
 optionally_install_node
 
 echo "Installing Yarn..."
@@ -658,7 +658,11 @@ optionally_install_and_boot_mongo
 
 echo "Optionally installing Caddy..."
 optionally_install_caddy
+
+echo "Optionally installing jq..."
 optionally_install_jq
+
+echo "Checking for blueprint..."
 ask_for_blueprint
 
 if [ -z "$blueprint_path" ]; then
