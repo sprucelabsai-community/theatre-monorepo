@@ -5,6 +5,7 @@ blueprint="blueprint.yml"
 
 ENV=$(node support/blueprint.js $blueprint env)
 PUBLIC_ASSETS_DIR=$(echo "$ENV" | jq -r '.heartwood[] | select(has("PUBLIC_ASSETS_DIR")) | .PUBLIC_ASSETS_DIR' 2>/dev/null)
+POST_BUNDLE_SCRIPT=$(echo "$ENV" | jq -r '.heartwood[] | select(has("POST_BUNDLE_SCRIPT")) | .POST_BUNDLE_SCRIPT' 2>/dev/null)
 
 heartwood_dir="packages/spruce-heartwood-skill"
 
@@ -34,5 +35,10 @@ if [ -n "$PUBLIC_ASSETS_DIR" ]; then
   echo "Copying public assets to $heartwood_dir/dist/assets"
   mkdir -p $heartwood_dir/dist/assets
   cp -r $PUBLIC_ASSETS_DIR/* $heartwood_dir/dist/assets
+fi
 
+# Run POST_BUNDLE_SCRIPT if set
+if [ -n "$POST_BUNDLE_SCRIPT" ] && [ "$POST_BUNDLE_SCRIPT" != "null" ]; then
+  echo "Running POST_BUNDLE_SCRIPT..."
+  eval "$POST_BUNDLE_SCRIPT"
 fi

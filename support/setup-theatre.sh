@@ -106,6 +106,14 @@ if should_run_step "syncSkills"; then
     ./support/sync-skills-with-blueprint.sh $blueprint
 fi
 
+#if spruce-mercury-api exists and there is no mercury.ADMIN_NUMBERS, drop in PHONE to the env
+if [ -d "packages/spruce-mercury-api" ]; then
+    MERCURY_ADMIN_NUMBERS=$(echo "$ENV" | jq -r '.mercury[] | select(has("ADMIN_NUMBERS")) | .ADMIN_NUMBERS' 2>/dev/null)
+    if [ -z "$MERCURY_ADMIN_NUMBERS" ]; then
+        echo "ADMIN_NUMBERS=\"$PHONE\"" >>packages/spruce-mercury-api/.env
+    fi
+fi
+
 # Validate skill dependencies
 ./support/validate-skill-to-skill-dependencies.sh
 
