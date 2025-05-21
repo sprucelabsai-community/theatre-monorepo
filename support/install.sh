@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -e
+set -Eeuo pipefail
+trap 'echo "❌  Error on line $LINENO: $BASH_COMMAND (exit $?)" >&2' ERR
 
 echo "
    _____                          
@@ -23,7 +24,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.4"
+echo "Version: 4.0.5"
 
 setupTheatreUntil=""
 setupMode=""
