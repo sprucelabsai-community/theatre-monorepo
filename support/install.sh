@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.3"
+echo "Version: 4.0.4"
 
 setupTheatreUntil=""
 setupMode=""
@@ -100,6 +100,7 @@ ask_to_install() {
     local message="$1"
 
     if [ "$setupMode" == "production" ]; then
+        echo "Installing $message in production mode..."
         return 0
     else
         echo -n "Would you like me to install $message? (Y/n): "
