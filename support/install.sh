@@ -24,7 +24,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.5"
+echo "Version: 4.0.6"
 
 setupTheatreUntil=""
 setupMode=""
@@ -115,9 +115,10 @@ ask_to_install() {
 }
 
 get_profile() {
-    if [ -n "$ZSH_VERSION" ]; then
+    # Use ${VAR-} to avoid "unbound variable" errors when set -u is active
+    if [ -n "${ZSH_VERSION-}" ]; then
         echo "$HOME/.zshrc"
-    elif [ -n "$BASH_VERSION" ]; then
+    elif [ -n "${BASH_VERSION-}" ]; then
         echo "$HOME/.bashrc"
     else
         echo "$HOME/.profile"
