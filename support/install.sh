@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.2"
+echo "Version: 4.0.3"
 
 setupTheatreUntil=""
 setupMode=""
