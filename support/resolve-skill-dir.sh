@@ -9,6 +9,11 @@ fi
 
 namespace="$1"
 
+if [ -d "./packages/$namespace" ]; then
+    echo "$namespace"
+    exit 0
+fi
+
 # Use the vendor provided as an argument if available; otherwise, use resolve-vendor.sh
 if [ $# -ge 2 ] && [ -n "$2" ]; then
     vendor="$2"

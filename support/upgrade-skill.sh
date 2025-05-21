@@ -15,6 +15,7 @@ fi
 # Assign arguments
 namespace="$1"
 vendor="$2"
+
 skill_dir_name=$(./support/resolve-skill-dir.sh "$namespace" "$vendor")
 
 cd packages/$skill_dir_name
