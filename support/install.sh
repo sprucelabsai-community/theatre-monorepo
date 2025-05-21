@@ -33,6 +33,7 @@ isAlreadyInstalled=false
 minNodeVersion="20.0.0"
 shouldInstallNode=false
 shouldInstallMongo=true
+shouldInstallCaddy=true
 personal_access_token=""
 
 for arg in "$@"; do
@@ -55,6 +56,10 @@ for arg in "$@"; do
         ;;
     --shouldInstallMongo=*)
         shouldInstallMongo="${arg#*=}"
+        shift
+        ;;
+    --shouldInstallCaddy=*)
+        shouldInstallCaddy="${arg#*=}"
         shift
         ;;
     --personalAccessToken=*)
@@ -433,6 +438,11 @@ optionally_install_and_boot_mongo() {
 }
 
 optionally_install_caddy() {
+    if [ "$shouldInstallCaddy" = false ]; then
+        echo "Skipping Caddy installation..."
+        return
+    fi
+
     if ! [ -x "$(command -v caddy)" ]; then
         if ask_to_install "Caddy (to serve the front end)"; then
             install_caddy
