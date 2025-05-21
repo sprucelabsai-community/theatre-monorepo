@@ -20,7 +20,12 @@ if [ ! -d "$PACKAGES_DIR" ]; then
   exit 1
 fi
 
-INSTALLED_SKILLS=$(ls -d $PACKAGES_DIR/*/ 2>/dev/null | xargs -n1 basename)
+# Collect installed skills; if none, leave the variable empty
+if [ -d "$PACKAGES_DIR" ]; then
+  INSTALLED_SKILLS=$(find "$PACKAGES_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+else
+  INSTALLED_SKILLS=""
+fi
 
 if [ -z "$INSTALLED_SKILLS" ]; then
   echo "No installed skills found."
