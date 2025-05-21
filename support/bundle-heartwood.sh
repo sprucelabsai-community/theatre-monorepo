@@ -5,7 +5,7 @@ blueprint="blueprint.yml"
 
 ENV=$(node support/blueprint.js $blueprint env)
 PUBLIC_ASSETS_DIR=$(echo "$ENV" | jq -r '.heartwood[] | select(has("PUBLIC_ASSETS_DIR")) | .PUBLIC_ASSETS_DIR' 2>/dev/null)
-POST_BUNDLE_SCRIPT=$(echo "$ENV" | jq -r '.heartwood[] | select(has("POST_BUNDLE_SCRIPT")) | .POST_BUNDLE_SCRIPT' 2>/dev/null)
+POST_BUNDLE_SCRIPT=$(echo "$ENV" | jq -r '.theatre[] | select(has("POST_BUNDLE_SCRIPT")) | .POST_BUNDLE_SCRIPT' 2>/dev/null)
 
 heartwood_dir="packages/spruce-heartwood-skill"
 
