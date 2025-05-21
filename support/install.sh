@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.2.0"
+echo "Version: 4.2.1"
 
 # default flags
 debug=false
@@ -103,6 +103,8 @@ done
 if [ "$debug" = true ]; then
     set -Eeuo pipefail
     trap 'echo "❌  Error on line $LINENO: $BASH_COMMAND (exit $?)" >&2' ERR
+else
+    set -e
 fi
 
 get_package_manager() {
