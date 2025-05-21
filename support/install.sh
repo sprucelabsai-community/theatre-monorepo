@@ -128,6 +128,8 @@ install_package() {
         brew install "$package_name"
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get install -y "$package_name"
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+        sudo yum install -y "$package_name"
     else
         echo "Unsupported package manager. Please install $package_name manually."
         exit 1
@@ -160,7 +162,10 @@ update_package_manager() {
         sudo apt-get update
         # canvas requirements (heartwood)
         sudo apt-get install -y fuse libfuse2 pkg-config libpixman-1-dev build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
-
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+        sudo yum update -y
+        # canvas requirements (heartwood)
+        sudo yum install -y pkgconfig cairo-devel pango-devel libpng-devel libjpeg-turbo-devel giflib-devel librsvg2-devel pixman-devel
     else
         echo "Unsupported package manager. Please update your system manually."
         exit 1
@@ -244,6 +249,12 @@ install_node() {
         sudo mkdir -p /usr/local/lib/node_modules/
         sudo chown -R root:$(whoami) /usr/local/lib/node_modules/
         sudo chmod -R 775 /usr/local/lib/node_modules/
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+        curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+        sudo yum install -y nodejs
+        sudo mkdir -p /usr/local/lib/node_modules/
+        sudo chown -R root:$(whoami) /usr/local/lib/node_modules/
+        sudo chmod -R 775 /usr/local/lib/node_modules/
     else
         echo "Unsupported package manager. Please install Node.js manually."
         exit 1
@@ -257,6 +268,8 @@ install_yarn() {
         brew install yarn
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo npm install -g yarn
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+        sudo npm install -g yarn
     else
         echo "Unsupported package manager. Please install Yarn manually."
         exit 1
@@ -266,7 +279,6 @@ install_yarn() {
 }
 
 install_mongo() {
-
     if [ "$shouldInstallMongo" = false ]; then
         echo "Skipping MongoDB installation..."
         return
@@ -298,6 +310,22 @@ install_mongo() {
 
         # Create the data directory
         mkdir -p /data/db
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+        if [ "$shouldInstallMongo" = false ]; then
+            echo "Skipping MongoDB installation..."
+            return
+        fi
+        sudo tee /etc/yum.repos.d/mongodb-org-6.0.repo >/dev/null <<'EOM'
+[mongodb-org-6.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/6.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://pgp.mongodb.com/server-6.0.asc
+EOM
+        sudo yum clean all
+        sudo yum install -y mongodb-org
+        sudo mkdir -p /data/db
     else
         echo "Unsupported package manager. Please install MongoDB manually."
         exit 1
@@ -305,7 +333,6 @@ install_mongo() {
 }
 
 start_mongo() {
-
     if [ "$shouldInstallMongo" = false ]; then
         echo "Skipping MongoDB startup settings..."
         return
@@ -314,6 +341,10 @@ start_mongo() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew services start mongodb-community
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+        sudo systemctl daemon-reload
+        sudo systemctl enable mongod
+        sudo systemctl start mongod
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
         sudo systemctl daemon-reload
         sudo systemctl enable mongod
         sudo systemctl start mongod
@@ -332,6 +363,10 @@ install_caddy() {
         echo "deb [signed-by=/usr/share/keyrings/caddy-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
         sudo apt-get update
         sudo apt-get install -y caddy
+    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+        sudo yum install -y yum-plugin-copr
+        sudo yum copr enable @caddy/caddy -y
+        sudo yum install -y caddy
     else
         echo "Unsupported package manager. Please install Caddy manually."
         exit 1
