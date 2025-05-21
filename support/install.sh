@@ -24,7 +24,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.10"
+echo "Version: 4.0.11"
 
 setupTheatreUntil=""
 setupMode=""
@@ -702,11 +702,15 @@ else
     mkdir -p $path
     cd $path
 
-    # Clone theatre mono repo
-    if [ -z "$personal_access_token" ]; then
-        git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
+    if [ -d .git ]; then
+        echo "Existing Theatre repo detected — pulling latest changes..."
+        git pull --ff-only
     else
-        git clone https://"$personal_access_token"@github.com/sprucelabsai-community/theatre-monorepo.git .
+        if [ -z "$personal_access_token" ]; then
+            git clone git@github.com:sprucelabsai-community/theatre-monorepo.git .
+        else
+            git clone https://"$personal_access_token"@github.com/sprucelabsai-community/theatre-monorepo.git .
+        fi
     fi
 
     cp $blueprint_path ./blueprint.yml
