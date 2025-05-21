@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.2.1"
+echo "Version: 4.2.2"
 
 # default flags
 debug=false
@@ -220,6 +220,8 @@ update_package_manager() {
         sudo apt-get install -y fuse libfuse2 pkg-config libpixman-1-dev build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
     elif [ "$PACKAGE_MANAGER" == "yum" ]; then
         sudo yum update -y
+        # build essentials for node‑gyp, etc.
+        sudo yum groupinstall -y "Development Tools"
         # canvas requirements (heartwood)
         sudo yum install -y pkgconfig cairo-devel pango-devel libpng-devel libjpeg-turbo-devel giflib-devel librsvg2-devel pixman-devel
     else
