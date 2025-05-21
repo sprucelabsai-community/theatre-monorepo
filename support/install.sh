@@ -24,7 +24,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.0.8"
+echo "Version: 4.0.9"
 
 setupTheatreUntil=""
 setupMode=""
@@ -93,9 +93,12 @@ PACKAGE_MANAGER=$(get_package_manager)
 safe_source() {
     local file="$1"
     if [ -f "$file" ]; then
-        set +u # allow undefined vars while sourcing
+        # Temporarily relax strict mode so system profiles that use cat/grep
+        # with non‑existent files or unbound vars don't abort the installer.
+        set +e +u +o pipefail
         . "$file"
-        set -u
+        # Restore strict mode
+        set -Eeuo pipefail
     fi
 }
 
