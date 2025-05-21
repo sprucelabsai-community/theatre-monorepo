@@ -23,7 +23,7 @@ echo "
                                                                          
 "
 
-echo "Version: 3.8.0"
+echo "Version: 4.0.0"
 
 setupTheatreUntil=""
 setupMode=""
@@ -100,7 +100,7 @@ ask_to_install() {
     local message="$1"
 
     if [ "$setupMode" == "production" ]; then
-        return 0
+        return 1
     else
         echo -n "Would you like me to install $message? (Y/n): "
         read -r response
@@ -488,7 +488,7 @@ optionally_install_caddy() {
     fi
 }
 
-optionall_install_jq() {
+optionally_install_jq() {
     if ! [ -x "$(command -v jq)" ]; then
         if ask_to_install "jq (to parse JSON)"; then
             install_package jq
@@ -629,12 +629,16 @@ install_executable() {
     esac
 }
 
+echo "Checking for existing installation..."
 check_is_already_installed
 introduction_message
 
 touch $(get_profile)
 
+echo "Checking for package manager..."
 optionally_install_brew
+
+echo "Updating package manager..."
 update_package_manager
 
 echo "Checking for Git..."
@@ -642,12 +646,19 @@ optionally_install_git
 
 echo "Checking for Node..."
 optionally_install_node
+
+echo "Installing Yarn..."
 install_yarn
 
+echo "Installing Spruce CLI..."
 install_spruce_cli
+
+echo "Optionally installing MongoDB..."
 optionally_install_and_boot_mongo
+
+echo "Optionally installing Caddy..."
 optionally_install_caddy
-optionall_install_jq
+optionally_install_jq
 ask_for_blueprint
 
 if [ -z "$blueprint_path" ]; then
