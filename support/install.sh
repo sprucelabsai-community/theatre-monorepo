@@ -52,6 +52,7 @@ minNodeVersion="20.0.0"
 shouldInstallNode=false
 shouldInstallMongo=true
 shouldInstallCaddy=true
+shouldGrantNodeSecurePermissions=false
 personal_access_token=""
 
 for arg in "$@"; do
@@ -91,6 +92,10 @@ for arg in "$@"; do
     --help)
         print_help
         exit 0
+        ;;
+    --shouldGrantNodeSecurePermissions=*)
+        shouldGrantNodeSecurePermissions="${arg#*=}"
+        shift
         ;;
     *)
         echo "Unknown option: $arg"
@@ -319,6 +324,30 @@ install_node() {
     fi
     node --version
     npm --version
+
+    # Grant Node permission to bind to privileged ports if requested
+    if [ "$shouldGrantNodeSecurePermissions" = true ]; then
+        echo "Granting Node permission to listen on privileged ports…"
+
+        # Install libcap utility if not already present
+        PM="$PACKAGE_MANAGER"
+        if ! command -v setcap >/dev/null 2>&1; then
+            if [ "$PM" == "apt-get" ]; then
+                sudo "$PM" -y install libcap2-bin
+            else
+                sudo "$PM" -y install libcap || sudo "$PM" -y install libcap2-bin
+            fi
+        fi
+
+        # Node is installed by install.sh; add the capability
+        if command -v node >/dev/null 2>&1; then
+            sudo setcap 'cap_net_bind_service=+ep' "$(command -v node)" &&
+                echo "✓ Capability applied to $(command -v node)" ||
+                echo "⚠️  Failed to set capability on Node binary."
+        else
+            echo "⚠️  Node not found; skipping setcap."
+        fi
+    fi
 }
 
 install_yarn() {
