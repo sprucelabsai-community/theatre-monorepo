@@ -29,11 +29,21 @@ for dir in *-skill; do
         cd "$dir"
         namespace=$(grep '"namespace"' package.json | awk -F: '{print $2}' | tr -d '," ')
         if [[ " ${namespaces[*]} " == *"$namespace"* ]]; then
-            echo "Publishing "$namespace" and setting canBeInstalled to false"
-            mongosh "$mongo_connection_string" --eval "db = db.getSiblingDB('mercury'); db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: false}})" >/dev/null 2>&1 || echo "Error occurred while publishing $namespace"
+            echo "Publishing $namespace and setting canBeInstalled to false"
+            mongosh_output=$(mongosh "$mongo_connection_string" --eval "db = db.getSiblingDB('mercury'); db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: false}})" 2>&1)
+            mongosh_exit=$?
+            if [ $mongosh_exit -ne 0 ]; then
+                echo "❌ Error occurred while publishing $namespace"
+                echo "$mongosh_output"
+            fi
         else
-            echo "Publishing "$namespace" and setting canBeInstalled to true"
-            mongosh "$mongo_connection_string" --eval "db = db.getSiblingDB('mercury'); db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: true}})" >/dev/null 2>&1 || echo "Error occurred while publishing $namespace"
+            echo "Publishing $namespace and setting canBeInstalled to true"
+            mongosh_output=$(mongosh "$mongo_connection_string" --eval "db = db.getSiblingDB('mercury'); db.skills.updateMany({slug: '$namespace'}, { \$set: {isPublished: true, canBeInstalled: true}})" 2>&1)
+            mongosh_exit=$?
+            if [ $mongosh_exit -ne 0 ]; then
+                echo "❌ Error occurred while publishing $namespace"
+                echo "$mongosh_output"
+            fi
         fi
         cd ..
     fi
