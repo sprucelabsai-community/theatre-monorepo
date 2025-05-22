@@ -403,13 +403,14 @@ install_mongo() {
             echo "Skipping MongoDB installation..."
             return
         fi
-        sudo tee /etc/yum.repos.d/mongodb-org-6.0.repo >/dev/null <<'EOM'
-[mongodb-org-6.0]
+        # Use MongoDB 8.0 repo for yum
+        sudo tee /etc/yum.repos.d/mongodb-org-8.0.repo >/dev/null <<'EOM'
+[mongodb-org-8.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/6.0/x86_64/
+baseurl=https://repo.mongodb.org/yum/amazon/2023/mongodb-org/8.0/$basearch/
 gpgcheck=1
 enabled=1
-gpgkey=https://pgp.mongodb.com/server-6.0.asc
+gpgkey=https://pgp.mongodb.com/server-8.0.asc
 EOM
         sudo yum clean all
         sudo yum install -y mongodb-org
