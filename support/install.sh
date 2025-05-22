@@ -37,6 +37,7 @@ Options:
   --theatreDestination=<dir>   Destination directory for Theatre clone
   --shouldInstallMongo=<bool>  true (default) or false
   --shouldInstallCaddy=<bool>  true (default) or false
+  --shouldGrantNodeSecurePermissions=<bool>  true or false (default: false) - Allow Node.js to bind to privileged ports (e.g., 443)
   --personalAccessToken=<tok>  GitHub personal access token for private repo
   --debug                      Enable verbose execution trace and error trapping
   --help                       Show this help message and exit
