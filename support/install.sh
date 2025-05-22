@@ -375,7 +375,6 @@ install_mongo() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
         brew tap mongodb/brew
         brew install mongodb-community
-        brew install mongosh
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         apt-get update
         apt-get install -y gnupg curl
@@ -394,8 +393,8 @@ install_mongo() {
         # Reload local package database
         apt-get update
 
-        # Install MongoDB and mongosh
-        apt-get install -y mongodb-org mongosh
+        # Install MongoDB
+        apt-get install -y mongodb-org
 
         # Create the data directory
         mkdir -p /data/db
@@ -413,7 +412,7 @@ enabled=1
 gpgkey=https://pgp.mongodb.com/server-6.0.asc
 EOM
         sudo yum clean all
-        sudo yum install -y mongodb-org mongosh
+        sudo yum install -y mongodb-org
         sudo mkdir -p /data/db
     else
         echo "Unsupported package manager. Please install MongoDB manually."
