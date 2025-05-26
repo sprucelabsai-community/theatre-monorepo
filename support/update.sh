@@ -64,6 +64,9 @@ if [ "$nonDashDashArgExists" = true ]; then
     exit 0
 fi
 
+hero "Updating cli..."
+yarn global add @sprucelabs/spruce-cli
+
 hero "Updating skills..."
 
 if [ "$startWith" ]; then
