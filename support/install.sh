@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.3.4"
+echo "Version: 4.3.5"
 
 # default flags
 debug=false
@@ -377,18 +377,16 @@ install_mongo() {
         brew install mongodb-community
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
         sudo apt-get update
-        sudo apt-get install -y gnupg curl
-
         # Remove old GPG key if it exists
-        rm -f /usr/share/keyrings/mongodb-server-6.0.gpg
+        sudo rm -f /usr/share/keyrings/mongodb-server-8.0.gpg
 
         # Import the MongoDB public GPG key
-        curl -fsSL https://pgp.mongodb.com/server-6.0.asc |
-            gpg --dearmor -o /usr/share/keyrings/mongodb-server-6.0.gpg
+        curl -fsSL https://pgp.mongodb.com/server-8.0.asc |
+            sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-8.0.gpg
 
         # Create the list file for MongoDB
-        echo "deb [signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" |
-            tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+        echo "deb [signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/8.0 multiverse" |
+            sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
 
         # Reload local package database
         sudo apt-get update
