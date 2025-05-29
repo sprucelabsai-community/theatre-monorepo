@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.3.7"
+echo "Version: 4.3.8"
 
 # default flags
 debug=false
@@ -328,30 +328,31 @@ install_node() {
     node --version
     npm --version
 
-    # Grant Node permission to bind to privileged ports if requested
-    if [ "$shouldGrantNodeSecurePermissions" = true ]; then
-        echo "Granting Node permission to listen on privileged ports…"
+}
 
-        # Install libcap utility if not already present
-        PM="$PACKAGE_MANAGER"
-        if ! command -v setcap >/dev/null 2>&1; then
-            if [ "$PM" == "apt-get" ]; then
-                sudo "$PM" -y install libcap2-bin
-            else
-                sudo "$PM" -y install libcap || sudo "$PM" -y install libcap2-bin
-            fi
-        fi
+# Grant Node permission to bind to privileged ports if requested
+if [ "$shouldGrantNodeSecurePermissions" = true ]; then
+    echo "Granting Node permission to listen on privileged ports…"
 
-        # Node is installed by install.sh; add the capability
-        if command -v node >/dev/null 2>&1; then
-            sudo setcap 'cap_net_bind_service=+ep' "$(command -v node)" &&
-                echo "✓ Capability applied to $(command -v node)" ||
-                echo "⚠️  Failed to set capability on Node binary."
+    # Install libcap utility if not already present
+    PM="$PACKAGE_MANAGER"
+    if ! command -v setcap >/dev/null 2>&1; then
+        if [ "$PM" == "apt-get" ]; then
+            sudo "$PM" -y install libcap2-bin
         else
-            echo "⚠️  Node not found; skipping setcap."
+            sudo "$PM" -y install libcap || sudo "$PM" -y install libcap2-bin
         fi
     fi
-}
+
+    # Node is installed by install.sh; add the capability
+    if command -v node >/dev/null 2>&1; then
+        sudo setcap 'cap_net_bind_service=+ep' "$(command -v node)" &&
+            echo "✓ Capability applied to $(command -v node)" ||
+            echo "⚠️  Failed to set capability on Node binary."
+    else
+        echo "⚠️  Node not found; skipping setcap."
+    fi
+fi
 
 install_yarn() {
     if [ "$PACKAGE_MANAGER" == "brew" ]; then
