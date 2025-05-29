@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.3.6"
+echo "Version: 4.3.7"
 
 # default flags
 debug=false
@@ -132,6 +132,8 @@ PACKAGE_MANAGER=$(get_package_manager)
 safe_source() {
     local file="$1"
 
+    echo "Loading profile from $file"
+
     if [ "$debug" != true ]; then
         source "$file"
         return 0
@@ -226,10 +228,10 @@ update_package_manager() {
         sudo apt-get install -y fuse libfuse2 pkg-config libpixman-1-dev build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
     elif [ "$PACKAGE_MANAGER" == "yum" ]; then
         sudo yum update -y
-        # canvas requirements (heartwood)
-        sudo yum install -y pkgconfig cairo-devel pango-devel libpng-devel libjpeg-turbo-devel giflib-devel librsvg2-devel pixman-devel
         # build essentials for node‑gyp, etc.
         sudo yum groupinstall -y "Development Tools"
+        # canvas requirements (heartwood)
+        sudo yum install -y pkgconfig cairo-devel pango-devel libpng-devel libjpeg-turbo-devel giflib-devel librsvg2-devel pixman-devel
     else
         echo "Unsupported package manager. Please update your system manually."
         exit 1
