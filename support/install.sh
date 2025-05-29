@@ -376,8 +376,8 @@ install_mongo() {
         brew tap mongodb/brew
         brew install mongodb-community
     elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
-        apt-get update
-        apt-get install -y gnupg curl
+        sudo apt-get update
+        sudo apt-get install -y gnupg curl
 
         # Remove old GPG key if it exists
         rm -f /usr/share/keyrings/mongodb-server-6.0.gpg
@@ -391,10 +391,10 @@ install_mongo() {
             tee /etc/apt/sources.list.d/mongodb-org-6.0.list
 
         # Reload local package database
-        apt-get update
+        sudo apt-get update
 
         # Install MongoDB
-        apt-get install -y mongodb-org
+        sudo apt-get install -y mongodb-org
 
         # Create the data directory
         mkdir -p /data/db
