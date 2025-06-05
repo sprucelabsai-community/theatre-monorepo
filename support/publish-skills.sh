@@ -17,6 +17,11 @@ for arg in "$@"; do
     esac
 done
 
+if [[ "$mongo_connection_string" != mongodb://* ]]; then
+    echo "Skipping publishing skills because not using Mongodb."
+    exit 0
+fi
+
 echo -e "Publishing skills...\n"
 echo "MongoDB connection string: $mongo_connection_string"
 cd packages
