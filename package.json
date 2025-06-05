@@ -16,6 +16,7 @@
     "commit.push.skills": "./support/commit-push-skills.sh",
     "dump.core.database": "./support/dump-core-db.sh",
     "export.theatre.zip": "./support/export-theatre.sh",
+    "register.skills": "./support/register-skills.sh",
     "fix.lint": "lerna run fix.lint",
     "generate.hash": "./support/generate-hash.sh",
     "import.blueprint": "./support/import-blueprint.sh",
