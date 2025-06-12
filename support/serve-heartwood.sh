@@ -99,10 +99,8 @@ log_with_timestamp() {
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Executing: caddy run --config ./Caddyfile" >> "$log_file"
 
 # Start Caddy and capture both stdout and stderr with timestamps
-nohup caddy run --config ./Caddyfile 2>&1 | ./support/timestamp_log.sh >> "$log_file" &
+(caddy run --config ./Caddyfile 2>&1 | log_with_timestamp) &
 caddy_pid=$!
-echo "$caddy_pid" > .processes/caddy-heartwood.pid
-
 
 # Save the PID of the Caddy process
 echo "$caddy_pid" > .processes/caddy-heartwood.pid
