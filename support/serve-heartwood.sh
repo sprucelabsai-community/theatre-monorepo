@@ -2,18 +2,22 @@
 set -e
 
 # ────────────────────────────────────────────────────
-# Prevent duplicate instances
+# Kill any previous serve-heartwood.sh instances
 # ────────────────────────────────────────────────────
-LOCKFILE="/tmp/serve-heartwood.lock"
-if [ -e "$LOCKFILE" ] && kill -0 "$(cat "$LOCKFILE")" 2>/dev/null; then
-  echo "Another instance of serve-heartwood.sh is already running under PID $(cat "$LOCKFILE"). Exiting."
-  exit 1
+SCRIPT_NAME="serve-heartwood.sh"
+CURRENT_PID=$$
+
+# Get all other running serve-heartwood.sh PIDs (excluding current)
+OTHER_PIDS=$(pgrep -f "$SCRIPT_NAME" | grep -v "$CURRENT_PID" || true)
+
+if [ -n "$OTHER_PIDS" ]; then
+  echo "Found other running instances of $SCRIPT_NAME: $OTHER_PIDS"
+  echo "Terminating previous instances..."
+  echo "$OTHER_PIDS" | xargs kill -9
 fi
-echo $$ > "$LOCKFILE"
-trap 'rm -f "$LOCKFILE"' EXIT
 
 # ────────────────────────────────────────────────────
-# Setup
+# Set DIR to the current working directory
 # ────────────────────────────────────────────────────
 DIR="$(pwd)"
 source ./support/hero.sh
