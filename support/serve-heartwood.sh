@@ -1,11 +1,26 @@
 #!/bin/bash
 set -e
 
+# ────────────────────────────────────────────────────
+# Kill any previous serve-heartwood.sh instances
+# ────────────────────────────────────────────────────
+SCRIPT_NAME="serve-heartwood.sh"
+CURRENT_PID=$$
+
+# Get all other running serve-heartwood.sh PIDs (excluding current)
+OTHER_PIDS=$(pgrep -f "$SCRIPT_NAME" | grep -v "$CURRENT_PID" || true)
+
+if [ -n "$OTHER_PIDS" ]; then
+  echo "Found other running instances of $SCRIPT_NAME: $OTHER_PIDS"
+  echo "Terminating previous instances..."
+  echo "$OTHER_PIDS" | xargs kill -9
+fi
+
+# ────────────────────────────────────────────────────
 # Set DIR to the current working directory
+# ────────────────────────────────────────────────────
 DIR="$(pwd)"
 source ./support/hero.sh
-
-# Default value for shouldCreateCaddyfile
 shouldCreateCaddyfile=true
 
 # Parse command line arguments
@@ -17,63 +32,73 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;
     *)
-        # Unknown option
         echo "Unknown option: $1"
         exit 1
         ;;
     esac
 done
 
-# is heartwood even installed
+# ────────────────────────────────────────────────────
+# Validate Heartwood installation
+# ────────────────────────────────────────────────────
 heartwood_skill_dir="$DIR/packages/spruce-heartwood-skill"
 if [ ! -d "$heartwood_skill_dir" ]; then
-    echo "Heartwood not installed. Skipping serve..."
+    echo "Heartwood not installed. Skipping server start."
     exit 0
 fi
 
-# Define the path to the heartwood-skill directory
 heartwood_dist_dir="$heartwood_skill_dir/dist"
-
-# Check if the heartwood-skill directory exists
 if [ ! -d "$heartwood_dist_dir" ]; then
-    echo "Error: The $heartwood_dist_dir directory does not exist. You need to run 'yarn bundle.heartwood'."
+    echo "Error: The $heartwood_dist_dir directory does not exist. Please run 'yarn bundle.heartwood'."
     exit 0
 fi
 
 web_server_port=8080
-
-# look inside packages/spruce-heartwood-skill/.env
-# if it exists, source it
 if [ -f "$heartwood_dist_dir/../.env" ]; then
     source "$heartwood_dist_dir/../.env"
-    # if WEB_SERVER_PORT is set, use it
     web_server_port=${WEB_SERVER_PORT:-8080}
 fi
 
-# Ensure the .processes directory exists
+# ────────────────────────────────────────────────────
+# Logging and setup
+# ────────────────────────────────────────────────────
 mkdir -p .processes
-
-# Create timestamped log entry
 log_file=".processes/caddy-heartwood.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting Caddy server on port $web_server_port" >> "$log_file"
 
-# Check if Caddy is already running
+# ────────────────────────────────────────────────────
+# Stop any existing Caddy process
+# ────────────────────────────────────────────────────
 if [ -f ".processes/caddy-heartwood.pid" ]; then
     old_pid=$(cat .processes/caddy-heartwood.pid)
-    if ps -p "$old_pid" > /dev/null 2>&1; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - WARNING: Caddy already running with PID $old_pid. Stopping it first." >> "$log_file"
+    if ps -p "$old_pid" -o comm= | grep -q "caddy"; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Stopping existing Caddy process with PID $old_pid" >> "$log_file"
         kill "$old_pid" 2>/dev/null || true
         sleep 2
+    else
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Found stale PID file ($old_pid). Removing." >> "$log_file"
+        rm -f .processes/caddy-heartwood.pid
     fi
 fi
 
-# Create a Caddyfile if shouldCreateCaddyfile is true
+# Kill any orphaned caddy processes on port 8080
+CADDY_PIDS=$(lsof -ti :8080 -sTCP:LISTEN | xargs ps -o pid=,comm= | grep caddy | awk '{print $1}' || true)
+
+if [ -n "$CADDY_PIDS" ]; then
+  echo "Terminating orphaned Caddy processes on port 8080: $CADDY_PIDS"
+  echo "$CADDY_PIDS" | xargs kill -9
+fi
+
+# ────────────────────────────────────────────────────
+# Create Caddyfile if required
+# ────────────────────────────────────────────────────
 if [ "$shouldCreateCaddyfile" = true ]; then
-    echo ":$web_server_port {
+    cat > Caddyfile <<EOF
+:$web_server_port {
     bind 0.0.0.0
     root * $heartwood_dist_dir
     file_server
-    
+
     log {
         output file .processes/caddy-access.log {
             roll_size 10mb
@@ -81,73 +106,72 @@ if [ "$shouldCreateCaddyfile" = true ]; then
         }
         format json
     }
-}" >Caddyfile
-    echo "Caddyfile created with logging enabled."
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Created new Caddyfile" >> "$log_file"
+}
+EOF
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddyfile created" >> "$log_file"
 else
-    echo "Skipping Caddyfile creation."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - Skipping Caddyfile creation" >> "$log_file"
 fi
 
-# Function to log with timestamp
+# ────────────────────────────────────────────────────
+# Log output with timestamps
+# ────────────────────────────────────────────────────
 log_with_timestamp() {
     while IFS= read -r line; do
         echo "$(date '+%Y-%m-%d %H:%M:%S') - $line" >> "$log_file"
     done
 }
 
-# Run Caddy with better logging
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Executing: caddy run --config ./Caddyfile" >> "$log_file"
-
-# Start Caddy and capture both stdout and stderr with timestamps
+# ────────────────────────────────────────────────────
+# Start Caddy
+# ────────────────────────────────────────────────────
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Launching Caddy" >> "$log_file"
 (caddy run --config ./Caddyfile 2>&1 | log_with_timestamp) &
 caddy_pid=$!
 
-# Save the PID of the Caddy process
 echo "$caddy_pid" > .processes/caddy-heartwood.pid
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy started with PID: $caddy_pid" >> "$log_file"
-
-echo "Starting webserver on $web_server_port..."
-
-# Wait for Caddy to start
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy started with PID $caddy_pid" >> "$log_file"
+echo "Server is starting on port $web_server_port..."
 sleep 3
 
-# Check if Caddy process is still running
+# ────────────────────────────────────────────────────
+# Health checks
+# ────────────────────────────────────────────────────
 if ! ps -p "$caddy_pid" > /dev/null 2>&1; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy process died immediately" >> "$log_file"
-    echo "Error: Caddy process died. Check logs:"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy process exited immediately" >> "$log_file"
+    echo "Error: Caddy exited unexpectedly. See logs below:"
     tail -20 "$log_file"
     exit 1
 fi
 
-# Check if Caddy is listening on the port
 if ! nc -zv 127.0.0.1 "$web_server_port" >/dev/null 2>&1; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy not responding on port $web_server_port" >> "$log_file"
-    echo "Error: Caddy did not start successfully. Recent logs:"
+    echo "Error: Caddy is not responding. See logs below:"
     tail -20 "$log_file"
     exit 1
 fi
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy successfully started and responding on port $web_server_port" >> "$log_file"
-hero "Heartwood is now serving at http://localhost:$web_server_port"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy is running and responding on port $web_server_port" >> "$log_file"
+hero "Heartwood is now available at http://localhost:$web_server_port"
 
-# Create a monitoring script
+# ────────────────────────────────────────────────────
+# Create monitor script
+# ────────────────────────────────────────────────────
 cat > .processes/monitor-caddy.sh << 'EOF'
 #!/bin/bash
-# Monitor Caddy and restart if needed
-
 log_file=".processes/caddy-heartwood.log"
 pid_file=".processes/caddy-heartwood.pid"
 
 if [ ! -f "$pid_file" ]; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: PID file not found" >> "$log_file"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: PID file missing" >> "$log_file"
     exit 1
 fi
 
 pid=$(cat "$pid_file")
 
 if ! ps -p "$pid" > /dev/null 2>&1; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy process $pid not running. Service died!" >> "$log_file"
-    echo "Caddy process died! Check $log_file for details."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy process $pid not running" >> "$log_file"
+    echo "Caddy process is not running. Please check logs."
     exit 1
 else
     echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy process $pid is running normally" >> "$log_file"
@@ -155,6 +179,4 @@ fi
 EOF
 
 chmod +x .processes/monitor-caddy.sh
-
-echo "Monitoring script created at .processes/monitor-caddy.sh"
-echo "Run it periodically to check if Caddy is still running."
+echo "Monitor script created: .processes/monitor-caddy.sh"
