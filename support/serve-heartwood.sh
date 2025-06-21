@@ -11,9 +11,9 @@ CURRENT_PID=$$
 OTHER_PIDS=$(pgrep -f "$SCRIPT_NAME" | grep -v "$CURRENT_PID" || true)
 
 if [ -n "$OTHER_PIDS" ]; then
-  echo "Found other running instances of $SCRIPT_NAME: $OTHER_PIDS"
-  echo "Terminating previous instances..."
-  echo "$OTHER_PIDS" | xargs kill -9
+    echo "Found other running instances of $SCRIPT_NAME: $OTHER_PIDS"
+    echo "Terminating previous instances..."
+    echo "$OTHER_PIDS" | xargs kill -9 2>/dev/null || true
 fi
 
 # ────────────────────────────────────────────────────
@@ -64,7 +64,7 @@ fi
 # ────────────────────────────────────────────────────
 mkdir -p .processes
 log_file=".processes/caddy-heartwood.log"
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting Caddy server on port $web_server_port" >> "$log_file"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting Caddy server on port $web_server_port" >>"$log_file"
 
 # ────────────────────────────────────────────────────
 # Stop any existing Caddy process
@@ -72,11 +72,11 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting Caddy server on port $web_server_p
 if [ -f ".processes/caddy-heartwood.pid" ]; then
     old_pid=$(cat .processes/caddy-heartwood.pid)
     if ps -p "$old_pid" -o comm= | grep -q "caddy"; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - Stopping existing Caddy process with PID $old_pid" >> "$log_file"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Stopping existing Caddy process with PID $old_pid" >>"$log_file"
         kill "$old_pid" 2>/dev/null || true
         sleep 2
     else
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - Found stale PID file ($old_pid). Removing." >> "$log_file"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Found stale PID file ($old_pid). Removing." >>"$log_file"
         rm -f .processes/caddy-heartwood.pid
     fi
 fi
@@ -85,15 +85,15 @@ fi
 CADDY_PIDS=$(lsof -ti :8080 -sTCP:LISTEN | xargs ps -o pid=,comm= | grep caddy | awk '{print $1}' || true)
 
 if [ -n "$CADDY_PIDS" ]; then
-  echo "Terminating orphaned Caddy processes on port 8080: $CADDY_PIDS"
-  echo "$CADDY_PIDS" | xargs kill -9
+    echo "Terminating orphaned Caddy processes on port 8080: $CADDY_PIDS"
+    echo "$CADDY_PIDS" | xargs kill -9
 fi
 
 # ────────────────────────────────────────────────────
 # Create Caddyfile if required
 # ────────────────────────────────────────────────────
 if [ "$shouldCreateCaddyfile" = true ]; then
-    cat > Caddyfile <<EOF
+    cat >Caddyfile <<EOF
 :$web_server_port {
     bind 0.0.0.0
     root * $heartwood_dist_dir
@@ -108,9 +108,9 @@ if [ "$shouldCreateCaddyfile" = true ]; then
     }
 }
 EOF
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddyfile created" >> "$log_file"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddyfile created" >>"$log_file"
 else
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Skipping Caddyfile creation" >> "$log_file"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - Skipping Caddyfile creation" >>"$log_file"
 fi
 
 # ────────────────────────────────────────────────────
@@ -118,46 +118,46 @@ fi
 # ────────────────────────────────────────────────────
 log_with_timestamp() {
     while IFS= read -r line; do
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - $line" >> "$log_file"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - $line" >>"$log_file"
     done
 }
 
 # ────────────────────────────────────────────────────
 # Start Caddy
 # ────────────────────────────────────────────────────
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Launching Caddy" >> "$log_file"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Launching Caddy" >>"$log_file"
 (caddy run --config ./Caddyfile 2>&1 | log_with_timestamp) &
 caddy_pid=$!
 
-echo "$caddy_pid" > .processes/caddy-heartwood.pid
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy started with PID $caddy_pid" >> "$log_file"
+echo "$caddy_pid" >.processes/caddy-heartwood.pid
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy started with PID $caddy_pid" >>"$log_file"
 echo "Server is starting on port $web_server_port..."
 sleep 3
 
 # ────────────────────────────────────────────────────
 # Health checks
 # ────────────────────────────────────────────────────
-if ! ps -p "$caddy_pid" > /dev/null 2>&1; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy process exited immediately" >> "$log_file"
+if ! ps -p "$caddy_pid" >/dev/null 2>&1; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy process exited immediately" >>"$log_file"
     echo "Error: Caddy exited unexpectedly. See logs below:"
     tail -20 "$log_file"
     exit 1
 fi
 
 if ! nc -zv 127.0.0.1 "$web_server_port" >/dev/null 2>&1; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy not responding on port $web_server_port" >> "$log_file"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy not responding on port $web_server_port" >>"$log_file"
     echo "Error: Caddy is not responding. See logs below:"
     tail -20 "$log_file"
     exit 1
 fi
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy is running and responding on port $web_server_port" >> "$log_file"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy is running and responding on port $web_server_port" >>"$log_file"
 hero "Heartwood is now available at http://localhost:$web_server_port"
 
 # ────────────────────────────────────────────────────
 # Create monitor script
 # ────────────────────────────────────────────────────
-cat > .processes/monitor-caddy.sh << 'EOF'
+cat >.processes/monitor-caddy.sh <<'EOF'
 #!/bin/bash
 log_file=".processes/caddy-heartwood.log"
 pid_file=".processes/caddy-heartwood.pid"
