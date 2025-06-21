@@ -81,12 +81,24 @@ if [ -f ".processes/caddy-heartwood.pid" ]; then
     fi
 fi
 
-# Kill any orphaned caddy processes on port 8080
-CADDY_PIDS=$(lsof -ti :8080 -sTCP:LISTEN | xargs ps -o pid=,comm= | grep caddy | awk '{print $1}' || true)
+# Check if lsof is available
+if ! command -v lsof &>/dev/null; then
+    echo "Warning: 'lsof' is not installed. Skipping orphaned Caddy process cleanup."
+    skip_lsof=true
+else
+    skip_lsof=false
+fi
 
-if [ -n "$CADDY_PIDS" ]; then
-    echo "Terminating orphaned Caddy processes on port 8080: $CADDY_PIDS"
-    echo "$CADDY_PIDS" | xargs kill -9
+# Kill any orphaned caddy processes on port 8080
+if [ "$skip_lsof" = false ]; then
+    CADDY_PIDS=$(lsof -ti :8080 -sTCP:LISTEN | xargs ps -o pid=,comm= | grep caddy | awk '{print $1}' || true)
+
+    if [ -n "$CADDY_PIDS" ]; then
+        echo "Terminating orphaned Caddy processes on port 8080: $CADDY_PIDS"
+        echo "$CADDY_PIDS" | xargs kill -9 2>/dev/null || true
+    fi
+else
+    echo "Skipping orphaned Caddy process cleanup due to missing 'lsof'."
 fi
 
 # ────────────────────────────────────────────────────
