@@ -89,12 +89,12 @@ else
     skip_lsof=false
 fi
 
-# Kill any orphaned caddy processes on port 8080
+# Kill any orphaned caddy processes on the specified port
 if [ "$skip_lsof" = false ]; then
-    CADDY_PIDS=$(lsof -ti :8080 -sTCP:LISTEN | xargs ps -o pid=,comm= | grep caddy | awk '{print $1}' || true)
+    CADDY_PIDS=$(lsof -ti :$web_server_port -sTCP:LISTEN | xargs ps -o pid=,comm= | grep caddy | awk '{print $1}' || true)
 
     if [ -n "$CADDY_PIDS" ]; then
-        echo "Terminating orphaned Caddy processes on port 8080: $CADDY_PIDS"
+        echo "Terminating orphaned Caddy processes on port $web_server_port: $CADDY_PIDS"
         echo "$CADDY_PIDS" | xargs kill -9 2>/dev/null || true
     fi
 else
