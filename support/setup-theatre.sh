@@ -179,6 +179,13 @@ hero "Publishing core skills..."
 
 ./support/publish-skills.sh --mongoConnectionString="$DB_CONNECTION_STRING"
 
+# Check if we should end the script after the build step
+if [ "$runUntil" == "publish" ]; then
+    yarn shutdown
+    hero "Reached 'publish' step. Exiting as requested."
+    exit 0
+fi
+
 hero "Booting..."
 
 yarn boot

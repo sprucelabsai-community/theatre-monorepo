@@ -428,19 +428,32 @@ start_mongo() {
         return
     fi
 
-    if [ "$PACKAGE_MANAGER" == "brew" ]; then
-        brew services start mongodb-community
-    elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
-        sudo systemctl daemon-reload
-        sudo systemctl enable mongod
-        sudo systemctl start mongod
-    elif [ "$PACKAGE_MANAGER" == "yum" ]; then
-        sudo systemctl daemon-reload
-        sudo systemctl enable mongod
-        sudo systemctl start mongod
+    if command -v systemctl &>/dev/null; then
+        if [ "$PACKAGE_MANAGER" == "brew" ]; then
+            brew services start mongodb-community
+        elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
+            sudo systemctl daemon-reload
+            sudo systemctl enable mongod
+            sudo systemctl start mongod
+        elif [ "$PACKAGE_MANAGER" == "yum" ]; then
+            sudo systemctl daemon-reload
+            sudo systemctl enable mongod
+            sudo systemctl start mongod
+        else
+            echo "Unsupported package manager. Please start MongoDB manually."
+            exit 1
+        fi
     else
-        echo "Unsupported package manager. Please start MongoDB manually."
-        exit 1
+        echo "systemctl not found. Starting MongoDB manually..."
+        if command -v mongod &>/dev/null; then
+            mongod --fork --logpath /var/log/mongodb.log --dbpath /data/db || {
+                echo "Failed to start MongoDB manually."
+                exit 1
+            }
+        else
+            echo "mongod command not found. Please ensure MongoDB is installed."
+            exit 1
+        fi
     fi
 }
 
