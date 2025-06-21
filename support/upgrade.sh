@@ -132,6 +132,6 @@ if [[ -d "packages/spruce-mercury-api" ]]; then
 fi
 
 yarn clean
-yarn
+./support/yarn.sh
 yarn sync.events
 yarn rebuild --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"

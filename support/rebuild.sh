@@ -23,7 +23,7 @@ yarn clean
 hero "Starting to update dependencies..."
 rm -rf node_modules
 
-yarn
+./support/yarn.sh
 
 hero "Building..."
 if [ "$shouldOpenVsCodeOnFail" = true ]; then

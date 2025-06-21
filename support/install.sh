@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.3.8"
+echo "Version: 4.4.0"
 
 # default flags
 debug=false
@@ -428,21 +428,12 @@ start_mongo() {
         return
     fi
 
-    if command -v systemctl &>/dev/null; then
-        if [ "$PACKAGE_MANAGER" == "brew" ]; then
-            brew services start mongodb-community
-        elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
-            sudo systemctl daemon-reload
-            sudo systemctl enable mongod
-            sudo systemctl start mongod
-        elif [ "$PACKAGE_MANAGER" == "yum" ]; then
-            sudo systemctl daemon-reload
-            sudo systemctl enable mongod
-            sudo systemctl start mongod
-        else
-            echo "Unsupported package manager. Please start MongoDB manually."
-            exit 1
-        fi
+    if [ "$PACKAGE_MANAGER" == "brew" ]; then
+        brew services start mongodb-community
+    elif command -v systemctl &>/dev/null; then
+        sudo systemctl daemon-reload
+        sudo systemctl enable mongod
+        sudo systemctl start mongod
     else
         echo "systemctl not found. Starting MongoDB manually..."
         if command -v mongod &>/dev/null; then

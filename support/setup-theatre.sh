@@ -76,7 +76,7 @@ if should_run_step "update"; then
     git pull
 
     hero "Setting up theatre dependencies..."
-    yarn
+    ./support/yarn.sh
 fi
 
 # check for required options in the blueprint (admin.PHONE), if missing, exit 1
@@ -129,7 +129,7 @@ if should_run_step "skillDependencies"; then
 
     hero "Pulling skill dependencies..."
     set +e
-    yarn
+    ./support/yarn.sh
     set -e
 fi
 
