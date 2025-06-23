@@ -5,9 +5,12 @@
     "boot.serve": "yarn serve.heartwood && ./support/boot.sh",
     "boot": "./support/boot.sh",
     "build.ci": "lerna run build.ci",
-    "build.parallel": "lerna run build.dev",
-    "build.serial": "lerna run build.dev --concurrency 1",
+    "build.dev.parallel": "lerna run build.dev",
+    "build.dev.serial": "lerna run build.dev --concurrency 1",
+    "build.parallel": "lerna run build",
+    "build.serial": "lerna run build --concurrency 1",
     "build": "./support/build.sh",
+    "build.prod": "./support/build-prod.sh",
     "bundle.heartwood": "./support/bundle-heartwood.sh",
     "bundle.serve.heartwood": "yarn bundle.heartwood && yarn serve.heartwood",
     "checkout": "./support/checkout.sh",
@@ -47,13 +50,14 @@
   "workspaces": [
     "packages/*"
   ],
-  "devDependencies": {},
+  "devDependencies": {
+    "lerna": "^8.1.8"
+  },
   "resolutions": {
     "date-fns": ">=3.6.0"
   },
   "dependencies": {
     "pm2": "^5.4.2",
-    "js-yaml": "^4.1.0",
-    "lerna": "^8.1.8"
+    "js-yaml": "^4.1.0"
   }
 }

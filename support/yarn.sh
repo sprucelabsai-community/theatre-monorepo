@@ -1,17 +1,13 @@
 #!/bin/bash
 
-# Read the environment from blueprint.yml
-environment=$(grep -A 10 '^theatre:' blueprint.yml | grep 'ENVIRONMENT:' | awk -F ': ' '{print $2}' | tr -d '"')
+source ./support/get_environment.sh
 
-if [ -z "$environment" ]; then
-    echo "No environment defined blueprint.yml. Falling back to dev."
-    environment="dev"
-fi
+echo "Environment detected: $ENVIRONMENT"
 
-if [ "$environment" = "production" ]; then
+if [ "$ENVIRONMENT" = "production" ]; then
     echo "Environment is production. Installing production dependencies only."
     yarn install --production
 else
-    echo "Environment is $environment. Installing all dependencies."
+    echo "Environment is $ENVIRONMENT. Installing all dependencies."
     yarn install
 fi

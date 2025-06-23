@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source ./support/hero.sh
+source ./support/get_environment.sh
 
 hero "Building skills..."
 
@@ -16,12 +17,24 @@ if [ "$BUILD_STRATEGY" != null ]; then
     build_strategy=$BUILD_STRATEGY
 fi
 
-if [ "$build_strategy" = "serial" ]; then
-    echo "Building skills in series..."
-    yarn run build.serial
+echo "Environment detected: $ENVIRONMENT"
+
+if [ "$ENVIRONMENT" = "production" ]; then
+    if [ "$build_strategy" = "serial" ]; then
+        echo "Building skills in production (serial)..."
+        yarn run build.serial
+    else
+        echo "Building skills in production (parallel)..."
+        yarn run build.parallel
+    fi
 else
-    echo "Building skills in parallel..."
-    yarn run build.parallel
+    if [ "$build_strategy" = "serial" ]; then
+        echo "Building skills in development (serial)..."
+        yarn run build.dev.serial
+    else
+        echo "Building skills in development (parallel)..."
+        yarn run build.dev.parallel
+    fi
 fi
 
 yarn bundle.heartwood
