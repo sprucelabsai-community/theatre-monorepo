@@ -9,6 +9,11 @@ for i in "$@"; do
         shouldOpenVsCodeOnFail="${i#*=}"
         shift
         ;;
+    --help)
+        echo "Usage: ./circle-status.sh [--shouldOpenVsCodeOnFail=<true|false>]"
+        echo "Example: ./circle-status.sh --shouldOpenVsCodeOnFail=true"
+        exit 0
+        ;;
     *) ;;
     esac
 done
