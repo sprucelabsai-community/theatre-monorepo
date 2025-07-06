@@ -45,11 +45,6 @@ ADDITIONAL_ARGS="${@:2}"
 # Path to the SSH key
 SSH_KEY_PATH="../deploy_keys/$REPO_NAME"
 
-# Log the start of the script
-echo "Starting add-skill.sh with arguments: $@"
-echo "Target directory: $TARGET_DIR"
-echo "Repository name: $REPO_NAME"
-
 # Clone the repo if it doesn't exist
 if [ "$DOES_EXIST" = false ]; then
     echo "Cloning repository: $1 into $TARGET_DIR"
@@ -57,7 +52,6 @@ if [ "$DOES_EXIST" = false ]; then
         echo "Using SSH key: $SSH_KEY_PATH"
         GIT_SSH_COMMAND="ssh -i $SSH_KEY_PATH" git clone $1
     else
-        echo "Running: git clone $1"
         git clone $1 .
     fi
 
@@ -73,12 +67,8 @@ fi
 
 REPO_PATH=$(pwd)
 
-# Log pull process
-echo "Pulling latest changes for $REPO_NAME"
 git pull
 
-# Log propagation process
-echo "Propagating blueprint for $REPO_NAME"
 cd ../../
 
 echo "Propogating from $(pwd)"
