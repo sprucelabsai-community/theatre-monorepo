@@ -10,15 +10,22 @@ should_build=true
 
 # Function to display usage details
 show_help() {
-    echo "Usage: $0 [options]"
+    echo "Usage: $0 <branch> [options]"
     echo ""
     echo "Options:"
-    echo "  --branchName=<branch>         Specify the branch name to checkout."
+    echo "  <branch>                      Specify the branch name to checkout (can be passed as the first argument)."
+    echo "  --branchName=<branch>         Specify the branch name to checkout (alternative to passing as the first argument)."
     echo "  --hard                        Clobber all local changes."
     echo "  --shouldUpdateDependencies=   Specify whether to run 'yarn' after checking out. Default is true."
     echo "  --shouldBuild                 Specify whether to run 'yarn build' after checking out. Default is true."
     echo "  --help                        Show this help message."
 }
+
+# Check if the first argument is not an option and treat it as branchName
+if [[ "$1" != --* ]]; then
+    branch_name="$1"
+    shift
+fi
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
