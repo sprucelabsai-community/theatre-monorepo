@@ -71,6 +71,4 @@ git pull
 
 cd ../../
 
-echo "Propogating from $(pwd)"
-
 ./support/propagate-blueprint.sh $REPO_PATH $ADDITIONAL_ARGS
