@@ -42,18 +42,26 @@ touch .env
 
 # Loop to set the environment variables
 for key in $(jq -r 'keys[]' <<<"$ENV"); do
-    if [[ "$key" == "universal" || "$key" == "$SKILL_NAMESPACE" ]]; then
+    if [[ "$key" == "universal" ]]; then
         len=$(jq -r ".\"$key\" | length" <<<"$ENV")
         for i in $(seq 0 $(($len - 1))); do
             pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\\\"\(.value)\\\"\"" <<<"$ENV")
-            key_name=$(echo $pair | cut -d= -f1)
-            if grep -q "^$key_name=" .env; then
-                # Overwrite the existing line
-                if [[ "$OSTYPE" == "darwin"* ]]; then
-                    sed -i '' "/^$key_name=/d" .env
-                else
-                    sed -i "/^$key_name=/d" .env
-                fi
+            echo "$pair" >>.env
+        done
+    fi
+done
+
+for key in $(jq -r 'keys[]' <<<"$ENV"); do
+    if [[ "$key" == "$SKILL_NAMESPACE" ]]; then
+        len=$(jq -r ".\"$key\" | length" <<<"$ENV")
+        for i in $(seq 0 $(($len - 1))); do
+            pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\\\"\(.value)\\\"\"" <<<"$ENV")
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                # macOS requires an empty string after -i
+                sed -i '' "/^$(echo $pair | cut -d= -f1)/d" .env
+            else
+                # Linux and other UNIX-like systems do not require the empty string
+                sed -i "/^$(echo $pair | cut -d= -f1)/d" .env
             fi
             echo "$pair" >>.env
         done
@@ -76,6 +84,3 @@ for i in "${!keys[@]}"; do
         sed -i "s/{{${key}}}/${value}/g" .env
     fi
 done
-
-# Ensure entries are not appended to the same line
-awk '!seen[$0]++' .env >.env.tmp && mv .env.tmp .env
