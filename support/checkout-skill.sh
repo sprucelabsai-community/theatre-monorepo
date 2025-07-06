@@ -22,8 +22,6 @@ if [ -z "$skill_dir" ]; then
     exit 1
 fi
 
-echo "Checking $skill_dir..."
-
 # Determine the branch to use
 if [ -z "$branch" ]; then
     # Call the resolve-default-branch.sh script to get the default branch name
@@ -41,7 +39,14 @@ fi
 echo "Branch to use: $branch"
 
 # Checkout the specified branch and pull the latest changes
-git checkout "$branch"
+if git rev-parse --verify "$branch" >/dev/null 2>&1; then
+    echo "Branch $branch exists locally. Checking out..."
+    git checkout "$branch"
+else
+    echo "Branch $branch does not exist locally. Creating it..."
+    git checkout -b "$branch"
+fi
+
 git pull
 
 hero "Checked out $skill_dir to $branch"
