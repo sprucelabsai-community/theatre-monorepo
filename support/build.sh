@@ -17,8 +17,6 @@ if [ "$BUILD_STRATEGY" != null ]; then
     build_strategy=$BUILD_STRATEGY
 fi
 
-echo "Environment detected: $ENVIRONMENT"
-
 if [ "$ENVIRONMENT" = "production" ]; then
     if [ "$build_strategy" = "serial" ]; then
         echo "Building skills in production (serial)..."

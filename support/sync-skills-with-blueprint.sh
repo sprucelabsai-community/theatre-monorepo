@@ -64,10 +64,9 @@ for SKILL in $INSTALLED_SKILLS; do
   done
 
   if [ "$SKILL_FOUND" = false ]; then
-    read -p "Do you want to remove the skill '$SKILL' (y/N): " REMOVE_SKILL
+    read -p "Do you want me to remove '$SKILL'? (y/N): " REMOVE_SKILL
     if [[ $REMOVE_SKILL =~ ^[Yy]$ ]]; then
-      # Remove the skill from the PM2 setup
-      ./pm2.sh delete $SKILL >>/dev/null
+      ./pm2.sh delete $SKILL >>/dev/null 2>&1 || true
       rm -rf ../$PACKAGES_DIR/$SKILL
     fi
   fi

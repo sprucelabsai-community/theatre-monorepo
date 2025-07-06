@@ -6,7 +6,7 @@ set -e
 
 # Function to print usage and exit
 usage() {
-    echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>]"
+    echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>] [--startFrom=<step>]"
     echo "Steps: build"
     exit 1
 }

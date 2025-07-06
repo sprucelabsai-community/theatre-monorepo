@@ -2,8 +2,6 @@
 
 source ./support/get_environment.sh
 
-echo "Environment detected: $ENVIRONMENT"
-
 if [ "$ENVIRONMENT" = "production" ]; then
     echo "Environment is production. Installing production dependencies only."
     yarn install --production
