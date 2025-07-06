@@ -6,8 +6,8 @@ set -e
 
 # Function to print usage and exit
 usage() {
-    echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>] [--startFrom=<step>]"
-    echo "Steps: build"
+    echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>] [--startFrom=<step>] [--shouldValidateSkillDependencies=<true|false>]"
+    echo "Steps: update, syncSkills, skillDependencies, build, publish"
     exit 1
 }
 
@@ -40,6 +40,7 @@ fi
 blueprint=$1
 runUntil=""
 startFrom=""
+shouldValidateSkillDependencies=true
 
 # Parse arguments
 for arg in "$@"; do
@@ -50,6 +51,10 @@ for arg in "$@"; do
         ;;
     --startFrom=*)
         startFrom="${arg#*=}"
+        shift
+        ;;
+    --shouldValidateSkillDependencies=*)
+        shouldValidateSkillDependencies="${arg#*=}"
         shift
         ;;
     *.yml)
@@ -114,8 +119,10 @@ if [ -d "packages/spruce-mercury-api" ]; then
     fi
 fi
 
-# Validate skill dependencies
-./support/validate-skill-to-skill-dependencies.sh
+# Validate skill dependencies if shouldValidateSkillDependencies is true
+if [ "$shouldValidateSkillDependencies" = true ]; then
+    ./support/validate-skill-to-skill-dependencies.sh
+fi
 
 # Check if we should end the script after the build step
 if [ "$runUntil" == "syncSkills" ]; then
