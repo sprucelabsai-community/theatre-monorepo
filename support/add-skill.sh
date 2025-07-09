@@ -62,7 +62,7 @@ if [ "$DOES_EXIST" = false ]; then
 
     echo "$REPO_NAME cloned successfully."
 else
-    echo "Skipping $REPO_NAME. Already exists."
+    echo "Skipping $REPO_NAME. Already exists @ $DESTINATION_DIR"
 fi
 
 REPO_PATH=$(pwd)
