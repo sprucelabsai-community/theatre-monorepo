@@ -75,11 +75,6 @@ for ENTRY in "${REPOS_RAW_ARRAY[@]}"; do
     exit 1
   fi
 
-  if [[ ! "$REPO_URL" =~ ^git@github.com:.*\.git$ ]]; then
-    echo "Error: Malformed repo URL: $REPO_URL"
-    exit 1
-  fi
-
   if [[ "$TARGET_DIR" =~ [^a-zA-Z0-9_-] ]]; then
     echo "Error: Invalid target directory name: $TARGET_DIR"
     exit 1

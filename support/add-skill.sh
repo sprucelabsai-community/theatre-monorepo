@@ -50,9 +50,9 @@ if [ "$DOES_EXIST" = false ]; then
     echo "Cloning repository: $1 into $TARGET_DIR"
     if [ -f "$SSH_KEY_PATH" ]; then
         echo "Using SSH key: $SSH_KEY_PATH"
-        GIT_SSH_COMMAND="ssh -i $SSH_KEY_PATH" git clone $1
+        GIT_SSH_COMMAND="ssh -i $SSH_KEY_PATH" git clone "$1"
     else
-        git clone $1 .
+        git clone "$1" .
     fi
 
     if [ $? -ne 0 ]; then
