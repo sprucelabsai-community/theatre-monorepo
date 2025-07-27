@@ -768,6 +768,8 @@ else
     mkdir -p $path
     cd $path
 
+    echo "Installing into $path..."
+
     if [ -d .git ]; then
         echo "Existing Theatre repo detected — pulling latest changes..."
         git pull --ff-only
