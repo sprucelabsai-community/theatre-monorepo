@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.4.1"
+echo "Version: 4.4.2"
 
 # default flags
 debug=false
@@ -781,7 +781,7 @@ else
         fi
     fi
 
-    cp $blueprint_path ./blueprint.yml
+    cp "$blueprint_path" ./blueprint.yml
 
     yarn setup.theatre blueprint.yml --runUntil="$setupTheatreUntil"
 
