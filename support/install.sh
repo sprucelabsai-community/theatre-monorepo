@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.4.2"
+echo "Version: 4.4.3"
 
 # default flags
 debug=false
@@ -49,7 +49,7 @@ setupMode=""
 blueprint=""
 theatreDestination=""
 isAlreadyInstalled=false
-minNodeVersion="20.0.0"
+minNodeVersion="24.0.0"
 shouldInstallNode=false
 shouldInstallMongo=true
 shouldInstallCaddy=true
@@ -727,7 +727,7 @@ update_package_manager
 echo "Checking for Git..."
 optionally_install_git
 
-echo "Checking for Node if not installed..."
+echo "Checking if Node is installed..."
 optionally_install_node
 
 echo "Installing Yarn..."
