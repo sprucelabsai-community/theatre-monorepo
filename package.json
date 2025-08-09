@@ -51,13 +51,11 @@
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^8.1.8"
+    "lerna": "^8.2.3"
   },
-  "resolutions": {
-    "date-fns": ">=3.6.0"
-  },
+  "resolutions": {},
   "dependencies": {
-    "pm2": "^5.4.2",
+    "pm2": "^6.0.8",
     "js-yaml": "^4.1.0"
   }
 }
