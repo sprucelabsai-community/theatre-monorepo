@@ -84,3 +84,22 @@ for i in "${!keys[@]}"; do
         sed -i "s/{{${key}}}/${value}/g" .env
     fi
 done
+
+# Deduplicate .env entries, preserving comments and blank lines, keeping only the last value for each key
+awk '
+    /^[[:space:]]*#/ || /^[[:space:]]*$/ { print; next }
+    /^[A-Za-z_][A-Za-z0-9_]*=/ {
+        key = $1
+        sub(/=.*/, "", key)
+        last[key] = NR
+        line[NR] = $0
+        key_for_line[NR] = key
+        next
+    }
+    { print }
+    END {
+        for (i=1; i<=NR; i++) {
+            if (line[i] != "" && last[key_for_line[i]] == i) print line[i]
+        }
+    }
+' .env >.env.cleaned && mv .env.cleaned .env
