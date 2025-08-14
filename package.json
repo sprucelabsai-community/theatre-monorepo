@@ -54,9 +54,6 @@
   "devDependencies": {
     "lerna": "^8.2.3"
   },
-  "resolutions": {
-    "@vonage/verify2": "1.16.1"
-  },
   "dependencies": {
     "pm2": "^6.0.8",
     "js-yaml": "^4.1.0"
