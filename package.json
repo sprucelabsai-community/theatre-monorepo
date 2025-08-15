@@ -51,6 +51,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "resolutions": {
+    "@vonage/verify2": "1.16.1"
+  },
   "devDependencies": {
     "lerna": "^8.2.3"
   },
