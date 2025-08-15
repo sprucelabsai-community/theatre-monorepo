@@ -57,6 +57,9 @@ if [ $# -ge 1 ]; then
 	exit 0
 fi
 
+rm yarn.lock
+rm package-lock.json
+
 if [ "$startWith" ]; then
 	startWith=$(./support/resolve-skill-dir.sh "$startWith")
 fi
