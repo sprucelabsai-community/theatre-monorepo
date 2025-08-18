@@ -52,7 +52,8 @@
     "packages/*"
   ],
   "resolutions": {
-    "@vonage/verify2": "1.16.1"
+    "@vonage/verify2": "1.16.1",
+    "@vonage/server-sdk": "3.22.3"
   },
   "devDependencies": {
     "lerna": "^8.2.3"
