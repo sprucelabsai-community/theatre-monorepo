@@ -65,7 +65,7 @@ for skill_dir in packages/*-skill packages/*-api; do
                 ./support/checkout-skill.sh "$skill_dir"
             fi
         fi
-    )
+    ) &
 done
 
 # Wait for all background processes to finish
