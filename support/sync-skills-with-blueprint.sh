@@ -85,6 +85,25 @@ for ENTRY in "${REPOS_RAW_ARRAY[@]}"; do
   TARGET_DIRS+=("$TARGET_DIR")
 done
 
+# Compare installed skills against TARGET_DIRS and prompt for removal
+for SKILL in $INSTALLED_SKILLS; do
+  SKILL_FOUND=false
+  for TARGET_DIR in "${TARGET_DIRS[@]}"; do
+    if [[ "$SKILL" == "$TARGET_DIR" ]]; then
+      SKILL_FOUND=true
+      break
+    fi
+  done
+
+  if [ "$SKILL_FOUND" = false ]; then
+    read -p "Do you want to remove the skill '$SKILL' (y/N): " REMOVE_SKILL
+    if [[ $REMOVE_SKILL =~ ^[Yy]$ ]]; then
+      echo "Removing $SKILL..."
+      rm -rf "$PACKAGES_DIR/$SKILL"
+    fi
+  fi
+done
+
 # Ensure repo URLs are treated as strings in subsequent operations
 for i in "${!REPOS[@]}"; do
   REPO=${REPOS[$i]}
