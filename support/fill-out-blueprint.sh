@@ -17,17 +17,15 @@
 # - The script will prompt the user for input and use the default if no input is provided.
 
 # Define the file to process
-FILE="blueprint-placeholders.yml"
+FILE="blueprint.yml"
+
+source ./support/hero.sh
 
 # Check if the file exists
 if [[ ! -f "$FILE" ]]; then
   echo "File $FILE not found!"
   exit 1
 fi
-
-# Define the output file to avoid overwriting the source
-OUTPUT_FILE="${FILE%.yml}-completed.yml"
-cp "$FILE" "$OUTPUT_FILE"
 
 # Read the entire file into a variable
 file_content=$(<"$FILE")
@@ -76,7 +74,7 @@ for line in $file_content; do
     user_input="\"$user_input\""
 
     # Replace the placeholder in the output file
-    sed -i '' "s|$placeholder|$user_input|g" "$OUTPUT_FILE"
+    sed -i '' "s|$placeholder|$user_input|g" "$FILE"
   fi
 done
 

@@ -13,6 +13,7 @@
     "build.prod": "./support/build-prod.sh",
     "bundle.heartwood": "./support/bundle-heartwood.sh",
     "bundle.serve.heartwood": "yarn bundle.heartwood && yarn serve.heartwood",
+    "fill.out.blueprint": "./support/fill-out-blueprint.sh",
     "checkout": "./support/checkout.sh",
     "code": "./support/open-in-vscode.sh",
     "clean": "lerna run clean",

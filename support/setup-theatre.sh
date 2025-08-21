@@ -72,6 +72,8 @@ if [ ! -f "$blueprint" ]; then
     exit 1
 fi
 
+./support/fill-out-blueprint.sh
+
 if [ "$runUntil" != "" ]; then
     echo "Running until: $runUntil"
 fi
