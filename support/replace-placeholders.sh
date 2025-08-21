@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# This script processes a YAML file and replaces placeholders with user-provided or default values.
+#
+# Placeholder Format:
+# - Placeholders must follow the format: <<KEY "Description" "Default">>
+#   - KEY: A unique identifier for the placeholder.
+#   - Description: A user-friendly message explaining the purpose of the placeholder.
+#   - Default: The default value to use if the user does not provide input. Can be an empty string ("").
+#
+# Example:
+# - <<ENV.HEARTWOOD.WEB_SERVER_PORT "Which port can I use to serve the front end?" "8080">>
+# - <<admin.PHONE_NUMBER "Enter the cell number to create the owner account." "">>
+#
+# Notes:
+# - All placeholders must include a default value, even if it is an empty string.
+# - The script will prompt the user for input and use the default if no input is provided.
+
 # Define the file to process
 FILE="blueprint-placeholders.yml"
 
@@ -21,11 +37,12 @@ IFS=$'\n' # Set IFS to newline to handle splitting
 for line in $file_content; do
   # Check for placeholders in the format <<>>
   if echo "$line" | grep -q '<<[^>]*>>'; then
+    # Extract the description and default using sed
     placeholder=$(echo "$line" | grep -o '<<[^>]*>>')
-    description=$(echo "$placeholder" | awk -F'"' '{print $2}')
-    default=$(echo "$placeholder" | awk -F'"' '{print $3}')
+    description=$(echo "$placeholder" | sed -n 's/.*"\(.*\)" ".*".*/\1/p')
+    default=$(echo "$placeholder" | sed -n 's/.*".*" "\(.*\)".*/\1/p')
 
-    if [[ "$default" == ">>" ]]; then
+    if [[ "$default" == "" ]]; then
       default=""
     fi
 
@@ -40,6 +57,9 @@ for line in $file_content; do
     if [[ -z "$user_input" ]]; then
       user_input="$default"
     fi
+
+    # Ensure the replacement value is wrapped in quotes
+    user_input="\"$user_input\""
 
     # Replace the placeholder in the output file
     sed -i '' "s|$placeholder|$user_input|g" "$OUTPUT_FILE"
