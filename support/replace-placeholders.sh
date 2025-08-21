@@ -32,6 +32,12 @@ cp "$FILE" "$OUTPUT_FILE"
 # Read the entire file into a variable
 file_content=$(<"$FILE")
 
+# Create a temporary file to track answered placeholders
+temp_file=$(mktemp /tmp/replace-placeholders-answers.XXXXXX)
+
+# Restore the trap to delete the temporary file on exit
+trap "rm -f $temp_file" EXIT
+
 # Process each line by splitting on newlines
 IFS=$'\n' # Set IFS to newline to handle splitting
 for line in $file_content; do
@@ -46,16 +52,24 @@ for line in $file_content; do
       default=""
     fi
 
-    # Prompt the user for input
-    if [[ -n "$default" ]]; then
-      read -p "$description (default $default): " user_input
+    # Check if the placeholder has already been answered
+    if grep -q "^$placeholder=" "$temp_file"; then
+      user_input=$(grep "^$placeholder=" "$temp_file" | cut -d'=' -f2)
     else
-      read -p "$description: " user_input
-    fi
+      # Prompt the user for input
+      if [[ -n "$default" ]]; then
+        read -p "$description (default $default): " user_input
+      else
+        read -p "$description: " user_input
+      fi
 
-    # Use default if no input is provided
-    if [[ -z "$user_input" ]]; then
-      user_input="$default"
+      # Use default if no input is provided
+      if [[ -z "$user_input" ]]; then
+        user_input="$default"
+      fi
+
+      # Store the answer in the temporary file
+      echo "$placeholder=$user_input" >>"$temp_file"
     fi
 
     # Ensure the replacement value is wrapped in quotes
