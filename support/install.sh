@@ -32,7 +32,7 @@ Usage: install.sh [options]
 
 Options:
   --setupTheatreUntil=<date>   Datetime up to which step to setup the theatre. Possible values are syncSkills, skillDependencies, build.  (optional)
-  --setupMode=<mode>           Mode: development (default) or production
+  --setupMode=<mode>           Mode: development/production/streaming (default: development) (streaming = if this script is being run through a UI that streams through to the shell)
   --blueprint=<path>           Path to blueprint.yml
   --theatreDestination=<dir>   Destination directory for Theatre clone
   --shouldInstallMongo=<bool>  true (default) or false

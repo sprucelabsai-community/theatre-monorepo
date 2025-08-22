@@ -36,6 +36,12 @@ temp_file=$(mktemp /tmp/replace-placeholders-answers.XXXXXX)
 # Restore the trap to delete the temporary file on exit
 trap "rm -f $temp_file" EXIT
 
+# Clear the terminal window if any placeholder exists
+if echo "$file_content" | grep -q '<<[^>]*>>'; then
+  clear
+  hero "Configure blueprint"
+fi
+
 # Process each line by splitting on newlines
 IFS=$'\n' # Set IFS to newline to handle splitting
 for line in $file_content; do
