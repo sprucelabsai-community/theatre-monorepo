@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.5.0"
+echo "Version: 4.5.1"
 
 # default flags
 debug=false
@@ -116,6 +116,7 @@ fi
 # Set up error trap only if setupMode is streaming
 if [ "$setupMode" == "streaming" ]; then
     trap 'echo "SIGNAL:SETUP_FAILURE"' ERR
+    trap 'if [ $? -ne 0 ]; then echo "SIGNAL:SETUP_FAILED"; fi' EXIT
 fi
 
 get_package_manager() {
