@@ -187,7 +187,7 @@ if [ "$runUntil" == "build" ]; then
 fi
 
 echo "Attempting to shut down any running services..."
-yarn shutdown &>/dev/null
+yarn shutdown
 
 # Boot mercury if packages/spruce-mercury-api exists
 if [ -d "packages/spruce-mercury-api" ]; then

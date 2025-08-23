@@ -45,7 +45,7 @@ if ! echo "$pm2_json" | jq empty; then
     # Check again if pm2 jlist was successful
     if ! echo "$pm2_json" | jq empty; then
         echo "Failed to get PM2 list. Exiting..."
-        exit 1
+        exit 0
     fi
 fi
 
