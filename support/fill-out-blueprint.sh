@@ -77,7 +77,7 @@ for line in $file_content; do
     fi
 
     # Ensure the replacement value is wrapped in quotes
-    user_input="\"$user_input\""
+    user_input="$user_input"
 
     # Replace the placeholder in the output file
     sed -i '' "s|$placeholder|$user_input|g" "$FILE"
