@@ -62,7 +62,7 @@ for line in $file_content; do
     else
       # Prompt the user for input
       if [[ -n "$default" ]]; then
-        read -p "$description (default $default): " user_input
+        read -p "$description [$default]: " user_input
       else
         read -p "$description: " user_input
       fi

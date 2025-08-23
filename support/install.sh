@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.5.1"
+echo "Version: 4.5.2"
 
 # default flags
 debug=false
