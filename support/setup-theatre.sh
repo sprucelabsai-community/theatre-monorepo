@@ -6,8 +6,33 @@ set -e
 
 # Function to print usage and exit
 usage() {
-    echo "Usage: yarn setup.theatre <blueprint.yml> [--runUntil=<step>] [--startFrom=<step>] [--shouldValidateSkillDependencies=<true|false>]"
-    echo "Steps: update, syncSkills, skillDependencies, build, publish"
+    cat <<EOF
+Usage: yarn setup.theatre <blueprint.yml> [options]
+
+Options:
+  --runUntil=<step>                  Run the setup process until the specified step. Possible values:
+                                     update, syncSkills, skillDependencies, build, publish.
+  --startFrom=<step>                 Start the setup process from the specified step. Possible values:
+                                     update, syncSkills, skillDependencies, build, publish.
+  --shouldValidateSkillDependencies=<true|false>
+                                     Validate skill dependencies during the setup process. Default: true.
+
+Arguments:
+  <blueprint.yml>                    Path to the blueprint YAML file. This file defines the configuration
+                                     for setting up the theatre.
+
+Steps:
+  update                             Pull the latest changes and set up theatre dependencies.
+  syncSkills                         Sync skills with the blueprint.
+  skillDependencies                  Handle skill dependencies and lock files.
+  build                              Build all skills.
+  publish                            Publish core skills.
+
+Examples:
+  yarn setup.theatre blueprint.yml --runUntil=build
+  yarn setup.theatre blueprint.yml --startFrom=syncSkills --shouldValidateSkillDependencies=false
+
+EOF
     exit 1
 }
 
@@ -161,7 +186,8 @@ if [ "$runUntil" == "build" ]; then
     exit 0
 fi
 
-yarn shutdown
+echo "Attempting to shut down any running services..."
+yarn shutdown &>/dev/null
 
 # Boot mercury if packages/spruce-mercury-api exists
 if [ -d "packages/spruce-mercury-api" ]; then

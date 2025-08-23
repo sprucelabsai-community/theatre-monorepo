@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.4.3"
+echo "Version: 4.5.0"
 
 # default flags
 debug=false
@@ -31,8 +31,8 @@ print_help() {
 Usage: install.sh [options]
 
 Options:
-  --setupTheatreUntil=<date>   Datetime up to which step to setup the theatre. Possible values are syncSkills, skillDependencies, build.  (optional)
   --setupMode=<mode>           Mode: development/production/streaming (default: development) (streaming = if this script is being run through a UI that streams through to the shell)
+  --setupTheatreUntil=<date>   Datetime up to which step to setup the theatre. Possible values are syncSkills, skillDependencies, build.  (optional)
   --blueprint=<path>           Path to blueprint.yml
   --theatreDestination=<dir>   Destination directory for Theatre clone
   --shouldInstallMongo=<bool>  true (default) or false
@@ -45,7 +45,7 @@ EOF
 }
 
 setupTheatreUntil=""
-setupMode=""
+setupMode="development"
 blueprint=""
 theatreDestination=""
 isAlreadyInstalled=false
@@ -113,6 +113,11 @@ else
     set -e
 fi
 
+# Set up error trap only if setupMode is streaming
+if [ "$setupMode" == "streaming" ]; then
+    trap 'echo "SIGNAL:SETUP_FAILURE"' ERR
+fi
+
 get_package_manager() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "brew"
@@ -161,17 +166,17 @@ check_is_already_installed() {
 ask_to_install() {
     local message="$1"
 
-    if [ "$setupMode" == "production" ]; then
-        echo "Installing $message in production mode..."
+    if [ "$setupMode" != "development" ]; then
+        echo "Installing $message in $setupMode mode..."
+        return 0
+    fi
+
+    echo -n "Would you like me to install $message? (Y/n): "
+    read -r response
+    if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         return 0
     else
-        echo -n "Would you like me to install $message? (Y/n): "
-        read -r response
-        if [[ -z "$response" || "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-            return 0
-        else
-            return 1
-        fi
+        return 1
     fi
 }
 
@@ -482,7 +487,7 @@ optionally_install_node() {
 }
 
 introduction_message() {
-    if [ "$setupMode" != "production" ] && [ "$isAlreadyInstalled" = false ]; then
+    if [ "$setupMode" == "development" ] && [ "$isAlreadyInstalled" = false ]; then
         sleep 1
         echo "Hey there! 👋"
         sleep 1
@@ -785,8 +790,12 @@ else
 
     yarn setup.theatre blueprint.yml --runUntil="$setupTheatreUntil"
 
-    echo "You're all set up! 🚀"
-    echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
-    echo "When you're ready to build your first skill, run \"spruce create.skill [skill-name]\""
-    echo "Go team! 🌲🤖"
+    if [ "$setupMode" == "streaming" ]; then
+        echo "SIGNAL:SETUP_COMPLETE"
+    else
+        echo "You're all set up! 🚀"
+        echo "You can now access your Sprucebot Development Theatre at http://localhost:8080/ 🎉"
+        echo "When you're ready to build your first skill, run \"spruce create.skill [skill-name]\""
+        echo "Go team! 🌲🤖"
+    fi
 fi
