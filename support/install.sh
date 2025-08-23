@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.5.2"
+echo "Version: 4.5.3"
 
 # default flags
 debug=false
@@ -109,8 +109,8 @@ done
 if [ "$debug" = true ]; then
     set -Eeuo pipefail
     trap 'echo "❌  Error on line $LINENO: $BASH_COMMAND (exit $?)" >&2' ERR
-else
-    set -e
+# elif
+#     set -e
 fi
 
 # Set up error trap only if setupMode is streaming
@@ -488,6 +488,11 @@ optionally_install_node() {
 }
 
 introduction_message() {
+
+    if [ "$setupMode" == "streaming" ]; then
+        echo "Setting up streaming mode..."
+    fi
+
     if [ "$setupMode" == "development" ] && [ "$isAlreadyInstalled" = false ]; then
         sleep 1
         echo "Hey there! 👋"
