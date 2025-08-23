@@ -40,6 +40,7 @@ trap "rm -f $temp_file" EXIT
 if echo "$file_content" | grep -q '<<[^>]*>>'; then
   clear
   hero "Configure blueprint"
+  play_chime
 fi
 
 # Process each line by splitting on newlines
