@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.5.3"
+echo "Version: 4.5.4"
 
 # default flags
 debug=false
@@ -794,7 +794,7 @@ else
 
     cp "$blueprint_path" ./blueprint.yml
 
-    yarn setup.theatre blueprint.yml --runUntil="$setupTheatreUntil"
+    yarn setup.theatre blueprint.yml --runUntil="$setupTheatreUntil" --bootStrategy=serial
 
     if [ "$setupMode" == "streaming" ]; then
         echo "SIGNAL:SETUP_COMPLETE"
