@@ -13,6 +13,21 @@ fi
 boot_strategy="parallel"
 should_boot_message_receiver=false
 
+# Parse arguments for --bootStrategy
+for arg in "$@"; do
+    case $arg in
+    --bootStrategy=*)
+        boot_strategy="${arg#*=}"
+        shift
+        ;;
+    *)
+        # Pass other arguments through to boot-skill.sh
+        bash "$boot_command" "$@"
+        exit 0
+        ;;
+    esac
+done
+
 THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
 BOOT_STRATEGY=$(echo "$THEATRE" | jq -r '.BOOT_STRATEGY' 2>/dev/null)
 if [ "$BOOT_STRATEGY" != null ]; then

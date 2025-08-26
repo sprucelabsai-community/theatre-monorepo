@@ -16,6 +16,7 @@ Options:
                                      update, syncSkills, skillDependencies, build, publish.
   --shouldValidateSkillDependencies=<true|false>
                                      Validate skill dependencies during the setup process. Default: true.
+  --bootStrategy=<strategy>           Specify the boot strategy. This option is passed to the 'yarn boot' command.
 
 Arguments:
   <blueprint.yml>                    Path to the blueprint YAML file. This file defines the configuration
@@ -31,6 +32,7 @@ Steps:
 Examples:
   yarn setup.theatre blueprint.yml --runUntil=build
   yarn setup.theatre blueprint.yml --startFrom=syncSkills --shouldValidateSkillDependencies=false
+  yarn setup.theatre blueprint.yml --bootStrategy=parallel
 
 EOF
     exit 1
@@ -66,6 +68,7 @@ blueprint=$1
 runUntil=""
 startFrom=""
 shouldValidateSkillDependencies=true
+bootStrategy=""
 
 # Parse arguments
 for arg in "$@"; do
@@ -80,6 +83,10 @@ for arg in "$@"; do
         ;;
     --shouldValidateSkillDependencies=*)
         shouldValidateSkillDependencies="${arg#*=}"
+        shift
+        ;;
+    --bootStrategy=*)
+        bootStrategy="${arg#*=}"
         shift
         ;;
     *.yml)
@@ -223,7 +230,12 @@ fi
 
 hero "Booting..."
 
-yarn boot
+# Pass bootStrategy to yarn boot if provided
+if [ -n "$bootStrategy" ]; then
+    yarn boot --bootStrategy="$bootStrategy"
+else
+    yarn boot
+fi
 
 wait
 
