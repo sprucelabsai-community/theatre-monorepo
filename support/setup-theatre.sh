@@ -209,15 +209,15 @@ hero "Logging in using cli..."
 
 ./support/login.sh $blueprint
 
-hero "Registering all new skills..."
+hero "Registering all new skills"
 
 ./support/register-skills.sh --shouldForceRegister=true
 
-hero "Logging in as any existing skills..."
+hero "Logging in as any existing skills"
 
 ./support/login-skills.sh
 
-hero "Publishing core skills..."
+hero "Publishing core skills"
 
 ./support/publish-skills.sh --mongoConnectionString="$DB_CONNECTION_STRING"
 

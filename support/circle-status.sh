@@ -28,13 +28,13 @@ if [ -z "$CIRCLECI_TOKEN" ]; then
     exit 1
 fi
 
-hero "Checking CircleCI status for each skill..."
+hero "Checking CircleCI status for each skill"
 
 for dir in packages/*-skill/ packages/*-api/; do
     if [[ -d $dir ]]; then
         dir="${dir%/}"
         dirName="$(basename "$dir")"
-        hero "Checking CircleCI status for $dirName..."
+        hero "Checking CircleCI status for $dirName"
 
         ./support/print-circleci-status-for-skill.sh --pathToSkill="$dir" --circleToken="$CIRCLECI_TOKEN" --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"
 

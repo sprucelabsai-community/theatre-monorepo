@@ -8,7 +8,8 @@ boot_command="$(pwd)/support/boot-skill.sh"
 boot_strategy="parallel"
 
 # Parse arguments
-skill=""
+namespace=""
+vendor=""
 for arg in "$@"; do
     case $arg in
     --bootStrategy=*)
@@ -16,20 +17,24 @@ for arg in "$@"; do
         shift
         ;;
     *)
-        # Assume the argument is a skill if it's not --bootStrategy
-        skill="$arg"
+        # Assume the first argument is namespace and the second is vendor
+        if [ -z "$namespace" ]; then
+            namespace="$arg"
+        elif [ -z "$vendor" ]; then
+            vendor="$arg"
+        fi
         shift
         ;;
     esac
 done
 
-# If a skill is provided, call boot-skill.sh with the skill and exit
-if [ -n "$skill" ]; then
-    bash "$boot_command" "$skill"
+# If a namespace is provided, call boot-skill.sh with namespace and vendor and exit
+if [ -n "$namespace" ]; then
+    bash "$boot_command" "$namespace" "$vendor"
     exit 0
 fi
 
-# If no skill is provided, proceed with the boot process
+# If no namespace is provided, proceed with the boot process
 echo "Using boot strategy: $boot_strategy"
 
 THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
@@ -73,7 +78,7 @@ boot_skill() {
 # Boot Mercury API if mercury exists
 if [[ -d $(pwd)/packages/spruce-mercury-api ]]; then
     echo "Booting Mercury API..."
-    boot_skill "mercury" >/dev/null
+    boot_skill "mercury" "spruce" >/dev/null
     sleep 5
     echo "Mercury API booted."
 else
@@ -83,7 +88,7 @@ fi
 # Boot Heartwood Skill if it exists
 if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
     echo "Booting Heartwood Skill..."
-    boot_skill "heartwood" >/dev/null
+    boot_skill "heartwood" "spruce" >/dev/null
     sleep 5
     echo "Heartwood Skill booted."
 else
@@ -93,7 +98,7 @@ fi
 # Boot theatre skill if it exists
 if [[ -d $(pwd)/packages/spruce-theatre-skill ]]; then
     echo "Booting Theatre Skill..."
-    boot_skill "theatre" >/dev/null
+    boot_skill "theatre" "spruce" >/dev/null
     echo "Theatre Skill booted."
 else
     echo "Theatre Skill not found. Skipping boot..."
