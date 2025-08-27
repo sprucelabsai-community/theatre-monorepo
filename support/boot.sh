@@ -4,16 +4,11 @@ source ./support/hero.sh
 
 boot_command="$(pwd)/support/boot-skill.sh"
 
-# if there are arguments, call boot-skill.sh and pass everything through
-if [ "$#" -gt 0 ]; then
-    bash "$boot_command" "$@"
-    exit 0
-fi
-
+# Default boot strategy
 boot_strategy="parallel"
-should_boot_message_receiver=false
 
-# Parse arguments for --bootStrategy
+# Parse arguments
+skill=""
 for arg in "$@"; do
     case $arg in
     --bootStrategy=*)
@@ -21,12 +16,21 @@ for arg in "$@"; do
         shift
         ;;
     *)
-        # Pass other arguments through to boot-skill.sh
-        bash "$boot_command" "$@"
-        exit 0
+        # Assume the argument is a skill if it's not --bootStrategy
+        skill="$arg"
+        shift
         ;;
     esac
 done
+
+# If a skill is provided, call boot-skill.sh with the skill and exit
+if [ -n "$skill" ]; then
+    bash "$boot_command" "$skill"
+    exit 0
+fi
+
+# If no skill is provided, proceed with the boot process
+echo "Using boot strategy: $boot_strategy"
 
 THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
 BOOT_STRATEGY=$(echo "$THEATRE" | jq -r '.BOOT_STRATEGY' 2>/dev/null)
