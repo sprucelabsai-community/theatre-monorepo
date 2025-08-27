@@ -16,8 +16,6 @@ if [ -f .processes/caddy-heartwood.pid ]; then
     # Kill the specific Caddy process
     if kill -9 "$pid"; then
         rm .processes/caddy-heartwood.pid
-        hero "Heartwood is no longer serving."
-        exit 0
     fi
 fi
 
