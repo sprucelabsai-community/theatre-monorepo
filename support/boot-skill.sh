@@ -18,9 +18,10 @@ fi
 # Determine vendor
 if [ $# -ge 2 ]; then
     vendor="$2"
-else
+fi
+
+if [ -z "$vendor" ]; then
     vendor=$(./support/resolve-vendor.sh "$namespace")
-    vendor="${vendor:-spruce}"
 fi
 
 export PATH="$HOME/.yarn/bin:$PATH"
