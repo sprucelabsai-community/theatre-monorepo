@@ -143,7 +143,7 @@ caddy_pid=$!
 
 echo "$caddy_pid" >.processes/caddy-heartwood.pid
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy started with PID $caddy_pid" >>"$log_file"
-echo "Server is starting on port $web_server_port..."
+echo "Heartwood is serving on port $web_server_port..."
 sleep 3
 
 # ────────────────────────────────────────────────────

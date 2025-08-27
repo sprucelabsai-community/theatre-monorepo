@@ -2,7 +2,6 @@
   "name": "theatre",
   "private": true,
   "scripts": {
-    "boot.serve": "yarn serve.heartwood && ./support/boot.sh",
     "boot": "./support/boot.sh",
     "build.ci": "lerna run build.ci",
     "build.dev.parallel": "lerna run build.dev",
