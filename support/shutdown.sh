@@ -81,11 +81,11 @@ echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
 done
 
 if [ ! -d packages/spruce-heartwood-skill ]; then
-    hero "All skills shutdown."
+    hero "All skills shutdown"
 else
     yarn stop.serving.heartwood
     wait
-    hero "All skills shutdown."
+    hero "All skills shutdown"
 fi
 
 if [ -f .processes/message-receiver ]; then

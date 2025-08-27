@@ -51,7 +51,7 @@ if [ "$shouldShowHelp" = true ]; then
 	exit 0
 fi
 
-hero "Upgrading skills..."
+hero "Upgrading skills"
 if [ $# -ge 1 ]; then
 	./support/upgrade-skill.sh "$@"
 	exit 0

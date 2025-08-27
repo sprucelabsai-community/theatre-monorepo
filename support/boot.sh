@@ -51,7 +51,7 @@ if [ -n "$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER" ]; then
     should_boot_message_receiver=$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER
 fi
 
-hero "Checking for Heartwood..."
+hero "Checking for Heartwood"
 
 if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
     echo "Heartwood found. Checking blueprint if should serve."
@@ -64,7 +64,7 @@ if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
     fi
 fi
 
-hero "Booting theatre..."
+hero "Booting theatre"
 
 # Function to boot a skill
 boot_skill() {

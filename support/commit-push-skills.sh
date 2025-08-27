@@ -15,7 +15,7 @@ cd packages
 # Commit and push changes for each skill + spruce-mercury-api
 for skill_dir in *-skill *-api; do
     (
-        hero "Committing changes for $skill_dir..."
+        hero "Committing changes for $skill_dir"
 
         cd "$skill_dir"
 
