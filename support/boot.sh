@@ -133,4 +133,11 @@ if [ "$should_boot_message_receiver" = true ]; then
     ./support/boot-message-receiver.sh
 fi
 
+# Run POST_BOOT_SCRIPT if set
+POST_BOOT_SCRIPT=$(echo "$THEATRE" | jq -r '.POST_BOOT_SCRIPT' 2>/dev/null)
+if [ -n "$POST_BOOT_SCRIPT" ] && [ "$POST_BOOT_SCRIPT" != "null" ]; then
+    echo "Running POST_BOOT_SCRIPT..."
+    eval "$POST_BOOT_SCRIPT"
+fi
+
 yarn list.running
