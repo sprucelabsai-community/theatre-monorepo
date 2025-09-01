@@ -40,6 +40,12 @@ cd $REPO_PATH
 
 touch .env
 
+# Ensure .env ends with a newline before appending
+# This prevents new entries from concatenating onto the last line
+if [ -s .env ] && [ "$(tail -c 1 .env | wc -l)" -eq 0 ]; then
+    echo >> .env
+fi
+
 # Loop to set the environment variables
 for key in $(jq -r 'keys[]' <<<"$ENV"); do
     if [[ "$key" == "universal" ]]; then
