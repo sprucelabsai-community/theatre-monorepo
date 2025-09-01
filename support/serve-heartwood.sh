@@ -67,39 +67,9 @@ log_file=".processes/caddy-heartwood.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting Caddy server on port $web_server_port" >>"$log_file"
 
 # ────────────────────────────────────────────────────
-# Stop any existing Caddy process
+# Delegate any pre-existing Heartwood shutdown to yarn
 # ────────────────────────────────────────────────────
-if [ -f ".processes/caddy-heartwood.pid" ]; then
-    old_pid=$(cat .processes/caddy-heartwood.pid)
-    if ps -p "$old_pid" -o comm= | grep -q "caddy"; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - Stopping existing Caddy process with PID $old_pid" >>"$log_file"
-        kill "$old_pid" 2>/dev/null || true
-        sleep 2
-    else
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - Found stale PID file ($old_pid). Removing." >>"$log_file"
-        rm -f .processes/caddy-heartwood.pid
-    fi
-fi
-
-# Check if lsof is available
-if ! command -v lsof &>/dev/null; then
-    echo "Warning: 'lsof' is not installed. Skipping orphaned Caddy process cleanup."
-    skip_lsof=true
-else
-    skip_lsof=false
-fi
-
-# Kill any orphaned caddy processes on the specified port
-if [ "$skip_lsof" = false ]; then
-    CADDY_PIDS=$(lsof -ti :$web_server_port -sTCP:LISTEN | xargs ps -o pid=,comm= | grep caddy | awk '{print $1}' || true)
-
-    if [ -n "$CADDY_PIDS" ]; then
-        echo "Terminating orphaned Caddy processes on port $web_server_port: $CADDY_PIDS"
-        echo "$CADDY_PIDS" | xargs kill -9 2>/dev/null || true
-    fi
-else
-    echo "Skipping orphaned Caddy process cleanup due to missing 'lsof'."
-fi
+yarn stop.serving.heartwood >/dev/null 2>&1 || true
 
 # ────────────────────────────────────────────────────
 # Create Caddyfile if required
