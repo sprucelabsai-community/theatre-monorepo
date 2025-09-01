@@ -53,18 +53,18 @@ if [ ! -d "$heartwood_dist_dir" ]; then
     exit 0
 fi
 
-web_server_port=8080
-if [ -f "$heartwood_dist_dir/../.env" ]; then
-    source "$heartwood_dist_dir/../.env"
-    web_server_port=${WEB_SERVER_PORT:-8080}
-fi
+# ────────────────────────────────────────────────────
+# Determine web server port from blueprint.yml
+# ────────────────────────────────────────────────────
+blueprint="blueprint.yml"
+ENV=$(node support/blueprint.js $blueprint env)
+web_server_port=$(echo "$ENV" | jq -r '.heartwood[] | select(has("WEB_SERVER_PORT")) | .WEB_SERVER_PORT' 2>/dev/null)
+web_server_port=${web_server_port:-8080}
 
 # ────────────────────────────────────────────────────
-# Logging and setup
+# Setup (no file logging)
 # ────────────────────────────────────────────────────
 mkdir -p .processes
-log_file=".processes/caddy-heartwood.log"
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting Caddy server on port $web_server_port" >>"$log_file"
 
 # ────────────────────────────────────────────────────
 # Delegate any pre-existing Heartwood shutdown to yarn
@@ -90,29 +90,17 @@ if [ "$shouldCreateCaddyfile" = true ]; then
     }
 }
 EOF
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddyfile created" >>"$log_file"
 else
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Skipping Caddyfile creation" >>"$log_file"
+    : # Skipping Caddyfile creation
 fi
-
-# ────────────────────────────────────────────────────
-# Log output with timestamps
-# ────────────────────────────────────────────────────
-log_with_timestamp() {
-    while IFS= read -r line; do
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - $line" >>"$log_file"
-    done
-}
 
 # ────────────────────────────────────────────────────
 # Start Caddy
 # ────────────────────────────────────────────────────
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Launching Caddy" >>"$log_file"
-(caddy run --config ./Caddyfile 2>&1 | log_with_timestamp) &
+(caddy run --config ./Caddyfile >/dev/null 2>&1) &
 caddy_pid=$!
 
 echo "$caddy_pid" >.processes/caddy-heartwood.pid
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy started with PID $caddy_pid" >>"$log_file"
 echo "Heartwood is serving on port $web_server_port..."
 sleep 3
 
@@ -120,45 +108,12 @@ sleep 3
 # Health checks
 # ────────────────────────────────────────────────────
 if ! ps -p "$caddy_pid" >/dev/null 2>&1; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy process exited immediately" >>"$log_file"
-    echo "Error: Caddy exited unexpectedly. See logs below:"
-    tail -20 "$log_file"
+    echo "Error: Caddy exited unexpectedly."
     exit 1
 fi
 
 if ! nc -zv 127.0.0.1 "$web_server_port" >/dev/null 2>&1; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy not responding on port $web_server_port" >>"$log_file"
-    echo "Error: Caddy is not responding. See logs below:"
-    tail -20 "$log_file"
+    echo "Error: Caddy is not responding on port $web_server_port."
     exit 1
 fi
-
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy is running and responding on port $web_server_port" >>"$log_file"
 hero "Heartwood is now available at http://localhost:$web_server_port"
-
-# ────────────────────────────────────────────────────
-# Create monitor script
-# ────────────────────────────────────────────────────
-cat >.processes/monitor-caddy.sh <<'EOF'
-#!/bin/bash
-log_file=".processes/caddy-heartwood.log"
-pid_file=".processes/caddy-heartwood.pid"
-
-if [ ! -f "$pid_file" ]; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: PID file missing" >> "$log_file"
-    exit 1
-fi
-
-pid=$(cat "$pid_file")
-
-if ! ps -p "$pid" > /dev/null 2>&1; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Caddy process $pid not running" >> "$log_file"
-    echo "Caddy process is not running. Please check logs."
-    exit 1
-else
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Caddy process $pid is running normally" >> "$log_file"
-fi
-EOF
-
-chmod +x .processes/monitor-caddy.sh
-echo "Monitor script created: .processes/monitor-caddy.sh"
