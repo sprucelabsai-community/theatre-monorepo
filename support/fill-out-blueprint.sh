@@ -42,6 +42,26 @@ if echo "$file_content" | grep -q '<<[^>]*>>'; then
   hero "Configure blueprint"
 fi
 
+# Detect sed in-place syntax (GNU vs BSD)
+if sed --version >/dev/null 2>&1; then
+  # GNU sed
+  SED_INPLACE=(-i)
+else
+  # BSD/macOS sed requires an explicit (possibly empty) suffix argument
+  SED_INPLACE=(-i "")
+fi
+
+# Escape helpers for sed
+escape_sed_search() {
+  # Escape regex metacharacters and the chosen delimiter (|)
+  printf '%s' "$1" | sed -e 's/[.[\*^$\\|]/\\&/g'
+}
+
+escape_sed_replace() {
+  # Escape replacement metacharacters: \\ and & and the delimiter (|)
+  printf '%s' "$1" | sed -e 's/[\\&|]/\\&/g'
+}
+
 # Process each line by splitting on newlines
 IFS=$'\n' # Set IFS to newline to handle splitting
 for line in $file_content; do
@@ -57,8 +77,8 @@ for line in $file_content; do
     fi
 
     # Check if the placeholder has already been answered
-    if grep -q "^$placeholder=" "$temp_file"; then
-      user_input=$(grep "^$placeholder=" "$temp_file" | cut -d'=' -f2)
+    if grep -Fq "$placeholder=" "$temp_file"; then
+      user_input=$(grep -F "$placeholder=" "$temp_file" | cut -d'=' -f2)
     else
       # Prompt the user for input
       if [[ -n "$default" ]]; then
@@ -76,11 +96,12 @@ for line in $file_content; do
       echo "$placeholder=$user_input" >>"$temp_file"
     fi
 
-    # Ensure the replacement value is wrapped in quotes
-    user_input="$user_input"
+    # Prepare safe search and replacement strings for sed
+    search=$(escape_sed_search "$placeholder")
+    replace=$(escape_sed_replace "$user_input")
 
-    # Replace the placeholder in the output file
-    sed -i '' "s|$placeholder|$user_input|g" "$FILE"
+    # Replace the placeholder in the output file (portable sed -i)
+    sed "${SED_INPLACE[@]}" -e "s|$search|$replace|g" "$FILE"
   fi
 done
 
