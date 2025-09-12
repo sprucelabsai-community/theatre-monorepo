@@ -34,14 +34,14 @@ if [ -n "$namespace" ]; then
 	exit 0
 fi
 
-# If no namespace is provided, proceed with the boot process
-echo "Using boot strategy: $boot_strategy"
-
 THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
 BOOT_STRATEGY=$(echo "$THEATRE" | jq -r '.BOOT_STRATEGY' 2>/dev/null)
 if [ "$BOOT_STRATEGY" != null ]; then
 	boot_strategy=$BOOT_STRATEGY
 fi
+
+# If no namespace is provided, proceed with the boot process
+echo "Using boot strategy: $boot_strategy"
 
 ENV=$(node support/blueprint.js blueprint.yml env)
 SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER=$(echo "$ENV" | jq -r '.mercury[] | select(has("SHOULD_BOOT_MESSAGE_RECEIVER")) | .SHOULD_BOOT_MESSAGE_RECEIVER' 2>/dev/null)
