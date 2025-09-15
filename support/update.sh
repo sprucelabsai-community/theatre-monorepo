@@ -12,57 +12,60 @@ nonDashDashArgExists=false
 shouldRebuild=true
 
 for arg in "$@"; do
-    case $arg in
-    --shouldOpenVsCodeAfterUpdate=*)
-        shouldOpenVsCodeAfterUpdate="${arg#*=}"
-        shift
-        ;;
-    --shouldOpenVsCodeOnPendingChanges=*)
-        shouldOpenVsCodeOnPendingChanges="${arg#*=}"
-        shift
-        ;;
-    --shouldCheckForPendingChanges=*)
-        shouldCheckForPendingChanges="${arg#*=}"
-        shift
-        ;;
-    --startWith=*)
-        startWith="${arg#*=}"
-        shift
-        ;;
-    --shouldOpenVsCodeOnFail=*)
-        shouldOpenVsCodeOnFail="${arg#*=}"
-        shift
-        ;;
-    --shouldRebuild=*)
-        shouldRebuild="${arg#*=}"
-        shift
-        ;;
-    --help)
-        shouldShowHelp=true
-        shift
-        ;;
-    *)
-        nonDashDashArgExists=true
-        ;;
-    esac
+	case $arg in
+	--shouldOpenVsCodeAfterUpdate=*)
+		shouldOpenVsCodeAfterUpdate="${arg#*=}"
+		shift
+		;;
+	--shouldOpenVsCodeOnPendingChanges=*)
+		shouldOpenVsCodeOnPendingChanges="${arg#*=}"
+		shift
+		;;
+	--shouldCheckForPendingChanges=*)
+		shouldCheckForPendingChanges="${arg#*=}"
+		shift
+		;;
+	--startWith=*)
+		startWith="${arg#*=}"
+		shift
+		;;
+	--shouldOpenVsCodeOnFail=*)
+		shouldOpenVsCodeOnFail="${arg#*=}"
+		shift
+		;;
+	--shouldRebuild=*)
+		shouldRebuild="${arg#*=}"
+		shift
+		;;
+	--help)
+		shouldShowHelp=true
+		shift
+		;;
+	*)
+		nonDashDashArgExists=true
+		;;
+	esac
 done
 
 if [ "$shouldShowHelp" = true ]; then
-    echo "Usage: ./support/update.sh [options]"
-    echo ""
-    echo "Options:"
-    echo "  --shouldOpenVsCodeAfterUpdate: Open VS Code after upgrading each skill. Default is false."
-    echo "  --shouldOpenVsCodeOnPendingChanges: Open VS Code if there are pending changes in a skill. Default is false."
-    echo "  --shouldCheckForPendingChanges: Check for pending changes in skills before upgrading. Default is true."
-    echo "  --startWith: Start the upgrade process with the specified skill directory."
-    echo "  --help: Show this help message."
-    exit 0
+	echo "Usage: ./support/update.sh [options]"
+	echo ""
+	echo "Options:"
+	echo "  --shouldOpenVsCodeAfterUpdate: Open VS Code after upgrading each skill. Default is false."
+	echo "  --shouldOpenVsCodeOnPendingChanges: Open VS Code if there are pending changes in a skill. Default is false."
+	echo "  --shouldCheckForPendingChanges: Check for pending changes in skills before upgrading. Default is true."
+	echo "  --startWith: Start the upgrade process with the specified skill directory."
+	echo "  --help: Show this help message."
+	exit 0
 fi
 
 if [ "$nonDashDashArgExists" = true ]; then
-    ./support/update-skill.sh "$@"
-    exit 0
+	./support/update-skill.sh "$@"
+	exit 0
 fi
+
+hero "Updating theatre..."
+git pull
 
 hero "Updating cli..."
 yarn global add @sprucelabs/spruce-cli
@@ -70,80 +73,80 @@ yarn global add @sprucelabs/spruce-cli
 hero "Updating skills..."
 
 if [ "$startWith" ]; then
-    startWith=$(./support/resolve-skill-dir.sh "$startWith")
+	startWith=$(./support/resolve-skill-dir.sh "$startWith")
 fi
 
 foundStart=false
 
 if [ "$shouldCheckForPendingChanges" = true ]; then
-    for dir in packages/*/; do
-        if [ -d "$dir" ]; then
-            dir="${dir%/}"
-            dirName="$(basename "$dir")"
+	for dir in packages/*/; do
+		if [ -d "$dir" ]; then
+			dir="${dir%/}"
+			dirName="$(basename "$dir")"
 
-            if [ -n "$startWith" ]; then
-                if [ "$foundStart" = false ]; then
-                    if [ "$dirName" = "$startWith" ]; then
-                        foundStart=true
-                    else
-                        continue
-                    fi
-                fi
-            fi
-            if ! git -C "$dir" diff --quiet; then
-                echo "There are local changes in $dir. Please commit or stash them before updating."
-                if [ "$shouldOpenVsCodeOnPendingChanges" = true ]; then
-                    code "$dir"
-                fi
-                exit 1
-            fi
-        fi
-    done
+			if [ -n "$startWith" ]; then
+				if [ "$foundStart" = false ]; then
+					if [ "$dirName" = "$startWith" ]; then
+						foundStart=true
+					else
+						continue
+					fi
+				fi
+			fi
+			if ! git -C "$dir" diff --quiet; then
+				echo "There are local changes in $dir. Please commit or stash them before updating."
+				if [ "$shouldOpenVsCodeOnPendingChanges" = true ]; then
+					code "$dir"
+				fi
+				exit 1
+			fi
+		fi
+	done
 fi
 
 foundStart=false
 
 for dir in packages/*-skill/; do
-    if [[ -d $dir ]]; then
-        dir="${dir%/}"
-        dirName="$(basename "$dir")"
+	if [[ -d $dir ]]; then
+		dir="${dir%/}"
+		dirName="$(basename "$dir")"
 
-        if [ -n "$startWith" ]; then
-            if [ "$foundStart" = false ]; then
-                if [ "$dirName" = "$startWith" ]; then
-                    foundStart=true
-                else
-                    continue
-                fi
-            fi
-        fi
+		if [ -n "$startWith" ]; then
+			if [ "$foundStart" = false ]; then
+				if [ "$dirName" = "$startWith" ]; then
+					foundStart=true
+				else
+					continue
+				fi
+			fi
+		fi
 
-        (
-            cd "$dir"
+		(
+			cd "$dir"
 
-            git checkout .
-            git pull
+			git checkout .
+			git pull
 
-            if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
-                code .
-            fi
-        ) &
-    fi
+			if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
+				code .
+			fi
+		) &
+	fi
 done
 
 wait
 
 if [[ -d "packages/spruce-mercury-api" ]]; then
-    cd "packages/spruce-mercury-api"
-    git checkout .
-    git pull
+	cd "packages/spruce-mercury-api"
+	git checkout .
+	git pull
 
-    if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
-        code .
-    fi
-    cd ../../
+	if [ "$shouldOpenVsCodeAfterUpdate" = true ]; then
+		code .
+	fi
+	cd ../../
 fi
 
 if [ "$shouldRebuild" = true ]; then
-    yarn rebuild --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"
+	yarn rebuild --shouldOpenVsCodeOnFail="$shouldOpenVsCodeOnFail"
 fi
