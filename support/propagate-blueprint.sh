@@ -51,7 +51,7 @@ for key in $(jq -r 'keys[]' <<<"$ENV"); do
     if [[ "$key" == "universal" ]]; then
         len=$(jq -r ".\"$key\" | length" <<<"$ENV")
         for i in $(seq 0 $(($len - 1))); do
-            pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\\\"\(.value)\\\"\"" <<<"$ENV")
+            pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\(.value | tostring | @json)\"" <<<"$ENV")
             echo "$pair" >>.env
         done
     fi
@@ -61,7 +61,7 @@ for key in $(jq -r 'keys[]' <<<"$ENV"); do
     if [[ "$key" == "$SKILL_NAMESPACE" ]]; then
         len=$(jq -r ".\"$key\" | length" <<<"$ENV")
         for i in $(seq 0 $(($len - 1))); do
-            pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\\\"\(.value)\\\"\"" <<<"$ENV")
+            pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\(.value | tostring | @json)\"" <<<"$ENV")
             if [[ "$OSTYPE" == "darwin"* ]]; then
                 # macOS requires an empty string after -i
                 sed -i '' "/^$(echo $pair | cut -d= -f1)/d" .env
@@ -109,3 +109,4 @@ awk '
         }
     }
 ' .env >.env.cleaned && mv .env.cleaned .env
+

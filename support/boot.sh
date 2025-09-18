@@ -51,6 +51,13 @@ if [ -n "$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER" ]; then
 	should_boot_message_receiver=$SHOULD_BOOT_MERCURY_MESSAGE_RECEIVER
 fi
 
+SHOULD_BOOT_MERCURY_MESSAGE_SENDER=$(echo "$ENV" | jq -r '.mercury[] | select(has("SHOULD_BOOT_MESSAGE_SENDER")) | .SHOULD_BOOT_MESSAGE_SENDER' 2>/dev/null)
+if [ -n "$SHOULD_BOOT_MERCURY_MESSAGE_SENDER" ]; then
+	echo "Found message sender configuration in blueprint.yml"
+	echo "Should boot message sender = $SHOULD_BOOT_MERCURY_MESSAGE_SENDER"
+	should_boot_message_sender=$SHOULD_BOOT_MERCURY_MESSAGE_SENDER
+fi
+
 hero "Checking for Heartwood"
 
 if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
@@ -130,6 +137,10 @@ done
 
 if [ "$should_boot_message_receiver" = true ]; then
 	./support/boot-message-receiver.sh
+fi
+
+if [ "$should_boot_message_sender" = true ]; then
+	./support/boot-message-sender.sh
 fi
 
 # Run POST_BOOT_SCRIPT if set
