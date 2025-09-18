@@ -51,27 +51,6 @@
   "workspaces": [
     "packages/*"
   ],
-  "resolutions": {
-    "@vonage/accounts": "1.17.0",
-    "@vonage/applications": "1.17.0",
-    "@vonage/auth": "1.12.0",
-    "@vonage/conversations": "1.10.0",
-    "@vonage/jwt": "1.11.0",
-    "@vonage/messages": "1.21.0",
-    "@vonage/number-insights": "1.17.0",
-    "@vonage/numbers": "1.19.0",
-    "@vonage/pricing": "1.17.0",
-    "@vonage/redact": "1.16.0",
-    "@vonage/server-client": "1.17.0",
-    "@vonage/server-sdk": "3.24.0",
-    "@vonage/sms": "1.18.0",
-    "@vonage/users": "1.11.0",
-    "@vonage/verify": "1.17.0",
-    "@vonage/verify2": "1.16.0",
-    "@vonage/vetch": "1.8.0",
-    "@vonage/video": "1.25.0",
-    "@vonage/voice": "1.18.0"
-  },
   "devDependencies": {
     "lerna": "^8.2.3"
   },
