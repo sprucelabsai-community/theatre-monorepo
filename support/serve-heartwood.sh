@@ -110,7 +110,7 @@ fi
 caddy_pid=$!
 
 echo "$caddy_pid" >.processes/caddy-heartwood.pid
-echo "Heartwood is serving on port $web_server_port..."
+echo "Heartwood is now serving..."
 sleep 3
 
 # ────────────────────────────────────────────────────
