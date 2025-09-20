@@ -33,11 +33,16 @@
 - A Skill has "full stack" capabilities. It can both present views to the user, but also be the backend to support those views.
 
 ## Booting a Theatre
- - When a Theatre boots, it must boot Mercury first, then the skills.
- - Because most Skills have views that users interact with, Heartwood needs to be booted next. This is because each Skill`s views are built and registered with Heartwood at boot.
- - It also is useful to boot the Theatre skill next, so people running a Theatre for development can begin interacting immediately.
- - After that, skills are booted either in parallel or one-at-a-time, depending on the `blueprint.yml` -> `theatre` -> `BOOT_STRATEGY` setting.
-   - `BOOT_STRATEGY` can be either `parallel` or `serial`.
-   - The default is `parallel`.
-   - `serial` is only needed when the host machine lacks the resources to boot all skills at once.
-   - If one skill depends on another skill being fully booted first, the dependent skill may crash and be restarted over-and-over until the skill it depends on is fully booted. This is not an issue.
+- When a Theatre boots, it must boot Mercury first, then the skills.
+- Because most Skills have views that users interact with, Heartwood needs to be booted next. This is because each Skill`s views are built and registered with Heartwood at boot.
+- It also is useful to boot the Theatre skill next, so people running a Theatre for development can begin interacting immediately.
+- After that, skills are booted either in parallel or one-at-a-time, depending on the `blueprint.yml` -> `theatre` -> `BOOT_STRATEGY` setting.
+  - `BOOT_STRATEGY` can be either `parallel` or `serial`.
+  - The default is `parallel`.
+  - `serial` is only needed when the host machine lacks the resources to boot all skills at once.
+  - If one skill depends on another skill being fully booted first, the dependent skill may crash and be restarted over-and-over until the skill it depends on is fully booted. This is not an issue.
+
+## Making code changes
+- Never make a code change without explicit confirmation based on an implementation plan.
+- Always outline all the changes that will be made into an implementation plan before making any code changes.
+- Whenever a change/addition is suggested, start by outlining it to confirm your comprehension before laying out the implementation plan.
