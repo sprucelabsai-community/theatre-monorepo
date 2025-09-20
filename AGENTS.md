@@ -23,8 +23,21 @@
   - Then, an attempt is made to `login.skill`. This does nothing if the skills were registerd in the last step. But, if the skill was already registed, the registeration will fail and the login will succeed. This makes the setup process idempotent.
   - Next, the `publish` process is run, which sets each skill as `published` so that it's visible in the front-end, then certain skills' `canBeInstalled` is set to `true` so that they can be installed.
 
-## Skills
+## Mercury
+- Mercury is the “event bus” that facilitates the communication between clients (skills, browsers, Iot, etc). When clients communicate, they are always having their events routed through Mercury. It also comes with suite of events to support some core functionality you’de expect from any foundational platform (people & role management, permissions, messages, etc).
+- Every skill utilizes the `MercuryClient` for communication. It's a websocket based client that facilitates both push and pull type communication (typical event driven systems stuff). All `events` route through Mercury. One outcome of this is that skills can be indepedently upgrade, updated, and rebooted without affecting the rest of the system.
 
+## Skills
+- A Skill is a descrete piece of functionality that includes the full stack of an application. It’s a way to encapsulate a feature or set of features that can easily be deployed, installed, updated, configured, removed, etc.
+- A Skill is usually one github repo.
+- A Skill has "full stack" capabilities. It can both present views to the user, but also be the backend to support those views.
 
 ## Booting a Theatre
- - 
+ - When a Theatre boots, it must boot Mercury first, then the skills.
+ - Because most Skills have views that users interact with, Heartwood needs to be booted next. This is because each Skill`s views are built and registered with Heartwood at boot.
+ - It also is useful to boot the Theatre skill next, so people running a Theatre for development can begin interacting immediately.
+ - After that, skills are booted either in parallel or one-at-a-time, depending on the `blueprint.yml` -> `theatre` -> `BOOT_STRATEGY` setting.
+   - `BOOT_STRATEGY` can be either `parallel` or `serial`.
+   - The default is `parallel`.
+   - `serial` is only needed when the host machine lacks the resources to boot all skills at once.
+   - If one skill depends on another skill being fully booted first, the dependent skill may crash and be restarted over-and-over until the skill it depends on is fully booted. This is not an issue.
