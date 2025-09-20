@@ -8,8 +8,11 @@ shouldOpenVsCodeOnPendingChanges=false
 shouldCheckForPendingChanges=true
 shouldShowHelp=false
 startWith=""
+matchPatterns=()
+positionals=()
 
-for arg in "$@"; do
+while [[ $# -gt 0 ]]; do
+	arg="$1"
 	case $arg in
 	--shouldOpenVsCodeAfterUpgrade=*)
 		shouldOpenVsCodeAfterUpgrade="${arg#*=}"
@@ -31,8 +34,21 @@ for arg in "$@"; do
 		shouldOpenVsCodeOnFail="${arg#*=}"
 		shift
 		;;
+	--match=*)
+		pattern="${arg#*=}"
+		matchPatterns+=("$pattern")
+		shift
+		;;
 	--help)
 		shouldShowHelp=true
+		shift
+		;;
+	--*)
+		# Unknown/other flag; keep and advance
+		shift
+		;;
+	*)
+		positionals+=("$arg")
 		shift
 		;;
 	esac
@@ -47,13 +63,15 @@ if [ "$shouldShowHelp" = true ]; then
 	echo "  --shouldCheckForPendingChanges: Check for pending changes in skills before upgrading. Default is true."
 	echo "  --startWith: Start the upgrade process with the specified skill directory."
 	echo "  --shouldOpenVsCodeOnFail: Open VS Code if the upgrade process fails. Default is false."
+	echo "  --match: Glob to match skill dirnames (e.g., --match='*heart*'). Can be used multiple times."
 	echo "  --help: Show this help message."
 	exit 0
 fi
 
 hero "Upgrading skills"
-if [ $# -ge 1 ]; then
-	./support/upgrade-skill.sh "$@"
+
+if [ ${#positionals[@]} -ge 1 ] && [ ${#matchPatterns[@]} -eq 0 ]; then
+	./support/upgrade-skill.sh "${positionals[@]}"
 	exit 0
 fi
 
@@ -101,6 +119,19 @@ for dir in packages/*-skill/; do
 	if [[ -d $dir ]]; then
 		dir="${dir%/}"
 		dirName="$(basename "$dir")"
+
+		if [ ${#matchPatterns[@]} -gt 0 ]; then
+			matched=false
+			for pat in "${matchPatterns[@]}"; do
+				if [[ "$dirName" == $pat ]]; then
+					matched=true
+					break
+				fi
+			done
+			if [ "$matched" = false ]; then
+				continue
+			fi
+		fi
 
 		if [ -n "$startWith" ]; then
 			if [ "$foundStart" = false ]; then
