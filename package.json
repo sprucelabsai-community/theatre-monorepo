@@ -25,6 +25,7 @@
     "generate.hash": "./support/generate-hash.sh",
     "import.blueprint": "./support/import-blueprint.sh",
     "import.theatre.zip": "./support/import-theatre.sh",
+    "deploy.ec2": "./support/ec2/deploy.sh",
     "list.running": "./support/pm2.sh save && ./support/pm2.sh list",
     "logs": "./support/logs.sh",
     "monitor": "./support/pm2.sh monit",
