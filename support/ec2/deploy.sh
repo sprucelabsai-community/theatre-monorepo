@@ -93,12 +93,14 @@ prompt_bool() {
 	fi
 
 	local input value=$current
+	local input_lower
 	while true; do
 		read -r -p "$prompt_text ($hint): " input || exit 1
 		if [[ -z $input ]]; then
 			break
 		fi
-		case ${input,,} in
+		input_lower=$(printf '%s' "$input" | tr '[:upper:]' '[:lower:]')
+		case $input_lower in
 		y | yes)
 			value="true"
 			break
@@ -274,7 +276,7 @@ if [[ $interactive == true ]]; then
 	prompt_optional install_setup_until "Run install until (blank for full run)"
 
 	if [[ -z $install_theatre_folder ]]; then
-		install_theatre_folder="sholder-theatre"
+		install_theatre_folder="spruce-theatre"
 	fi
 
 	while true; do
@@ -312,7 +314,7 @@ fi
 
 remote_script=$(basename "$script")
 if [[ -z $install_theatre_folder ]]; then
-	install_theatre_folder="sholder-theatre"
+	install_theatre_folder="spruce-theatre"
 fi
 install_theatre_folder=$(normalize_folder_name "$install_theatre_folder")
 if [[ -z $install_theatre_folder ]]; then
