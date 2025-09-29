@@ -23,9 +23,6 @@
 #   --debug / --debug=true|false / --no-debug
 #
 # Extras:
-#   (blueprint always uploaded to /home/ec2-user/blueprint.yml)
-#
-# Extras:
 #   --interactive           Prompt for missing values instead of requiring flags
 
 set -euo pipefail
@@ -335,7 +332,7 @@ if [[ $interactive == true ]]; then
 	if [[ $user != "ec2-user" ]]; then
 		replay_cmd+=(-u "$user")
 	fi
-    replay_cmd+=(-b "$blueprint")
+	replay_cmd+=(-b "$blueprint")
 	replay_cmd+=("--setupMode=$install_setup_mode")
 	if [[ -n $install_setup_until ]]; then
 		replay_cmd+=("--setupTheatreUntil=$install_setup_until")
