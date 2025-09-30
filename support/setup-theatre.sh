@@ -199,7 +199,7 @@ if [ -d "packages/spruce-mercury-api" ]; then
 
 	yarn boot mercury
 
-	sleep 3
+	sleep 5
 fi
 
 hero "Logging in using cli..."
