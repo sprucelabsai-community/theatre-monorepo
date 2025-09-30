@@ -110,6 +110,13 @@ if [ "$runUntil" != "" ]; then
 	echo "Running until: $runUntil"
 fi
 
+mercury_boot_spacer_sec=3
+THEATRE=$(node support/blueprint.js $blueprint theatre)
+MERCURY_BOOT_SPACER_SEC=$(echo "$THEATRE" | jq -r '.MERCURY_BOOT_SPACER_SEC' 2>/dev/null)
+if [ -n "$MERCURY_BOOT_SPACER_SEC" ] && [ "$MERCURY_BOOT_SPACER_SEC" != "null" ]; then
+	mercury_boot_spacer_sec=$MERCURY_BOOT_SPACER_SEC
+fi
+
 if should_run_step "update"; then
 	hero "Updating Theatre..."
 	git pull
@@ -199,7 +206,7 @@ if [ -d "packages/spruce-mercury-api" ]; then
 
 	yarn boot mercury
 
-	sleep 3
+	sleep "$mercury_boot_spacer_sec"
 fi
 
 hero "Logging in using cli..."

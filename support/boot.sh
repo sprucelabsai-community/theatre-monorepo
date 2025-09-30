@@ -7,6 +7,7 @@ boot_command="$(pwd)/support/boot-skill.sh"
 # Default boot strategy
 boot_strategy="parallel"
 serial_boot_spacer_sec=5
+mercury_boot_spacer_sec=3
 
 # Parse arguments
 namespace=""
@@ -44,6 +45,11 @@ fi
 SERIAL_BOOT_SPACER_SEC=$(echo "$THEATRE" | jq -r '.SERIAL_BOOT_SPACER_SEC' 2>/dev/null)
 if [ -n "$SERIAL_BOOT_SPACER_SEC" ] && [ "$SERIAL_BOOT_SPACER_SEC" != "null" ]; then
 	serial_boot_spacer_sec=$SERIAL_BOOT_SPACER_SEC
+fi
+
+MERCURY_BOOT_SPACER_SEC=$(echo "$THEATRE" | jq -r '.MERCURY_BOOT_SPACER_SEC' 2>/dev/null)
+if [ -n "$MERCURY_BOOT_SPACER_SEC" ] && [ "$MERCURY_BOOT_SPACER_SEC" != "null" ]; then
+	mercury_boot_spacer_sec=$MERCURY_BOOT_SPACER_SEC
 fi
 
 # If no namespace is provided, proceed with the boot process
@@ -92,7 +98,7 @@ boot_skill() {
 if [[ -d $(pwd)/packages/spruce-mercury-api ]]; then
 	echo "Booting Mercury API..."
 	boot_skill "mercury" "spruce" >/dev/null
-	sleep 5
+	sleep "$mercury_boot_spacer_sec"
 	echo "Mercury API booted."
 else
 	echo "Mercury API not found. Skipping boot..."
@@ -102,7 +108,7 @@ fi
 if [[ -d $(pwd)/packages/spruce-heartwood-skill ]]; then
 	echo "Booting Heartwood Skill..."
 	boot_skill "heartwood" "spruce" >/dev/null
-	sleep 5
+	sleep "$serial_boot_spacer_sec"
 	echo "Heartwood Skill booted."
 else
 	echo "Heartwood Skill not found. Skipping boot..."
