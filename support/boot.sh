@@ -6,6 +6,7 @@ boot_command="$(pwd)/support/boot-skill.sh"
 
 # Default boot strategy
 boot_strategy="parallel"
+serial_boot_spacer_sec=5
 
 # Parse arguments
 namespace=""
@@ -38,6 +39,11 @@ THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
 BOOT_STRATEGY=$(echo "$THEATRE" | jq -r '.BOOT_STRATEGY' 2>/dev/null)
 if [ "$BOOT_STRATEGY" != null ]; then
 	boot_strategy=$BOOT_STRATEGY
+fi
+
+SERIAL_BOOT_SPACER_SEC=$(echo "$THEATRE" | jq -r '.SERIAL_BOOT_SPACER_SEC' 2>/dev/null)
+if [ -n "$SERIAL_BOOT_SPACER_SEC" ] && [ "$SERIAL_BOOT_SPACER_SEC" != "null" ]; then
+	serial_boot_spacer_sec=$SERIAL_BOOT_SPACER_SEC
 fi
 
 # If no namespace is provided, proceed with the boot process
@@ -115,6 +121,7 @@ fi
 if [ "$boot_strategy" == "serial" ]; then
 	echo "Booting skills one at a time..."
 	echo "This may take a few minutes..."
+	echo "Using serial boot spacer: ${serial_boot_spacer_sec}s"
 else
 	echo "Booting remaining skills..."
 fi
@@ -130,7 +137,7 @@ for skill_dir in $(pwd)/packages/*-skill; do
 		boot_skill "$namespace" "$vendor" >/dev/null
 
 		if [ "$boot_strategy" == "serial" ]; then
-			sleep 5
+			sleep "$serial_boot_spacer_sec"
 		fi
 	fi
 done
