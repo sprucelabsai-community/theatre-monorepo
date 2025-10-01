@@ -1,11 +1,11 @@
 # Parse the --configStrategy argument
 ENV_STRATEGY=""
 for arg in "$@"; do
-    case $arg in
-    --configStrategy=*)
-        ENV_STRATEGY="${arg#*=}"
-        ;;
-    esac
+	case $arg in
+	--configStrategy=*)
+		ENV_STRATEGY="${arg#*=}"
+		;;
+	esac
 done
 
 REPO_PATH=$1
@@ -17,20 +17,20 @@ ENV=$(node support/blueprint.js $2 env)
 # Skip if .env if exists
 case $ENV_STRATEGY in
 skip)
-    echo "Skipping due to 'skip' strategy in $DIR_NAME."
-    exit 0
-    ;;
+	echo "Skipping due to 'skip' strategy in $DIR_NAME."
+	exit 0
+	;;
 replace)
-    if [ -f "$REPO_PATH/.env" ]; then
-        echo "Deleting .env due to 'replace' strategy in $DIR_NAME."
-        rm "$REPO_PATH/.env"
-    else
-        echo ".env file not found, nothing to delete."
-    fi
-    ;;
+	if [ -f "$REPO_PATH/.env" ]; then
+		echo "Deleting .env due to 'replace' strategy in $DIR_NAME."
+		rm "$REPO_PATH/.env"
+	else
+		echo ".env file not found in $DIR_NAME, creating new one."
+	fi
+	;;
 *)
-    # Other strategies can be handled here in the future
-    ;;
+	# Other strategies can be handled here in the future
+	;;
 esac
 
 ## drop in ENV logic here
@@ -43,35 +43,35 @@ touch .env
 # Ensure .env ends with a newline before appending
 # This prevents new entries from concatenating onto the last line
 if [ -s .env ] && [ "$(tail -c 1 .env | wc -l)" -eq 0 ]; then
-    echo >> .env
+	echo >>.env
 fi
 
 # Loop to set the environment variables
 for key in $(jq -r 'keys[]' <<<"$ENV"); do
-    if [[ "$key" == "universal" ]]; then
-        len=$(jq -r ".\"$key\" | length" <<<"$ENV")
-        for i in $(seq 0 $(($len - 1))); do
-            pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\(.value | tostring | @json)\"" <<<"$ENV")
-            echo "$pair" >>.env
-        done
-    fi
+	if [[ "$key" == "universal" ]]; then
+		len=$(jq -r ".\"$key\" | length" <<<"$ENV")
+		for i in $(seq 0 $(($len - 1))); do
+			pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\(.value | tostring | @json)\"" <<<"$ENV")
+			printf '%b\n' "$pair" >>.env
+		done
+	fi
 done
 
 for key in $(jq -r 'keys[]' <<<"$ENV"); do
-    if [[ "$key" == "$SKILL_NAMESPACE" ]]; then
-        len=$(jq -r ".\"$key\" | length" <<<"$ENV")
-        for i in $(seq 0 $(($len - 1))); do
-            pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\(.value | tostring | @json)\"" <<<"$ENV")
-            if [[ "$OSTYPE" == "darwin"* ]]; then
-                # macOS requires an empty string after -i
-                sed -i '' "/^$(echo $pair | cut -d= -f1)/d" .env
-            else
-                # Linux and other UNIX-like systems do not require the empty string
-                sed -i "/^$(echo $pair | cut -d= -f1)/d" .env
-            fi
-            echo "$pair" >>.env
-        done
-    fi
+	if [[ "$key" == "$SKILL_NAMESPACE" ]]; then
+		len=$(jq -r ".\"$key\" | length" <<<"$ENV")
+		for i in $(seq 0 $(($len - 1))); do
+			pair=$(jq -r ".\"$key\"[$i] | to_entries[0] | \"\(.key)=\(.value | tostring | @json)\"" <<<"$ENV")
+			if [[ "$OSTYPE" == "darwin"* ]]; then
+				# macOS requires an empty string after -i
+				sed -i '' "/^$(echo $pair | cut -d= -f1)/d" .env
+			else
+				# Linux and other UNIX-like systems do not require the empty string
+				sed -i "/^$(echo $pair | cut -d= -f1)/d" .env
+			fi
+			printf '%b\n' "$pair" >>.env
+		done
+	fi
 done
 
 # Define arrays for keys and values
@@ -80,15 +80,15 @@ values=("$SKILL_NAMESPACE")
 
 # Loop through the array and apply replacements
 for i in "${!keys[@]}"; do
-    key="${keys[$i]}"
-    value="${values[$i]}"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS requires an empty string after -i
-        sed -i '' "s/{{${key}}}/${value}/g" .env
-    else
-        # Linux and other UNIX-like systems do not require the empty string
-        sed -i "s/{{${key}}}/${value}/g" .env
-    fi
+	key="${keys[$i]}"
+	value="${values[$i]}"
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		# macOS requires an empty string after -i
+		sed -i '' "s/{{${key}}}/${value}/g" .env
+	else
+		# Linux and other UNIX-like systems do not require the empty string
+		sed -i "s/{{${key}}}/${value}/g" .env
+	fi
 done
 
 # Deduplicate .env entries, preserving comments and blank lines, keeping only the last value for each key
@@ -109,4 +109,3 @@ awk '
         }
     }
 ' .env >.env.cleaned && mv .env.cleaned .env
-
