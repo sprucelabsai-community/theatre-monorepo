@@ -5,30 +5,26 @@ source ./support/get_environment.sh
 
 # Check for namespace argument
 namespace=""
-vendor="spruce" # Default vendor
 if [ $# -ge 1 ]; then
 
 	hero "Building skill: $1"
 
 	namespace="$1"
-	# Resolve vendor if not provided
+	args=("$namespace")
 	if [ $# -ge 2 ]; then
-		vendor="$2"
-	else
-		vendor=$(./support/resolve-vendor.sh "$namespace")
+		args+=("$2")
 	fi
 
-	# Navigate to the skill directory and build it
-	skill_dir="packages/${vendor}-${namespace}-skill"
-	if [ -d "$skill_dir" ]; then
-		echo "Building: ${vendor}-${namespace}-skill..."
-		cd "$skill_dir"
-		yarn build.dev
-		exit 0
-	else
-		echo "Error: Skill directory ${skill_dir} not found."
-		exit 1
+	skill_dir=$(./support/resolve-skill-dir.sh "${args[@]}")
+	status=$?
+	if [ $status -ne 0 ]; then
+		exit $status
 	fi
+
+	echo "Building: ${skill_dir}..."
+	cd "packages/$skill_dir"
+	yarn build.dev
+	exit 0
 fi
 
 hero "Building Skills"
