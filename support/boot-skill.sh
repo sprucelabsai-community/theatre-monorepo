@@ -31,7 +31,9 @@ if [ -z "$vendor" ]; then
 	vendor=$(./support/resolve-vendor.sh "$namespace")
 fi
 
-export PATH="$HOME/.yarn/bin:$PATH"
+if [[ -n "${HOME:-}" ]]; then
+	export PATH="$HOME/.yarn/bin:$PATH"
+fi
 
 packages_dir="$(pwd)/packages"
 processes_dir="$(pwd)/.processes"
