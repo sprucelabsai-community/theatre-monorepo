@@ -6,9 +6,10 @@ cd packages
 # namespaces of skills that cannot be installed
 namespaces=("feed" "files" "images" "organization" "locations" "heartwood" "people" "roles" "skills" "permissions" "theatre" "marketplace" "rp")
 
-for dir in *-skill; do
-	if [[ -d $dir ]]; then
-		cd "$dir"
+publish_skill() {
+	local dir="$1"
+	(
+		cd "$dir" || exit 0
 		namespace=$(grep '"namespace"' package.json | awk -F: '{print $2}' | tr -d '," ')
 		if [[ " ${namespaces[*]} " == *"$namespace"* ]]; then
 			echo "Publishing $namespace and setting canBeInstalled to false"
@@ -17,6 +18,14 @@ for dir in *-skill; do
 			echo "Publishing $namespace and setting canBeInstalled to true"
 			spruce publish --isInstallable true
 		fi
-		cd ..
+	) &
+}
+
+for dir in *-skill; do
+	if [[ -d $dir ]]; then
+		publish_skill "$dir"
 	fi
 done
+
+wait
+echo "All publish tasks complete."
