@@ -93,11 +93,15 @@ fi
 if [ -f .processes/message-receiver ]; then
 	hero "Shutting down message receiver..."
 	./support/pm2.sh stop "message-receiver"
+else
+	hero "No message receiver to shut down."
 fi
 
 if [ -f .processes/message-sender ]; then
 	hero "Shutting down message sender..."
 	./support/pm2.sh stop "message-sender"
+else
+	hero "No message sender to shut down."
 fi
 
 # Check if shouldListRunning is true before running yarn list.running

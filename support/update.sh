@@ -11,6 +11,8 @@ startWith=""
 nonDashDashArgExists=false
 shouldRebuild=true
 
+: "${SHOULD_THEATRE_UPGRADE_SPRUCE_CLI:=false}"
+
 for arg in "$@"; do
 	case $arg in
 	--shouldOpenVsCodeAfterUpdate=*)
@@ -67,8 +69,12 @@ fi
 hero "Updating theatre..."
 git pull
 
-hero "Updating cli..."
-yarn global add @sprucelabs/spruce-cli
+hero "Handling CLI upgrade..."
+if [ "$SHOULD_THEATRE_UPGRADE_SPRUCE_CLI" = true ]; then
+	yarn global add @sprucelabs/spruce-cli
+else
+	echo "Skipping Spruce CLI upgrade because SHOULD_THEATRE_UPGRADE_SPRUCE_CLI=$SHOULD_THEATRE_UPGRADE_SPRUCE_CLI"
+fi
 
 hero "Updating skills..."
 
