@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # deploy.sh – copy a local setup script to an EC2 host and execute it
 # Usage:
-#   ./support/ec2/deploy.sh [-k key.pem] -h host [options]
+#   ./support/ec2/deploy.sh --host HOST [options]
 #
 # Required:
-#   -k key.pem              Path to SSH private key (optional if ssh config handles it)
-#   -h host                 EC2 host (IPv4/DNS)
+#   --host HOST             EC2 host (IPv4/DNS or SSH config alias)
 #
 # Optional SSH/deployment options:
-#   -u user                 SSH username (default: ec2-user)
+#   --key key.pem           Path to SSH private key (optional if ssh config handles it)
+#   --user USER             SSH username (default: ec2-user)
 #   (setup script fixed to support/ec2/setup.sh)
-#   -b blueprint.yml        Local blueprint to upload (default: blueprint.yml)
+#   --blueprint blueprint.yml  Local blueprint to upload (default: blueprint.yml)
 #
 # Optional install.sh flags (forwarded to remote setup script):
 #   --setupMode=MODE
@@ -28,40 +28,40 @@
 set -euo pipefail
 
 usage() {
-	echo "Usage: $0 [-k key.pem] -h host [options]" >&2
+	echo "Usage: $0 --host HOST [options]" >&2
 	echo "Run $0 --help for full details." >&2
 	exit 1
 }
 
 help() {
 	cat <<'HELP'
-Usage: support/ec2/deploy.sh [-k key.pem] -h host [options]
+Usage: support/ec2/deploy.sh --host HOST [options]
 
 Required:
-  -k key.pem              Path to SSH private key (optional if ssh config handles it)
-  -h host                 EC2 host (IPv4/DNS)
+  --host=HOST                EC2 host (IPv4/DNS or SSH config alias)
 
 Optional SSH/deployment options:
-  -u user                 SSH username (default: ec2-user)
-  (setup script fixed to support/ec2/setup.sh)
-  -b blueprint.yml        Local blueprint to upload (default: blueprint.yml)
+  --key=key.pem              Path to SSH private key (optional if ssh config handles it)
+  --user=USER                SSH username (default: ec2-user)
+  --blueprint=blueprint.yml  Local blueprint to upload (default: blueprint.yml)
 
 Optional install.sh flags forwarded to remote setup script:
   --setupMode=MODE
   --setupTheatreUntil=STEP
-  --theatreDestination=folder   (placed inside /home/ec2-user)
+  --theatreDestination=FOLDER   (placed inside /home/ec2-user)
   --shouldInstallMongo=true|false
   --shouldInstallCaddy=true|false
   --shouldGrantNodeSecurePermissions=true|false
   --personalAccessToken=TOKEN
   --debug / --debug=true|false / --no-debug
-  
-Extras:
-  --interactive           Prompt for any missing values instead of requiring flags
-  --help                  Show this message and exit
 
-Examples:
-  yarn deploy.ec2 -k ~/.ssh/key.pem -h 18.119.161.185 \
+Extras:
+  --interactive             Prompt for any missing values instead of requiring flags
+  --help                    Show this message and exit
+
+Example:
+  yarn deploy.ec2 --host=18.119.161.185 \
+    --key=~/.ssh/key.pem \
     --theatreDestination=spruce-theatre \
     --setupMode=production
 HELP
@@ -157,44 +157,79 @@ install_debug="true"
 remote_home="/home/ec2-user"
 remote_blueprint_path="$remote_home/blueprint.yml"
 
-while getopts "k:h:u:b:-:" opt; do
-	case $opt in
-	k) key=$OPTARG ;;
-	h) host=$OPTARG ;;
-	u) user=$OPTARG ;;
-	b) blueprint=$OPTARG ;;
-	-)
-		case $OPTARG in
-		help)
-			help
-			;;
-		interactive)
-			interactive=true
-			;;
-		*)
-			echo "Unknown long option --$OPTARG" >&2
-			usage
-			;;
-		esac
-		;;
-	*)
-		usage
-		;;
-	esac
-done
-
-shift $((OPTIND - 1))
-
 while [[ $# -gt 0 ]]; do
 	case $1 in
+	--help)
+		help
+		;;
+	--interactive)
+		interactive=true
+		;;
+	--host=*)
+		host=${1#*=}
+		;;
+	--host)
+		if [[ $# -lt 2 ]]; then
+			echo "--host requires a value." >&2
+			usage
+		fi
+		host=$2
+		shift
+		;;
+	--key=*)
+		key=${1#*=}
+		;;
+	--key)
+		if [[ $# -lt 2 ]]; then
+			echo "--key requires a value." >&2
+			usage
+		fi
+		key=$2
+		shift
+		;;
+	--user=*)
+		user=${1#*=}
+		;;
+	--user)
+		if [[ $# -lt 2 ]]; then
+			echo "--user requires a value." >&2
+			usage
+		fi
+		user=$2
+		shift
+		;;
+	--blueprint=*)
+		blueprint=${1#*=}
+		;;
+	--blueprint)
+		if [[ $# -lt 2 ]]; then
+			echo "--blueprint requires a value." >&2
+			usage
+		fi
+		blueprint=$2
+		shift
+		;;
 	--setupMode=*)
 		install_setup_mode=${1#*=}
+		;;
+	--setupMode)
+		if [[ $# -lt 2 ]]; then
+			echo "--setupMode requires a value." >&2
+			usage
+		fi
+		install_setup_mode=$2
+		shift
 		;;
 	--setupTheatreUntil=*)
 		install_setup_until=${1#*=}
 		;;
-	--blueprint=*)
-		echo "Warning: --blueprint is ignored; remote blueprint path is fixed to $remote_blueprint_path." >&2
+	--setupTheatreUntil)
+		if [[ $# -lt 2 ]]; then
+			echo "--setupTheatreUntil requires a value." >&2
+			usage
+		fi
+		install_setup_until=$2
+		shift
 		;;
 	--theatreDestination=*)
 		value=${1#*=}
@@ -205,17 +240,63 @@ while [[ $# -gt 0 ]]; do
 		fi
 		install_theatre_folder=$sanitized
 		;;
+	--theatreDestination)
+		if [[ $# -lt 2 ]]; then
+			echo "--theatreDestination requires a value." >&2
+			usage
+		fi
+		value=$2
+		sanitized=$(normalize_folder_name "$value")
+		if [[ -z $sanitized || $value != "$sanitized" ]]; then
+			echo "--theatreDestination must be a folder name (no slashes)." >&2
+			exit 1
+		fi
+		install_theatre_folder=$sanitized
+		shift
+		;;
 	--shouldInstallMongo=*)
 		install_should_install_mongo=${1#*=}
+		;;
+	--shouldInstallMongo)
+		if [[ $# -lt 2 ]]; then
+			echo "--shouldInstallMongo requires a value." >&2
+			usage
+		fi
+		install_should_install_mongo=$2
+		shift
 		;;
 	--shouldInstallCaddy=*)
 		install_should_install_caddy=${1#*=}
 		;;
+	--shouldInstallCaddy)
+		if [[ $# -lt 2 ]]; then
+			echo "--shouldInstallCaddy requires a value." >&2
+			usage
+		fi
+		install_should_install_caddy=$2
+		shift
+		;;
 	--shouldGrantNodeSecurePermissions=*)
 		install_should_grant_node_secure_permissions=${1#*=}
 		;;
+	--shouldGrantNodeSecurePermissions)
+		if [[ $# -lt 2 ]]; then
+			echo "--shouldGrantNodeSecurePermissions requires a value." >&2
+			usage
+		fi
+		install_should_grant_node_secure_permissions=$2
+		shift
+		;;
 	--personalAccessToken=*)
 		install_personal_access_token=${1#*=}
+		;;
+	--personalAccessToken)
+		if [[ $# -lt 2 ]]; then
+			echo "--personalAccessToken requires a value." >&2
+			usage
+		fi
+		install_personal_access_token=$2
+		shift
 		;;
 	--debug)
 		install_debug="true"
@@ -236,12 +317,6 @@ while [[ $# -gt 0 ]]; do
 			usage
 			;;
 		esac
-		;;
-	--interactive)
-		interactive=true
-		;;
-	--help)
-		help
 		;;
 	*)
 		echo "Unknown option: $1" >&2
@@ -328,23 +403,23 @@ remote_blueprint_dir=$(dirname "$remote_blueprint_path")
 if [[ $interactive == true ]]; then
 	replay_cmd=("$0")
 	if [[ -n $key ]]; then
-		replay_cmd+=(-k "$key")
+		replay_cmd+=("--key" "$key")
 	fi
-	replay_cmd+=(-h "$host")
+	replay_cmd+=("--host" "$host")
 	if [[ $user != "ec2-user" ]]; then
-		replay_cmd+=(-u "$user")
+		replay_cmd+=("--user" "$user")
 	fi
-	replay_cmd+=(-b "$blueprint")
-	replay_cmd+=("--setupMode=$install_setup_mode")
+	replay_cmd+=("--blueprint" "$blueprint")
+	replay_cmd+=("--setupMode" "$install_setup_mode")
 	if [[ -n $install_setup_until ]]; then
-		replay_cmd+=("--setupTheatreUntil=$install_setup_until")
+		replay_cmd+=("--setupTheatreUntil" "$install_setup_until")
 	fi
-	replay_cmd+=("--theatreDestination=$install_theatre_folder")
-	replay_cmd+=("--shouldInstallMongo=$install_should_install_mongo")
-	replay_cmd+=("--shouldInstallCaddy=$install_should_install_caddy")
-	replay_cmd+=("--shouldGrantNodeSecurePermissions=$install_should_grant_node_secure_permissions")
+	replay_cmd+=("--theatreDestination" "$install_theatre_folder")
+	replay_cmd+=("--shouldInstallMongo" "$install_should_install_mongo")
+	replay_cmd+=("--shouldInstallCaddy" "$install_should_install_caddy")
+	replay_cmd+=("--shouldGrantNodeSecurePermissions" "$install_should_grant_node_secure_permissions")
 	if [[ -n $install_personal_access_token ]]; then
-		replay_cmd+=("--personalAccessToken=$install_personal_access_token")
+		replay_cmd+=("--personalAccessToken" "$install_personal_access_token")
 	fi
 	if [[ $install_debug == "true" ]]; then
 		replay_cmd+=("--debug")

@@ -110,20 +110,20 @@ if [ "$runUntil" != "" ]; then
 	echo "Running until: $runUntil"
 fi
 
-mercury_boot_spacer_sec=3
-THEATRE=$(node support/blueprint.js $blueprint theatre)
-MERCURY_BOOT_SPACER_SEC=$(echo "$THEATRE" | jq -r '.MERCURY_BOOT_SPACER_SEC' 2>/dev/null)
-if [ -n "$MERCURY_BOOT_SPACER_SEC" ] && [ "$MERCURY_BOOT_SPACER_SEC" != "null" ]; then
-	mercury_boot_spacer_sec=$MERCURY_BOOT_SPACER_SEC
-	echo "Using mercury boot spacer sec: $mercury_boot_spacer_sec"
-fi
-
 if should_run_step "update"; then
 	hero "Updating Theatre..."
 	git pull
 
 	hero "Setting up theatre dependencies..."
 	./support/yarn.sh
+fi
+
+mercury_boot_spacer_sec=3
+THEATRE=$(node support/blueprint.js $blueprint theatre)
+MERCURY_BOOT_SPACER_SEC=$(echo "$THEATRE" | jq -r '.MERCURY_BOOT_SPACER_SEC' 2>/dev/null)
+if [ -n "$MERCURY_BOOT_SPACER_SEC" ] && [ "$MERCURY_BOOT_SPACER_SEC" != "null" ]; then
+	mercury_boot_spacer_sec=$MERCURY_BOOT_SPACER_SEC
+	echo "Using mercury boot spacer sec: $mercury_boot_spacer_sec"
 fi
 
 # check for required options in the blueprint (admin.PHONE), if missing, exit 1
