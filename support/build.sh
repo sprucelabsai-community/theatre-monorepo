@@ -35,6 +35,7 @@ should_boot_message_receiver=false
 should_boot_message_sender=false
 
 THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
+POST_BUILD_SCRIPT=$(echo "$THEATRE" | jq -r '.POST_BUILD_SCRIPT' 2>/dev/null)
 BUILD_STRATEGY=$(echo "$THEATRE" | jq -r '.BUILD_STRATEGY' 2>/dev/null)
 BUILD_MAX_MEMORY_MB=$(echo "$THEATRE" | jq -r '.BUILD_MAX_MEMORY_MB' 2>/dev/null)
 
@@ -73,3 +74,9 @@ else
 fi
 
 yarn bundle.heartwood
+
+# Run POST_BUILD_SCRIPT if set
+if [ -n "$POST_BUILD_SCRIPT" ] && [ "$POST_BUILD_SCRIPT" != "null" ]; then
+	echo "Running POST_BUILD_SCRIPT..."
+	eval "$POST_BUILD_SCRIPT"
+fi
