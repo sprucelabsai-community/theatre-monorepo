@@ -120,6 +120,10 @@ fi
 
 mercury_boot_spacer_sec=3
 THEATRE=$(node support/blueprint.js $blueprint theatre)
+SHOULD_VALIDATE_SKILL_DEPENDENCIES=$(echo "$THEATRE" | jq -r '.SHOULD_VALIDATE_SKILL_DEPENDENCIES' 2>/dev/null)
+if [ -n "$SHOULD_VALIDATE_SKILL_DEPENDENCIES" ] && [ "$SHOULD_VALIDATE_SKILL_DEPENDENCIES" != "null" ]; then
+	shouldValidateSkillDependencies="$SHOULD_VALIDATE_SKILL_DEPENDENCIES"
+fi
 MERCURY_BOOT_SPACER_SEC=$(echo "$THEATRE" | jq -r '.MERCURY_BOOT_SPACER_SEC' 2>/dev/null)
 if [ -n "$MERCURY_BOOT_SPACER_SEC" ] && [ "$MERCURY_BOOT_SPACER_SEC" != "null" ]; then
 	mercury_boot_spacer_sec=$MERCURY_BOOT_SPACER_SEC
