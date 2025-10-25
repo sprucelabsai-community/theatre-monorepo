@@ -36,6 +36,19 @@ should_boot_message_sender=false
 
 THEATRE=$(node ./support/blueprint.js blueprint.yml theatre)
 BUILD_STRATEGY=$(echo "$THEATRE" | jq -r '.BUILD_STRATEGY' 2>/dev/null)
+BUILD_MAX_MEMORY_MB=$(echo "$THEATRE" | jq -r '.BUILD_MAX_MEMORY_MB' 2>/dev/null)
+
+if [ -z "${NODE_OPTIONS:-}" ]; then
+	if [ -n "$BUILD_MAX_MEMORY_MB" ] && [ "$BUILD_MAX_MEMORY_MB" != "null" ]; then
+		export NODE_OPTIONS="--max_old_space_size=$BUILD_MAX_MEMORY_MB"
+		echo "Setting NODE_OPTIONS to $NODE_OPTIONS based on blueprint theatre.BUILD_MAX_MEMORY_MB"
+	else
+		export NODE_OPTIONS="--max_old_space_size=4096"
+		echo "Setting NODE_OPTIONS to $NODE_OPTIONS (default)"
+	fi
+else
+	echo "NODE_OPTIONS already set ($NODE_OPTIONS); leaving as-is."
+fi
 
 if [ "$BUILD_STRATEGY" != null ]; then
 	build_strategy=$BUILD_STRATEGY

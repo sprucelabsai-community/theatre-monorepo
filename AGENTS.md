@@ -63,3 +63,4 @@
 - Never make a code change without explicit confirmation based on an implementation plan.
 - Always outline all the changes that will be made into an implementation plan before making any code changes.
 - Whenever a change/addition is suggested, start by outlining it to confirm your comprehension before laying out the implementation plan.
+- Do not apply edits until the user explicitly approves both the plan and the code changes that will follow. Written confirmation of that approval is required before touching files.
