@@ -4,7 +4,7 @@ echo -e "Publishing skills...\n"
 cd packages
 
 # namespaces of skills that cannot be installed
-namespaces=("feed" "files" "images" "organization" "locations" "heartwood" "people" "roles" "skills" "permissions" "theatre" "marketplace" "rp")
+namespaces=("files" "images" "organization" "locations" "heartwood" "people" "roles" "skills" "permissions" "theatre" "marketplace" "rp")
 
 publish_skill() {
 	local dir="$1"
