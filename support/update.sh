@@ -11,7 +11,7 @@ startWith=""
 nonDashDashArgExists=false
 shouldRebuild=true
 
-: "${SHOULD_THEATRE_UPGRADE_SPRUCE_CLI:=false}"
+: "${SHOULD_THEATRE_UPGRADE_SPRUCE_CLI:=true}"
 
 for arg in "$@"; do
 	case $arg in
