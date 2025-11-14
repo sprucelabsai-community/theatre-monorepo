@@ -15,7 +15,7 @@
     "fill.out.blueprint": "./support/fill-out-blueprint.sh",
     "checkout": "./support/checkout.sh",
     "code": "./support/open-in-vscode.sh",
-    "clean": "lerna run clean",
+    "clean": "lerna run clean.all",
     "circle.status": "./support/circle-status.sh",
     "commit.push.skills": "./support/commit-push-skills.sh",
     "dump.core.database": "./support/dump-core-db.sh",
