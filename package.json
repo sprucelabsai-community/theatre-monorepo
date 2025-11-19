@@ -52,6 +52,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "resolutions": {
+    "webpack": "5.102.1"
+  },
   "devDependencies": {
     "lerna": "^9.0.0"
   },
