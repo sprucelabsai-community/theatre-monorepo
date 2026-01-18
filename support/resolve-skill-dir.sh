@@ -18,7 +18,14 @@ fi
 if [ $# -ge 2 ] && [ -n "$2" ]; then
     vendor="$2"
 else
-    vendor=$(./support/resolve-vendor.sh "$namespace")
+    vendor_output=$(./support/resolve-vendor.sh "$namespace" 2>&1)
+    vendor_exit_code=$?
+    if [ $vendor_exit_code -ne 0 ]; then
+        # Pass through the error from resolve-vendor.sh
+        echo "$vendor_output"
+        exit $vendor_exit_code
+    fi
+    vendor="$vendor_output"
 fi
 
 # Set directory name based on namespace and vendor
