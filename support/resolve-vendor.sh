@@ -17,6 +17,14 @@ matches=()
 for dir in packages/*-"$namespace"-skill; do
     if [ -d "$dir" ]; then
         vendor=$(echo "$dir" | sed -E 's/packages\/(.*)-'"$namespace"'-skill/\1/')
+
+        # If lookup namespace has no dashes, skip matches where vendor has dashes
+        # This prevents "shifts" from matching "spruce-seven-shifts-skill"
+        # (where the actual namespace is "seven-shifts", not "shifts")
+        if [[ "$namespace" != *-* ]] && [[ "$vendor" == *-* ]]; then
+            continue
+        fi
+
         matches+=("$vendor")
     fi
 done
