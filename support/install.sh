@@ -330,48 +330,6 @@ install_node() {
 
 }
 
-# Grant Node permission to bind to privileged ports if requested
-if [ "$shouldGrantNodeSecurePermissions" = true ]; then
-	echo "Granting Node permission to listen on privileged ports…"
-
-	PM="$PACKAGE_MANAGER"
-	if ! command -v setcap >/dev/null 2>&1; then
-		if [ "$PM" = "apt-get" ]; then
-			sudo "$PM" -y install libcap2-bin
-		else
-			sudo "$PM" -y install libcap || sudo "$PM" -y install libcap2-bin
-		fi
-	fi
-
-	if command -v node >/dev/null 2>&1; then
-		node_bin=$(command -v node)
-		node_real=$(readlink -f "$node_bin" 2>/dev/null || true)
-
-		if [ -z "$node_real" ]; then
-			if command -v python3 >/dev/null 2>&1; then
-				node_real=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$node_bin")
-			elif command -v python >/dev/null 2>&1; then
-				node_real=$(python -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$node_bin")
-			else
-				node_real=$node_bin
-			fi
-		fi
-
-		if [ -z "$node_real" ]; then
-			node_real=$node_bin
-		fi
-
-		if sudo setcap 'cap_net_bind_service=+ep' "$node_real"; then
-			echo "✓ Capability applied to $node_real"
-			getcap "$node_real" || true
-		else
-			echo "⚠️  Failed to set capability on $node_real"
-		fi
-	else
-		echo "⚠️  Node not found; skipping setcap."
-	fi
-fi
-
 install_yarn() {
 	if [ "$PACKAGE_MANAGER" == "brew" ]; then
 		brew install yarn
@@ -763,6 +721,48 @@ optionally_install_git
 
 echo "Checking if Node is installed..."
 optionally_install_node
+
+# Grant Node permission to bind to privileged ports if requested
+if [ "$shouldGrantNodeSecurePermissions" = true ]; then
+	echo "Granting Node permission to listen on privileged ports…"
+
+	PM="$PACKAGE_MANAGER"
+	if ! command -v setcap >/dev/null 2>&1; then
+		if [ "$PM" = "apt-get" ]; then
+			sudo "$PM" -y install libcap2-bin
+		else
+			sudo "$PM" -y install libcap || sudo "$PM" -y install libcap2-bin
+		fi
+	fi
+
+	if command -v node >/dev/null 2>&1; then
+		node_bin=$(command -v node)
+		node_real=$(readlink -f "$node_bin" 2>/dev/null || true)
+
+		if [ -z "$node_real" ]; then
+			if command -v python3 >/dev/null 2>&1; then
+				node_real=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$node_bin")
+			elif command -v python >/dev/null 2>&1; then
+				node_real=$(python -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$node_bin")
+			else
+				node_real=$node_bin
+			fi
+		fi
+
+		if [ -z "$node_real" ]; then
+			node_real=$node_bin
+		fi
+
+		if sudo setcap 'cap_net_bind_service=+ep' "$node_real"; then
+			echo "✓ Capability applied to $node_real"
+			getcap "$node_real" || true
+		else
+			echo "⚠️  Failed to set capability on $node_real"
+		fi
+	else
+		echo "⚠️  Node not found; skipping setcap."
+	fi
+fi
 
 echo "Installing Yarn..."
 install_yarn
