@@ -35,7 +35,12 @@ fi
 DESTINATION_DIR="../packages/$TARGET_DIR"
 DOES_EXIST=false
 if [ -d "$DESTINATION_DIR" ]; then
-    DOES_EXIST=true
+    if [ ! -f "$DESTINATION_DIR/package.json" ]; then
+        echo "Found invalid skill dir without package.json. Removing: $DESTINATION_DIR"
+        rm -rf "$DESTINATION_DIR"
+    else
+        DOES_EXIST=true
+    fi
 fi
 mkdir -p $DESTINATION_DIR
 cd "../packages/$TARGET_DIR"
