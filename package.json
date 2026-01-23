@@ -9,6 +9,8 @@
     "build.parallel": "lerna run build",
     "build.serial": "lerna run build --concurrency 1",
     "build": "./support/build.sh",
+    "build.docker": "./support/docker-build.sh",
+    "docker.up": "./support/docker-up.sh",
     "build.prod": "./support/build-prod.sh",
     "bundle.heartwood": "./support/bundle-heartwood.sh",
     "bundle.serve.heartwood": "yarn bundle.heartwood && yarn serve.heartwood",

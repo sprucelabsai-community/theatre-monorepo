@@ -1,9 +1,8 @@
 # Theatre Monorepo
 
-## Docker x86
+## Docker (arm64)
 
 ```bash
-yarn build.docker.ubuntu.x86
-yarn run.docker.ubuntu.x86
-ssh -i support/id_rsa_docker docker@localhost -p 2222
+yarn build.docker
+docker run --rm -p 8080:8080 -p 8081:8081 theatre-local:latest
 ```
