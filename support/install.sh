@@ -21,7 +21,7 @@ echo "
                                                                          
 "
 
-echo "Version: 4.5.5"
+echo "Version: 4.5.6"
 
 # default flags
 debug=false
@@ -334,9 +334,31 @@ install_yarn() {
 	if [ "$PACKAGE_MANAGER" == "brew" ]; then
 		brew install yarn
 	elif [ "$PACKAGE_MANAGER" == "apt-get" ]; then
-		sudo npm install -g yarn
+		local npm_path=""
+		if command -v npm >/dev/null 2>&1; then
+			npm_path="$(command -v npm)"
+		fi
+
+		if [[ -n "$npm_path" && "$npm_path" == "$HOME/.nvm/"* ]]; then
+			"$npm_path" install -g yarn
+		elif [[ -n "$npm_path" ]]; then
+			sudo "$npm_path" install -g yarn
+		else
+			sudo npm install -g yarn
+		fi
 	elif [ "$PACKAGE_MANAGER" == "yum" ]; then
-		sudo npm install -g yarn
+		local npm_path=""
+		if command -v npm >/dev/null 2>&1; then
+			npm_path="$(command -v npm)"
+		fi
+
+		if [[ -n "$npm_path" && "$npm_path" == "$HOME/.nvm/"* ]]; then
+			"$npm_path" install -g yarn
+		elif [[ -n "$npm_path" ]]; then
+			sudo "$npm_path" install -g yarn
+		else
+			sudo npm install -g yarn
+		fi
 	else
 		echo "Unsupported package manager. Please install Yarn manually."
 		exit 1
