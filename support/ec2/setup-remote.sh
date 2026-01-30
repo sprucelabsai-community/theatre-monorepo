@@ -62,7 +62,7 @@ for arg in "$@"; do
         esac
         ;;
     *)
-        echo "Unknown option passed to setup.sh: $arg" >&2
+        echo "Unknown option passed to setup-remote.sh: $arg" >&2
         exit 1
         ;;
     esac

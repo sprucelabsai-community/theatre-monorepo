@@ -9,7 +9,7 @@
 # Optional SSH/deployment options:
 #   --key key.pem           Path to SSH private key (optional if ssh config handles it)
 #   --user USER             SSH username (default: ec2-user)
-#   (setup script fixed to support/ec2/setup.sh)
+#   (setup script fixed to support/ec2/setup-remote.sh)
 #   --blueprint blueprint.yml  Local blueprint to upload (default: blueprint.yml)
 #
 # Optional install.sh flags (forwarded to remote setup script):
@@ -140,7 +140,7 @@ normalize_folder_name() {
 
 interactive=false
 user="ec2-user"
-script="support/ec2/setup.sh"
+script="support/ec2/setup-remote.sh"
 blueprint="blueprint.yml"
 key=""
 host=""
