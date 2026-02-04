@@ -49,6 +49,12 @@ if ! echo "$pm2_json" | jq empty; then
 	fi
 fi
 
+# Helper to check if a PM2 app exists in the list
+has_pm2_app() {
+	local target_name="$1"
+	echo "$pm2_json" | jq -e --arg name "$target_name" 'map(.name) | index($name) != null' >/dev/null 2>&1
+}
+
 # Loop through each application
 echo "$pm2_json" | jq -r '.[] | .name' | while read -r app_name; do
 	# Skip empty lines
@@ -90,14 +96,14 @@ else
 	hero "All skills shutdown"
 fi
 
-if [ -f .processes/message-receiver ]; then
+if has_pm2_app "message-receiver"; then
 	hero "Shutting down message receiver..."
 	./support/pm2.sh stop "message-receiver"
 else
 	hero "No message receiver to shut down."
 fi
 
-if [ -f .processes/message-sender ]; then
+if has_pm2_app "message-sender"; then
 	hero "Shutting down message sender..."
 	./support/pm2.sh stop "message-sender"
 else
