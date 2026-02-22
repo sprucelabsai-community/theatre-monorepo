@@ -61,5 +61,8 @@
   "dependencies": {
     "js-yaml": "^4.1.1",
     "pm2": "^6.0.13"
+  },
+  "resolutions": {
+    "@vonage/messages": "1.23.2"
   }
 }
