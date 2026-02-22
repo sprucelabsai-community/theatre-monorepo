@@ -63,6 +63,8 @@
     "pm2": "^6.0.13"
   },
   "resolutions": {
-    "@vonage/messages": "1.23.2"
+    "@vonage/messages": "1.23.2",
+    "@vonage/sms": "1.20.2",
+    "@vonage/conversations": "1.13.2"
   }
 }
